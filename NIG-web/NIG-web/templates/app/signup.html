@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}NIG-web Signup{% endblock %}
+
+{% block content %}
+<h2>NIG-web Signup</h2>
+<hr />
+<form class="form-signin" method="post" action="{% url 'app:signup' %}">
+  {% bootstrap_form form %}
+  {% csrf_token %}
+  {% buttons %}
+    <button type="submit" class="btn btn-primary">送信する</button>
+  {% endbuttons %}
+</form>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}NIG-web Login{% endblock %}
+
+{% block content %}
+<h2>NIG-web Login</h2>
+<hr />
+{% if form.errors %}
+  <p>ユーザ名・パスワードが一致しません。再度入力してください。</p>
+{% endif %}
+<form class="form-signin" method="post" action="{% url 'app:signin' %}">
+  {% bootstrap_form form %}
+  {% csrf_token %}
+  {% buttons %}
+    <button type="submit" class="btn btn-primary">送信する</button>
+  {% endbuttons %}
+</form>
+{% endblock %}
