@@ -3,6 +3,20 @@
 - ユーザがブラウザ経由でアクセスし操作を行う Web サーバ
 - 後ほど、Nginx などの Web サーバをフロントとしておくが開発段階では Django の内部サーバを用いる
   - Host の 8011 が内部の 8000 に Port Forward されている
+- ユーザがアクセスするフロントエンド Web システム
+- ユーザ毎のログイン認証制御あり
+- 解析結果データをストアしてユーザに提供 (http ダウンロード)
+- 解析パイプライン実行環境ごとに有効なワークフロー (CWL) リストを API Server から取得してユーザに提示する
+  - ユーザは自分が実行したい環境とワークフローを意識した上でリクエストする前提
+- 解析パイプライン実行時に必要な credential 情報は２種類ある
+  - 各データベース(JGA, AGD, TMM) へのアクセス権限
+    - config で記述できるとよい（使うデータしだいなので）
+  - 解析環境へのアクセス権限 (NIG スパコン, 東北大スパコン)
+    - Web Server <-> API Server 間のシステムトークンとして持つ（ユーザは意識しなくてよい）
+- 入力データによって解析パイプラインの実行環境は決まる
+  - JGA + TMM の組み合わせ → 東北大スパコンで実行
+  - AGD + JGA の組み合わせ → NIG スパコンで実行
+  - 権限的に不可能な組み合わせが指定された場合はエラーにすべき → 何らか Validation が必要
 
 ## 実行環境
 
@@ -52,6 +66,10 @@ $ pip freeze > /opt/NIG-web/requirements.txt
 ```bash
 $ docker-compose -f docker-compose.dev.yml up -d --build
 $ docker-compose -f docker-compose.dev.yml exec app bash
+$ ./migrate.sh
+$ ./run_server.sh
+
+# ブラウザで localhost:8011 にアクセス
 ```
 
 ## Django Start Project Memo

@@ -1,6 +1,18 @@
 # NIG-api
 
-- スパコンやクラウド上にて可動し実際の解析を行う API サーバ
+- WES API 相当の Interface を持ち、解析パイプライン実行環境上で稼働する。
+  - https://ga4gh.github.io/workflow-execution-service-schemas/swagger-ui/#/
+- Interface は共通だが、実装は実行環境毎に異なるはず。
+  - 今期プロトタイプでは、単体ノード上で cwl ワークフロー を生成して cwltool を実行する
+  - NIG スパコンなら、UGE のジョブを生成して submit する
+  - 東北大スパコンなら、???
+- ユーザが指定した実行パラメータ(config ファイル) を受け取って処理する
+  1. 必要なデータを解析環境上にステージング（ダウンロード＆展開）
+  2. 実行対象の CWL のパラメータファイル (yml) を生成
+- 解析環境上で CWL を起動する
+  - 実行状態を管理する
+  - https://ga4gh.github.io/workflow-execution-service-schemas/docs/#_state
+- 解析結果データを Web Server に送信する
 - 後ほど、Nginx などの Web サーバをフロントとしておくが開発段階では Flask の内部サーバを用いる
   - Host の 8022 が内部の 8000 に Port Forward されている
 - Docker exec の仕様などが面倒な点から、Flask と cwltool を同 container にまとめる
