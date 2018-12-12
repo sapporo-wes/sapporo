@@ -34,6 +34,11 @@ Type "help", "copyright", "credits" or "license" for more information.
 '2.1.4'
 ```
 
+- bootstrap
+  - 4.1.3
+- jquery
+  - 3.3.1
+
 ### pip package の更新方法
 
 ```bash
@@ -47,4 +52,25 @@ $ pip freeze > /opt/NIG-web/requirements.txt
 ```bash
 $ docker-compose -f docker-compose.dev.yml up -d --build
 $ docker-compose -f docker-compose.dev.yml exec app bash
+```
+
+## Django Start Project Memo
+
+```bash
+$ mkdir NIG-web
+$ cd NIG-web
+$ django-admin.py startproject config .
+$ python3 manage.py startapp app
+$ mkdir templates
+$ mkdir static
+$ mkdir static/js
+$ mkdir static/css
+$ curl -L https://github.com/twbs/bootstrap/releases/download/v4.1.3/bootstrap-4.1.3-dist.zip -o bootstrap-4.1.3-dist.zip
+$ unzip bootstrap-4.1.3-dist.zip
+$ rm -rf bootstrap-4.1.3-dist.zip
+$ mv css/bootstrap.min.css ./static/css/
+$ mv js/bootstrap.bundle.min.js ./static/js/
+$ rm -rf css
+$ rm -rf js
+$ curl -L https://code.jquery.com/jquery-3.3.1.slim.min.js -o ./static/js/jquery-3.3.1.slim.min.js
 ```

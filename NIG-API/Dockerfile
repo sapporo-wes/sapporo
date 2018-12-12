@@ -8,6 +8,7 @@ RUN apt update \
     curl \
     silversearcher-ag \
     tree \
+    unzip \
     vim \
  && apt clean \
  && rm -rf /var/lib/apt/lists/*
