@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile-django
     container_name: NIG-web-dev
+    restart: always
     volumes:
       - .:/opt/NIG-web
     ports:
