@@ -61,3 +61,17 @@ $ pip freeze > /opt/NIG-api/requirements.txt
 $ docker-compose -f docker-compose.dev.yml up -d --build
 $ docker-compose -f docker-compose.dev.yml exec app bash
 ```
+
+## Swagger による API ドキュメント
+
+- VSCode に Swagger 用の拡張があるからそれが良いかもしれない
+- Swagger Editor と Swagger UI がある
+  - 編集と閲覧
+  - Editor の方で閲覧もできる
+- 基本的に Editor にて yaml を編集していくが、UI での閲覧のためには json に変換しなければならない
+  - 変換は Editor で行える
+
+```bash
+$ docker run -d -p 8081:8080 swaggerapi/swagger-editor
+$ docker run -d -p 8082:8080 swaggerapi/swagger-ui
+```
