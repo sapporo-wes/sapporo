@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, View
 
-from .forms import UserCreationForm
+from .forms import UserCreationForm, ServiceAdditionForm
 
 
 class HomeView(View):
@@ -22,8 +22,22 @@ class SignupView(CreateView):
     template_name = 'app/signup.html'
 
 
-class ServiceListView(LoginRequiredMixin, TemplateView):
-    template_name = "app/service_list.html"
+class ServiceListView(LoginRequiredMixin, View):
+    def get(self, request):
+        service_addition_form = ServiceAdditionForm()
+        context = {
+            "service_addition_form": service_addition_form,
+        }
+        return render(request, "app/service_list.html", context)
+
+    def post(self, request):
+        service_addition_form = ServiceAdditionForm()
+        if service_addition_form.is_valid():
+            pass
+        context = {
+            "service_addition_form": service_addition_form,
+        }
+        return render(request, "app/service_list.html", context)
 
 
 class JobListView(LoginRequiredMixin, TemplateView):

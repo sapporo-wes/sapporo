@@ -31,6 +31,7 @@ DUMMY_SERVICE_INFO = {
     #         "job_file": "string",
     #     },
     # ],
+    # TODO State should create another API endpoint
     "system_state_counts": {
         "UNKNOWN": 0,
         "QUEUED": 0,
