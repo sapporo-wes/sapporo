@@ -1,53 +1,55 @@
 # coding: utf-8
 
 DUMMY_SERVICE_INFO = {
+    # The Workflow engine accepted by API-server and the Workflow definition accepted by that Workflow engine
     "workflow_type_versions": {
-        "additionalProp1": {
+        "cwltool": {
             "workflow_type_version": [
-                "string"
-            ]
+                "CWL",
+            ],
         },
-        "additionalProp2": {
-            "workflow_type_version": [
-                "string"
-            ]
-        },
-        "additionalProp3": {
-            "workflow_type_version": [
-                "string"
-            ]
-        }
     },
     "supported_wes_versions": [
-        "string"
+        "1.0.0",
     ],
     "supported_filesystem_protocols": [
-        "string"
+        "http",
+        "https",
+        "sftp",
+        "s3",
+        "file",
     ],
     "workflow_engine_versions": {
-        "additionalProp1": "string",
-        "additionalProp2": "string",
-        "additionalProp3": "string"
+        "cwltool": "1.0.20181201184214",
     },
+    # Default parameters accepted by the workflow engine
     "default_workflow_engine_parameters": [
         {
-            "name": "string",
-            "type": "string",
-            "default_value": "string"
-        }
+            "job_name": "string",
+            "workflow_type": "string",
+            "job_file": "string",
+        },
     ],
     "system_state_counts": {
-        "additionalProp1": 0,
-        "additionalProp2": 0,
-        "additionalProp3": 0
+        "UNKNOWN": 0,
+        "QUEUED": 0,
+        "INITIALIZING": 0,
+        "RUNNING": 0,
+        "PAUSED": 0,
+        "COMPLETE": 0,
+        "EXECUTOR_ERROR": 0,
+        "SYSTEM_ERROR": 0,
+        "CANCELED": 0,
+        "CANCELING": 0,
     },
-    "auth_instructions_url": "string",
-    "contact_info_url": "string",
+    "auth_instructions_url": "https://github.com/suecharo/NIG",
+    "contact_info_url": "https://github.com/suecharo/NIG",
+    # Arbitrary parameter set, I'm wondering whether to use this
     "tags": {
         "additionalProp1": "string",
         "additionalProp2": "string",
-        "additionalProp3": "string"
-    }
+        "additionalProp3": "string",
+    },
 }
 
 

@@ -1,10 +1,8 @@
-swagger: "2.0"
-info:
-  title: "NIG API Definition"
-  version: "1.0.0"
-  description: "スパコンやクラウド上にて可動し実際の解析を行う API サーバに関する仕様書"
-host: "localhost:8022"
 basePath: '/ga4gh/wes/v1'
+swagger: '2.0'
+info:
+  title: Workflow Execution Service
+  version: 1.0.0
 schemes:
   - https
 consumes:
@@ -318,7 +316,6 @@ paths:
           type: string
       tags:
         - WorkflowExecutionService
-
 definitions:
   DefaultWorkflowEngineParameter:
     type: object

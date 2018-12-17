@@ -22,8 +22,8 @@ class SignupView(CreateView):
     template_name = 'app/signup.html'
 
 
-class MachineListView(LoginRequiredMixin, TemplateView):
-    template_name = "app/machine_list.html"
+class ServiceListView(LoginRequiredMixin, TemplateView):
+    template_name = "app/service_list.html"
 
 
 class JobListView(LoginRequiredMixin, TemplateView):
