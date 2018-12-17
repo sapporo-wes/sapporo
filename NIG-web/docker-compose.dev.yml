@@ -11,4 +11,6 @@ services:
       - .:/opt/NIG-web
     ports:
       - 8011:8000
+    environment:
+      - TERM=xterm-256color
     command: ["tail", "-f", "/dev/null"]

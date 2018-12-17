@@ -9,7 +9,7 @@ from app.models import (Service, SupportedFilesystemProtocol,
 from app.tests.mock_server.dummy_data import DUMMY_SERVICE_INFO
 
 
-class ServiceModelTest(TestCase):
+class ServiceModelTests(TestCase):
     def set_up_db(self):
         service = Service()
         service.name = "TestService"
