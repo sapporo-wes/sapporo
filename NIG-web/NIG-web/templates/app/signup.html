@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load bootstrap4 %}
-
-{% block title %}NIG-web Signup{% endblock %}
-
+{% block title %}
+  NIG-web Signup
+{% endblock %}
 {% block content %}
-<h2>NIG-web Signup</h2>
-<hr />
-<form class="form-signin" method="post" action="{% url 'app:signup' %}">
-  {% bootstrap_form form %}
-  {% csrf_token %}
-  {% buttons %}
-    <button type="submit" class="btn btn-primary">送信する</button>
-  {% endbuttons %}
-</form>
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <h2>NIG-web Signup</h2>
+      <hr />
+      <form class="form-signin" method="post" action="{% url 'app:signup' %}">
+        {% bootstrap_form form %}
+        {% csrf_token %}
+        {% buttons %}
+          <button type="submit" class="btn btn-primary">Submit</button>
+        {% endbuttons %}
+      </form>
+    </div>
+  </div>
 {% endblock %}

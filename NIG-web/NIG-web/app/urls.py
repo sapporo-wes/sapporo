@@ -8,8 +8,8 @@ app_name = "app"
 
 urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
-    path("login/", LoginView.as_view(), name="signin"),
-    path("logout/", LogoutView.as_view(), name="signout"),
+    path("signin/", LoginView.as_view(), name="signin"),
+    path("signout/", LogoutView.as_view(), name="signout"),
     path("signup/", views.SignupView.as_view(), name="signup"),
     path("machine/", views.MachineListView.as_view(), name="machine_list"),
     path("job/", views.JobListView.as_view(), name="job_list"),

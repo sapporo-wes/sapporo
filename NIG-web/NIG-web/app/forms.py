@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class UserCreationForm(UserCreationForm):
     email = EmailField(label=_("Email address"),
-                       required=True, help_text=_("この項目は必須です。"))
+                       required=True, help_text=_("Required."))
 
     class Meta:
         model = User

@@ -1,9 +1,18 @@
 {% extends 'base.html' %}
-
-{% block title %}NIG-web Data List{% endblock %}
-
+{% load static %}
+{% load bootstrap4 %}
+{% block title %}
+  NIG-web Data
+{% endblock %}
 {% block content %}
-<h2>NIG-web Data List</h2>
-<hr />
-<p>User が Upload した Data を管理するための Page</p>
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <h2>NIG-web Data List</h2>
+      <hr />
+      <p class="lead">
+        Screen for managing Data uploaded by User
+      </p>
+    </div>
+  </div>
 {% endblock %}

@@ -1,9 +1,18 @@
 {% extends 'base.html' %}
-
-{% block title %}NIG-web Job List{% endblock %}
-
+{% load static %}
+{% load bootstrap4 %}
+{% block title %}
+  NIG-web  Job
+{% endblock %}
 {% block content %}
-<h2>NIG-web Job List</h2>
-<hr />
-<p>User が実行した Job を管理するための Page</p>
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <h2>NIG-web  Job List</h2>
+      <hr />
+      <p class="lead">
+        Screen for managing Job executed by User
+      </p>
+    </div>
+  </div>
 {% endblock %}

@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
-
+{% load static %}
+{% load bootstrap4 %}
 {% block title %}
-NIG-web Home
+  NIG-web Home
 {% endblock %}
-
 {% block content %}
-<div class="jumbotron mt-4">
-  <h1 class="display-4">NIG-web Home</h1>
-  <p class="lead">
-    ログイン前の画面
-  </p>
-</div>
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <div class="jumbotron">
+        <h1 class="display-3">NIG-web Home</h1>
+        <p class="lead">
+          Screen before login
+        </p>
+      </div>
+    </div>
+  </div>
 {% endblock %}

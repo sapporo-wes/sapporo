@@ -1,6 +1,7 @@
 {% load static %}
+{% load bootstrap4 %}
 <!doctype html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,16 +9,17 @@
     <meta name="author" content="NIG-Ascade">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link rel="stylesheet" href="application.css" >
     <title>{% block title %}{% endblock %}</title>
   </head>
 
   <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
       <a class="navbar-brand" href="{% url 'app:home' %}">NIG-web</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsNav" aria-controls="navbarsNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarsNav">
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
         {% if user.is_authenticated %}
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
@@ -29,13 +31,14 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'app:data_list' %}">Data</a>
             </li>
-          </ul>
-          <ul class="navbar-nav">
+            </ul>
+            <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" href="{% url 'app:user_detail' user_name=user.username %}">User Page</a>
             </li>
+            &nbsp;&nbsp;&nbsp;
             <li class="nav-item">
-              <a class="btn btn-outline-secondary" href="{% url 'app:signout' %}">Sign out</a> 
+              <a class="btn btn-outline-secondary" href="{% url 'app:signout' %}">Sign out</a>
             </li>
           </ul>
         {% else %}
@@ -53,9 +56,8 @@
         {% endif %}
       </div>
     </nav>
-
     <div class="container">
-      <div class="content">{% block content %}{% endblock %}</div>
+      {% block content %}{% endblock %}
     </div>
     <script src="{% static 'js/jquery-3.3.1.slim.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
