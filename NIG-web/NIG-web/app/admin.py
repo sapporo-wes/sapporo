@@ -7,7 +7,7 @@ from .models import SupportedWesVersion
 from .models import SupportedFilesystemProtocol
 # from .models import DefaultWorkflowEngineParameter
 from .models import SystemStateCount
-from .models import Job
+from .models import Run
 
 admin.site.register(Service)
 admin.site.register(WorkflowEngine)
@@ -16,4 +16,4 @@ admin.site.register(SupportedWesVersion)
 admin.site.register(SupportedFilesystemProtocol)
 # admin.site.register(DefaultWorkflowEngineParameter)
 admin.site.register(SystemStateCount)
-admin.site.register(Job)
+admin.site.register(Run)

@@ -12,7 +12,7 @@ urlpatterns = [
     path("signout/", LogoutView.as_view(), name="signout"),
     path("signup/", views.SignupView.as_view(), name="signup"),
     path("service/", views.ServiceListView.as_view(), name="service_list"),
-    path("job/", views.JobListView.as_view(), name="job_list"),
+    path("run/", views.RunListView.as_view(), name="run_list"),
     path("data/", views.DataListView.as_view(), name="data_list"),
     path("user/<str:user_name>/", views.UserDetailView.as_view(), name="user_detail"),
 ]

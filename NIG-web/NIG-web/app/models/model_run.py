@@ -5,8 +5,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 
-class Job(models.Model):
-    name = models.CharField(_("job name"), max_length=256)
+class Run(models.Model):
+    name = models.CharField(_("run name"), max_length=256)
     user = models.ForeignKey(User, verbose_name=_(
         "executing user"), on_delete=models.CASCADE)
     workflow = models.CharField(_("workflow name"), max_length=256)
@@ -17,9 +17,9 @@ class Job(models.Model):
     config_file_path = models.CharField(_("config file path"), max_length=256)
 
     class Meta:
-        db_table = "job"
-        verbose_name = "job"
-        verbose_name_plural = "jobs"
+        db_table = "run"
+        verbose_name = "run"
+        verbose_name_plural = "runs"
 
     def __str__(self):
         return self.name

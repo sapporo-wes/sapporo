@@ -27,9 +27,9 @@ DUMMY_SERVICE_INFO = {
     # TODO The specification here is wrong. Entry for each engine is required.
     # "default_workflow_engine_parameters": [
     #     {
-    #         "job_name": "string",
+    #         "run_name": "string",
     #         "workflow_type": "string",
-    #         "job_file": "string",
+    #         "run_file": "string",
     #     },
     # ],
     "system_state_counts": {

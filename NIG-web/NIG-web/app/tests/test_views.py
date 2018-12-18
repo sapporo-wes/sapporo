@@ -136,11 +136,11 @@ class ServiceListViewTests(TestCase):
         self.assertContains(response, "Please enter the correct URL.")
 
 
-class JobListViewTests(TestCase):
+class RunListViewTests(TestCase):
     def test_not_authenticated(self):
         client = Client()
         client.logout()
-        response = client.get(reverse("app:job_list"))
+        response = client.get(reverse("app:run_list"))
         self.assertEquals(response.status_code, 302)
 
     def test_authenticated(self):
@@ -149,7 +149,7 @@ class JobListViewTests(TestCase):
         user.username = "TestUser"
         user.save()
         client.force_login(user)
-        response = client.get(reverse("app:job_list"))
+        response = client.get(reverse("app:run_list"))
         self.assertEquals(response.status_code, 200)
 
 

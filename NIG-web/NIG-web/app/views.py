@@ -52,8 +52,8 @@ class ServiceListView(LoginRequiredMixin, View):
         return render(request, "app/service_list.html", context)
 
 
-class JobListView(LoginRequiredMixin, TemplateView):
-    template_name = "app/job_list.html"
+class RunListView(LoginRequiredMixin, TemplateView):
+    template_name = "app/run_list.html"
 
 
 class DataListView(LoginRequiredMixin, TemplateView):

@@ -24,9 +24,9 @@ class UrlResolveTests(TestCase):
         resolver = resolve("/service/")
         self.assertEqual(resolver.view_name, "app:service_list")
 
-    def test_url_resolves_to_job_list_view(self):
-        resolver = resolve("/job/")
-        self.assertEqual(resolver.view_name, "app:job_list")
+    def test_url_resolves_to_run_list_view(self):
+        resolver = resolve("/run/")
+        self.assertEqual(resolver.view_name, "app:run_list")
 
     def test_url_resolves_to_data_list_view(self):
         resolver = resolve("/data/")
@@ -59,9 +59,9 @@ class UrlReverseTests(TestCase):
         url = reverse("app:service_list")
         self.assertEqual(url, "/service/")
 
-    def test_reverse_job_list(self):
-        url = reverse("app:job_list")
-        self.assertEqual(url, "/job/")
+    def test_reverse_run_list(self):
+        url = reverse("app:run_list")
+        self.assertEqual(url, "/run/")
 
     def test_reverse_data_list(self):
         url = reverse("app:data_list")
