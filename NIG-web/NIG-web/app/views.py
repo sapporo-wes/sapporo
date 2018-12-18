@@ -5,7 +5,8 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, View
 
-from .forms import UserCreationForm, ServiceAdditionForm
+from app.forms import ServiceAdditionForm, UserCreationForm
+from app.models import Service
 
 
 class HomeView(View):
@@ -24,20 +25,29 @@ class SignupView(CreateView):
 
 class ServiceListView(LoginRequiredMixin, View):
     def get(self, request):
+        return self.general_render(request)
+
+    def post(self, request):
+        if request.POST.get("button_add_service"):
+            service_addition_form = ServiceAdditionForm(request.POST)
+            if service_addition_form.is_valid():
+                service = Service()
+                service.name = service_addition_form.cleaned_data["service_name"]
+                service.api_server_url = service_addition_form.cleaned_data["api_server_url"]
+                d_res = service.get_dict_response()
+                service.insert_from_dict_response(d_res)
+                service.save()
+
+        return self.general_render(request)
+
+    def general_render(self, request):
+        services = [service.expand_to_dict for service in Service.objects.all()]
         service_addition_form = ServiceAdditionForm()
         context = {
+            "services": services,
             "service_addition_form": service_addition_form,
         }
         return render(request, "app/service_list.html", context)
-
-    # def post(self, request):
-    #     service_addition_form = ServiceAdditionForm()
-    #     if service_addition_form.is_valid():
-    #         pass
-    #     context = {
-    #         "service_addition_form": service_addition_form,
-    #     }
-    #     return render(request, "app/service_list.html", context)
 
 
 class JobListView(LoginRequiredMixin, TemplateView):

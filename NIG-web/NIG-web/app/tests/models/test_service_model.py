@@ -51,6 +51,40 @@ class ServiceModelTests(TestCase):
         self.assertIsInstance(service.created_at, datetime)
         self.assertIsInstance(service.updated_at, datetime)
 
+    def test_expand_to_dict(self):
+        self.set_up_db()
+        service = Service.objects.get(name="TestService")
+        d_service = service.expand_to_dict()
+        self.assertEqual(d_service["name"], "TestService")
+        self.assertEqual(d_service["api_server_url"], "localhost:9999")
+        self.assertEqual(d_service["auth_instructions_url"],
+                         DUMMY_SERVICE_INFO["auth_instructions_url"])
+        self.assertEqual(d_service["contact_info_url"],
+                         DUMMY_SERVICE_INFO["contact_info_url"])
+        for workflow_engine in d_service["workflow_engines"]:
+            self.assertIn(
+                workflow_engine["name"], DUMMY_SERVICE_INFO["workflow_type_versions"].keys())
+            self.assertIn(
+                workflow_engine["version"], DUMMY_SERVICE_INFO["workflow_engine_versions"].values())
+            for type_version in workflow_engine["type_versions"]:
+                self.assertIn(type_version, [t_v for value in DUMMY_SERVICE_INFO["workflow_type_versions"].values(
+                ) for t_v in value["workflow_type_version"]])
+        for system_state_count in d_service["system_state_counts"]:
+            self.assertIn(
+                system_state_count["state"], DUMMY_SERVICE_INFO["system_state_counts"].keys())
+            self.assertIn(
+                system_state_count["count"], DUMMY_SERVICE_INFO["system_state_counts"].values())
+
+
+class WorkflowEngineModelTests(TestCase):
+    def set_up_db(self):
+        service = Service()
+        service.name = "TestService"
+        service.api_server_url = "localhost:9999"
+        d_res = service.get_dict_response()
+        service.insert_from_dict_response(d_res)
+        service.save()
+
     def test_workflow_engine_entries(self):
         self.set_up_db()
         workflow_engines = WorkflowEngine.objects.filter(
@@ -64,6 +98,16 @@ class ServiceModelTests(TestCase):
                              DUMMY_SERVICE_INFO["workflow_engine_versions"][key])
             self.assertIsInstance(workflow_engine.created_at, datetime)
             self.assertIsInstance(workflow_engine.updated_at, datetime)
+
+
+class WorkflowTypeVersionTests(TestCase):
+    def set_up_db(self):
+        service = Service()
+        service.name = "TestService"
+        service.api_server_url = "localhost:9999"
+        d_res = service.get_dict_response()
+        service.insert_from_dict_response(d_res)
+        service.save()
 
     def test_workflow_type_version_entries(self):
         self.set_up_db()
@@ -82,6 +126,16 @@ class ServiceModelTests(TestCase):
                 self.assertIsInstance(
                     workflow_type_version.updated_at, datetime)
 
+
+class SupportedWesVersionModelTests(TestCase):
+    def set_up_db(self):
+        service = Service()
+        service.name = "TestService"
+        service.api_server_url = "localhost:9999"
+        d_res = service.get_dict_response()
+        service.insert_from_dict_response(d_res)
+        service.save()
+
     def test_supported_wes_version_entries(self):
         self.set_up_db()
         supported_wes_versions = SupportedWesVersion.objects.filter(
@@ -93,6 +147,16 @@ class ServiceModelTests(TestCase):
                           DUMMY_SERVICE_INFO["supported_wes_versions"])
             self.assertIsInstance(supported_wes_version.created_at, datetime)
             self.assertIsInstance(supported_wes_version.updated_at, datetime)
+
+
+class SupportedFilesystemProtocolModelTests(TestCase):
+    def set_up_db(self):
+        service = Service()
+        service.name = "TestService"
+        service.api_server_url = "localhost:9999"
+        d_res = service.get_dict_response()
+        service.insert_from_dict_response(d_res)
+        service.save()
 
     def test_supported_filesystem_protocol_entries(self):
         self.set_up_db()
@@ -108,8 +172,15 @@ class ServiceModelTests(TestCase):
             self.assertIsInstance(
                 supported_filesystem_protocol.updated_at, datetime)
 
-    # def test_default_workflow_engine_parameter_entries(self):
-    #     pass
+
+class SystemStateCountTests(TestCase):
+    def set_up_db(self):
+        service = Service()
+        service.name = "TestService"
+        service.api_server_url = "localhost:9999"
+        d_res = service.get_dict_response()
+        service.insert_from_dict_response(d_res)
+        service.save()
 
     def test_system_state_count_entries(self):
         self.set_up_db()

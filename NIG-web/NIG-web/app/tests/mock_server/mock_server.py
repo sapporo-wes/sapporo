@@ -1,7 +1,8 @@
 # coding: utf-8
 from flask import Flask, jsonify
-from dummy_data import DUMMY_SERVICE_INFO, DUMMY_RUNS_LIST, DUMMY_RUNS_RUN, DUMMY_RUNS_INFO, DUMMY_RUNS_CANCEL, DUMMY_RUNS_STATUS
 
+from dummy_data import (DUMMY_RUNS_CANCEL, DUMMY_RUNS_INFO, DUMMY_RUNS_LIST,
+                        DUMMY_RUNS_RUN, DUMMY_RUNS_STATUS, DUMMY_SERVICE_INFO)
 
 app = Flask(__name__)
 

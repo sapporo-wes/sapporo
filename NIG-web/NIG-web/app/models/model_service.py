@@ -1,10 +1,9 @@
 # coding: utf-8
+import requests
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-import requests
 from requests.exceptions import RequestException
-import sys
 
 
 class CommonInfo(models.Model):
@@ -37,7 +36,8 @@ class Service(CommonInfo):
         except AttributeError:
             return False
         try:
-            d_res = requests.get("http://" + api_server_url + "/service-info").json()
+            d_res = requests.get(
+                "http://" + api_server_url + "/service-info").json()
         except RequestException:
             return False
 
@@ -81,6 +81,32 @@ class Service(CommonInfo):
             system_state_count.save()
         self.auth_instructions_url = d_res["auth_instructions_url"]
         self.contact_info_url = d_res["contact_info_url"]
+
+    def expand_to_dict(self):
+        ret_dict = {
+            "name": self.name,
+            "api_server_url": self.api_server_url,
+            "auth_instructions_url": self.auth_instructions_url,
+            "contact_info_url": self.contact_info_url,
+            "workflow_engines": [],
+            "supported_wes_versions": [sup_wes_ver.wes_version for sup_wes_ver in SupportedWesVersion.objects.filter(service__id=self.id)],
+            "supported_filesystem_protocols": [sup_file_pro.name for sup_file_pro in SupportedFilesystemProtocol.objects.filter(service__id=self.id)],
+            "system_state_counts": [],
+        }
+        for workflow_engine in WorkflowEngine.objects.filter(service__id=self.id):
+            d_engine = dict()
+            d_engine["name"] = workflow_engine.name
+            d_engine["version"] = workflow_engine.version
+            d_engine["type_versions"] = [
+                work_type_ver.type_version for work_type_ver in WorkflowTypeVersion.objects.filter(workflow_engine__id=workflow_engine.id)]
+            ret_dict["workflow_engines"].append(d_engine)
+        for system_state_count in SystemStateCount.objects.filter(service__id=self.id):
+            d_state_count = dict()
+            d_state_count["state"] = system_state_count.state
+            d_state_count["count"] = system_state_count.count
+            ret_dict["system_state_counts"].append(d_state_count)
+
+        return ret_dict
 
 
 class WorkflowEngine(CommonInfo):
