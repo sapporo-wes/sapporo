@@ -30,14 +30,14 @@ class ServiceListView(LoginRequiredMixin, View):
         }
         return render(request, "app/service_list.html", context)
 
-    def post(self, request):
-        service_addition_form = ServiceAdditionForm()
-        if service_addition_form.is_valid():
-            pass
-        context = {
-            "service_addition_form": service_addition_form,
-        }
-        return render(request, "app/service_list.html", context)
+    # def post(self, request):
+    #     service_addition_form = ServiceAdditionForm()
+    #     if service_addition_form.is_valid():
+    #         pass
+    #     context = {
+    #         "service_addition_form": service_addition_form,
+    #     }
+    #     return render(request, "app/service_list.html", context)
 
 
 class JobListView(LoginRequiredMixin, TemplateView):
