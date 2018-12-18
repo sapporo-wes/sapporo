@@ -1,9 +1,6 @@
-from django.contrib.auth.views import LoginView, LogoutView
-from django.urls import resolve, reverse
+# coding: utf-8
 from django.test import TestCase
-
-from app.views import (DataListView, HomeView, JobListView, ServiceListView,
-                       SignupView, UserDetailView)
+from django.urls import resolve, reverse
 
 
 class UrlResolveTests(TestCase):
