@@ -27,7 +27,7 @@ class UserCreationForm(UserCreationForm):
 
 class ServiceAdditionForm(forms.Form):
     service_name = forms.CharField(label=_(
-        "Service Name"), max_length=256, required=True, help_text=_("Required."))
+        "Service Name"), max_length=256, required=True, help_text=_("Required. e.g. localhost:8000"))
     api_server_url = forms.CharField(label=_(
         "API server url"), max_length=256, required=True, help_text=_("Required."))
 

@@ -25,7 +25,8 @@ class SignupView(CreateView):
 
 class ServiceListView(LoginRequiredMixin, View):
     def get(self, request):
-        return self.general_render(request)
+        service_addition_form = ServiceAdditionForm()
+        return self.general_render(request, service_addition_form)
 
     def post(self, request):
         if request.POST.get("button_add_service"):
@@ -37,12 +38,13 @@ class ServiceListView(LoginRequiredMixin, View):
                 d_res = service.get_dict_response()
                 service.insert_from_dict_response(d_res)
                 service.save()
+        else:
+            service_addition_form = ServiceAdditionForm()
 
-        return self.general_render(request)
+        return self.general_render(request, service_addition_form)
 
-    def general_render(self, request):
+    def general_render(self, request, service_addition_form):
         services = [service.expand_to_dict for service in Service.objects.all()]
-        service_addition_form = ServiceAdditionForm()
         context = {
             "services": services,
             "service_addition_form": service_addition_form,

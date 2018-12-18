@@ -120,6 +120,21 @@ class ServiceListViewTests(TestCase):
         service = Service.objects.get(name=params["service_name"])
         self.assertIsNotNone(service)
 
+    def test_post_service_addition_form_error(self):
+        client = Client()
+        user = User()
+        user.username = "TestUser"
+        user.save()
+        client.force_login(user)
+        params = {
+            "service_name": "TestService",
+            "api_server_url": "localhost:9998",
+            "button_add_service": "submit",
+        }
+        response = client.post(reverse("app:service_list"), params)
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, "Please enter the correct URL.")
+
 
 class JobListViewTests(TestCase):
     def test_not_authenticated(self):
