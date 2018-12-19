@@ -9,10 +9,18 @@
   <div class="row justify-content-center">
     <div class="col-10">
       <h2>NIG-web Admin</h2>
-      <hr />
       <p class="lead">
-        Screen for managing Admin
+        Administration page. Only superuser can view here.
       </p>
+      <hr />
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <dl class="row">
+        <dt class="col-3"><a href="{% url 'app:admin_service' %}">Managing services</a></dt>
+        <dd class="col-9">Add and delete services</dd>
+      </dl>
     </div>
   </div>
 {% endblock %}

@@ -9,12 +9,12 @@ class WorkflowListViewTests(TestCase):
         client = Client()
         client.logout()
         response = client.get(reverse("app:workflow_list"))
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, 403)
 
     def test_authenticated(self):
         client = Client()
         user = User()
-        user.username = "TestUser"
+        user.username = "test_user"
         user.save()
         client.force_login(user)
         response = client.get(reverse("app:workflow_list"))
@@ -25,13 +25,14 @@ class WorkflowDetailViewTests(TestCase):
     def test_not_authenticated(self):
         client = Client()
         client.logout()
-        response = client.get(reverse("app:workflow_detail"))
-        self.assertEquals(response.status_code, 302)
+        response = client.get(reverse("app:workflow_detail", kwargs={
+            "workflow_unique_id": "workflow_unique_id"}))
+        self.assertEquals(response.status_code, 403)
 
     def test_authenticated(self):
         client = Client()
         user = User()
-        user.username = "TestUser"
+        user.username = "test_user"
         user.save()
         client.force_login(user)
         response = client.get(reverse("app:workflow_detail", kwargs={

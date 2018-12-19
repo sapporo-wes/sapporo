@@ -15,7 +15,7 @@ class CommonInfo(models.Model):
 
 
 class Service(CommonInfo):
-    name = models.CharField(_("Service name"), max_length=256)
+    name = models.CharField(_("Service name"), max_length=256, unique=True)
     api_server_url = models.CharField(_("API server url"), max_length=256)
     auth_instructions_url = models.CharField(
         _("Auth instructions url"), max_length=256)

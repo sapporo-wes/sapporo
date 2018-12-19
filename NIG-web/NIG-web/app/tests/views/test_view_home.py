@@ -14,7 +14,7 @@ class HomeViewTests(TestCase):
     def test_authenticated(self):
         client = Client()
         user = User()
-        user.username = "TestUser"
+        user.username = "test_user"
         user.save()
         client.force_login(user)
         response = client.get(reverse("app:home"))

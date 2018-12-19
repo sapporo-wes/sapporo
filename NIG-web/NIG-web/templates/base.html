@@ -11,8 +11,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
     <link rel="stylesheet" href="{% static 'css/application.css' %}">
     <title>{% block title %}{% endblock %}</title>
+    {% block extrastyle %}{% endblock %}
   </head>
 
+
+</head>
   <body>
     <nav class="navbar navbar-expand navbar-dark bg-dark">
       <a class="navbar-brand" href="{% url 'app:home' %}">NIG-web</a>

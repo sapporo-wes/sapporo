@@ -8,7 +8,7 @@ class UserDetailTests(TestCase):
     def test_not_authenticated(self):
         client = Client()
         client.logout()
-        url = reverse("app:user_home", kwargs={"user_name": "TestUser"})
+        url = reverse("app:user_home", kwargs={"user_name": "test_user"})
         response = client.get(url)
         self.assertEquals(response.status_code, 403)
 

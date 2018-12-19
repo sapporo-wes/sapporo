@@ -1,11 +1,18 @@
 # coding: utf-8
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
+from django.shortcuts import render
+from django.views.generic import View
 
 
-class DataListView(LoginRequiredMixin, TemplateView):
-    template_name = "app/data_list.html"
+class DataListView(LoginRequiredMixin, View):
+    raise_exception = True
+
+    def get(self, request):
+        return render(request, "app/data_list.html")
 
 
-class DataDetailView(LoginRequiredMixin, TemplateView):
-    template_name = "app/data_detail.html"
+class DataDetailView(LoginRequiredMixin, View):
+    raise_exception = True
+
+    def get(self, request, data_unique_id):
+        return render(request, "app/data_detail.html")

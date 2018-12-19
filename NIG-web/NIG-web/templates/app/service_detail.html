@@ -2,17 +2,124 @@
 {% load static %}
 {% load bootstrap4 %}
 {% block title %}
-  NIG-web Service
+  NIG-web Service Detail
 {% endblock %}
+
 {% block content %}
   <br />
   <div class="row justify-content-center">
     <div class="col-10">
-      <h2>NIG-web Service Detail</h2>
-      <hr />
+      <h2>NIG-web Service Detail: {{ service.name }}</h2>
       <p class="lead">
-        Screen for managing Service
+        Details about registered services
       </p>
+      <hr />
+    </div>
+  </div>
+  <br />
+
+  <div class="row justify-content-center">
+    <div class="col-9">
+      <table class="table table-bordered table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col"><div class="text-center">Parameter</div></th>
+            <th scope="col"><div class="text-center">Content</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="align-middle">API Service URL</td>
+            <td class="align-middle">{{ service.api_server_url }}</td>
+          </tr>
+          <tr>
+            <td class="align-middle">Worfklow Engine</td>
+            <td class="align-middle">
+              {% for workflow_engine in service.workflow_engines %}
+                {% if forloop.counter == service.workflow_engines|length %}
+                  {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}
+                {% else %}
+                  {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}<br />
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Workflow Type</td>
+            <td class="align-middle">
+              {% for workflow_engine in service.workflow_engines %}
+                {% if forloop.counter == service.workflow_engines|length %}
+                  {% for type_version in workflow_engine.type_versions %}
+                    {% if forloop.counter == workflow_engine.type_versions|length %}
+                      {{ type_version }}
+                    {% else %}
+                      {{ type_version }}<br />
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  {% for type_version in workflow_engine.type_versions %}
+                    {% if forloop.counter == workflow_engine.type_versions|length %}
+                      {{ type_version }}<br />
+                    {% else %}
+                      {{ type_version }}<br />
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Supported WES Version</td>
+            <td class="align-middle">
+              {% for supported_wes_version in service.supported_wes_versions %}
+                {% if forloop.counter == service.supported_wes_versions|length %}
+                  {{ supported_wes_version }}
+                {% else %}
+                  {{ supported_wes_version }}<br />
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Supported Filesystem Protocol</td>
+            <td class="align-middle">
+              {% for supported_filesystem_protocol in service.supported_filesystem_protocols %}
+                {% if forloop.counter == service.supported_filesystem_protocols|length %}
+                  {{ supported_filesystem_protocol }}
+                {% else %}
+                  {{ supported_filesystem_protocol }}<br />
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td class="align-middle">System State Count</td>
+            <td class="align-middle">
+              {% for system_state_count in service.system_state_counts %}
+                {% if forloop.counter == service.system_state_counts|length %}
+                  {{ system_state_count.state }}:&nbsp;{{ system_state_count.count }}
+                {% else %}
+                  {{ system_state_count.state }}:&nbsp;{{ system_state_count.count }}<br />
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td class="align-middle">Auth Instructions URL</td>
+            <td class="align-middle"><a href="{{ service.auth_instructions_url }}">{{ service.auth_instructions_url }}</a></td>
+          </tr>
+          <tr>
+            <td class="align-middle">Contact Info URL</td>
+            <td class="align-middle"><a href="{{ service.contact_indo_url }}">{{ service.contact_info_url }}</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <a class="btn btn-outline-secondary" href="{% url 'app:service_list' %}" role="button">Back</a>
     </div>
   </div>
 {% endblock %}

@@ -14,7 +14,7 @@ class SigninViewTests(TestCase):
     def test_authenticated(self):
         client = Client()
         user = User()
-        user.username = "TestUser"
+        user.username = "test_user"
         user.save()
         client.force_login(user)
         response = client.get(reverse("app:signin"))
@@ -31,7 +31,7 @@ class SignoutViewTests(TestCase):
     def test_authenticated(self):
         client = Client()
         user = User()
-        user.username = "TestUser"
+        user.username = "test_user"
         user.save()
         client.force_login(user)
         response = client.get(reverse("app:signout"))
@@ -48,7 +48,7 @@ class SignupViewTests(TestCase):
     def test_authenticated(self):
         client = Client()
         user = User()
-        user.username = "TestUser"
+        user.username = "test_user"
         user.save()
         client.force_login(user)
         response = client.get(reverse("app:signup"))

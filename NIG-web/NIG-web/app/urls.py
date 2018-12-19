@@ -3,9 +3,9 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
 
 from app.views import (AdminHomeView, AdminServiceView, DataDetailView,
-                    DataListView, HomeView, RunDetailView, RunListView,
-                    ServiceDetailView, ServiceListView, SignupView,
-                    UserHomeView, WorkflowListView, WorkflowDetailView)
+                       DataListView, HomeView, RunDetailView, RunListView,
+                       ServiceDetailView, ServiceListView, SignupView,
+                       UserHomeView, WorkflowListView, WorkflowDetailView)
 
 app_name = "app"
 
@@ -18,10 +18,10 @@ urlpatterns = [
     path("admin/services/", AdminServiceView.as_view(), name="admin_service"),
     path("services/", ServiceListView.as_view(), name="service_list"),
     path("services/<str:service_name>/",
-         ServiceListView.as_view(), name="service_detail"),
+         ServiceDetailView.as_view(), name="service_detail"),
     path("workflows/", WorkflowListView.as_view(), name="workflow_list"),
     path("workflows/<slug:workflow_unique_id>/",
-         WorkflowListView.as_view(), name="workflow_detail"),
+         WorkflowDetailView.as_view(), name="workflow_detail"),
     path("runs/", RunListView.as_view(), name="run_list"),
     path("runs/<slug:run_unique_id>/",
          RunDetailView.as_view(), name="run_detail"),

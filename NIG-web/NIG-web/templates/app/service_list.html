@@ -2,15 +2,16 @@
 {% load static %}
 {% load bootstrap4 %}
 {% block title %}
-  NIG-web Service
+  NIG-web Service List
 {% endblock %}
+
 {% block content %}
   <br />
   <div class="row justify-content-center">
     <div class="col-10">
       <h2>NIG-web Service List</h2>
       <p class="lead">
-        Screen for managing Service authenticated by User
+        List of currently registered services
       </p>
       <hr />
     </div>
@@ -18,29 +19,25 @@
 
   <div class="row justify-content-center">
     <div class="col-10">
-      <h3>List of services</h3>
-      <br />
+      <h4>Service List</h4>
     </div>
   </div>
-
-  {% for service in services %}
-    <div class="row justify-content-center">
-      <div class="col-9">
-        <h5>{{ service.name }}</h5>
-        <table class="table table-bordered table-sm">
-          <thead class="thead-dark">
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-9">
+      <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col"><div class="text-center">Service Name</div></th>
+            <th scope="col"><div class="text-center">API URL</div></th>
+            <th scope="col"><div class="text-center">Workflow Engines</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for service in services %}
             <tr>
-              <th scope="col"><div class="text-center">Parameter</div></th>
-              <th scope="col"><div class="text-center">Content</div></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="align-middle">API Service URL</td>
+              <td class="align-middle"><a href="{% url 'app:service_detail' service_name=service.name %}">{{ service.name }}</a></td>
               <td class="align-middle">{{ service.api_server_url }}</td>
-            </tr>
-            <tr>
-              <td class="align-middle">Worfklow Engine</td>
               <td class="align-middle">
                 {% for workflow_engine in service.workflow_engines %}
                   {% if forloop.counter == service.workflow_engines|length %}
@@ -51,98 +48,15 @@
                 {% endfor %}
               </td>
             </tr>
-            <tr>
-              <td class="align-middle">Workflow Type</td>
-              <td class="align-middle">
-                {% for workflow_engine in service.workflow_engines %}
-                  {% if forloop.counter == service.workflow_engines|length %}
-                    {% for type_version in workflow_engine.type_versions %}
-                      {% if forloop.counter == workflow_engine.type_versions|length %}
-                        {{ type_version }}
-                      {% else %}
-                        {{ type_version }}<br />
-                      {% endif %}
-                    {% endfor %}
-                  {% else %}
-                    {% for type_version in workflow_engine.type_versions %}
-                      {% if forloop.counter == workflow_engine.type_versions|length %}
-                        {{ type_version }}<br />
-                      {% else %}
-                        {{ type_version }}<br />
-                      {% endif %}
-                    {% endfor %}
-                  {% endif %}
-                {% endfor %}
-              </td>
-            </tr>
-            <tr>
-              <td class="align-middle">Supported WES Version</td>
-              <td class="align-middle">
-                {% for supported_wes_version in service.supported_wes_versions %}
-                  {% if forloop.counter == service.supported_wes_versions|length %}
-                    {{ supported_wes_version }}
-                  {% else %}
-                    {{ supported_wes_version }}<br />
-                  {% endif %}
-                {% endfor %}
-              </td>
-            </tr>
-            <tr>
-              <td class="align-middle">Supported Filesystem Protocol</td>
-              <td class="align-middle">
-                {% for supported_filesystem_protocol in service.supported_filesystem_protocols %}
-                  {% if forloop.counter == service.supported_filesystem_protocols|length %}
-                    {{ supported_filesystem_protocol }}
-                  {% else %}
-                    {{ supported_filesystem_protocol }}<br />
-                  {% endif %}
-                {% endfor %}
-              </td>
-            </tr>
-            <tr>
-              <td class="align-middle">System State Count</td>
-              <td class="align-middle">
-                {% for system_state_count in service.system_state_counts %}
-                  {% if forloop.counter == service.system_state_counts|length %}
-                    {{ system_state_count.state }}:&nbsp;{{ system_state_count.count }}
-                  {% else %}
-                    {{ system_state_count.state }}:&nbsp;{{ system_state_count.count }}<br />
-                  {% endif %}
-                {% endfor %}
-              </td>
-            </tr>
-            <tr>
-              <td class="align-middle">Auth Instructions URL</td>
-              <td class="align-middle">{{ service.auth_instructions_url }}</td>
-            </tr>
-            <tr>
-              <td class="align-middle">Contact Info URL</td>
-              <td class="align-middle">{{ service.contact_info_url }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  {% endfor %}
-
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <br />
-      <hr />
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
-
+  <br />
   <div class="row justify-content-center">
     <div class="col-10">
-      <h3>Add service</h3>
-      <br />
-      <form action="{% url 'app:service_list' %}" method="post">
-        {% csrf_token %}
-        {% bootstrap_form service_addition_form %}
-      {% buttons %}
-        <input type="submit" class="btn btn-primary" name="button_add_service" value="submit" />
-      {% endbuttons %}
-    </form>
+      <a class="btn btn-outline-secondary" href="{% url 'app:home' %}" role="button">Back</a>
     </div>
   </div>
 {% endblock %}
