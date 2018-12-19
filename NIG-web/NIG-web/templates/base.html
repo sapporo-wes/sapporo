@@ -36,8 +36,14 @@
             </li>
             </ul>
             <ul class="navbar-nav">
+            {% if user.is_superuser %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'app:admin_home' %}">Admin</a>
+              </li>
+            {% endif %}
+            &nbsp;&nbsp;&nbsp;
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'app:user_home' user_name=user.username %}">User Page</a>
+              <a class="nav-link" href="{% url 'app:user_home' user_name=user.username %}">User</a>
             </li>
             &nbsp;&nbsp;&nbsp;
             <li class="nav-item">
