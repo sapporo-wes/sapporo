@@ -1,3 +1,4 @@
+# coding: utf-8
 from django.test import TestCase
 from app.forms import UserCreationForm
 from app.forms import ServiceAdditionForm

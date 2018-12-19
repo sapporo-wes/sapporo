@@ -8,3 +8,5 @@ from .model_service import SupportedFilesystemProtocol
 from .model_service import SystemStateCount
 
 from .model_run import Run
+from .model_run import Log
+from .model_run import Command
