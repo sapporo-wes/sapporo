@@ -1,5 +1,10 @@
 # coding: utf-8
 
+with open("./test_workflow_job_template.cwl") as f:
+    test_workflow_job_template = f.read()
+with open("./test_workflow_form_SRA_ID_job_template.cwl") as f:
+    test_workflow_form_SRA_ID_job_template = f.read()
+
 DUMMY_SERVICE_INFO = {
     # The Workflow engine accepted by API-server and the Workflow definition accepted by that Workflow engine
     # TODO Is there more than one version
@@ -67,19 +72,19 @@ DUMMY_SERVICE_INFO = {
 DUMMY_RUNS_LIST = {
     "runs": [
         {
-            "run_id": "1",
+            "run_id": "0",
             "state": "UNKNOWN",
         },
         {
-            "run_id": "2",
+            "run_id": "1",
             "state": "RUNNING",
         },
         {
-            "run_id": "3",
+            "run_id": "2",
             "state": "COMPLETE",
         },
         {
-            "run_id": "4",
+            "run_id": "3",
             "state": "CANCELED",
         },
     ],
@@ -88,11 +93,11 @@ DUMMY_RUNS_LIST = {
 }
 
 DUMMY_RUNS_RUN = {
-    "run_id": "1",
+    "run_id": "0",
 }
 
 DUMMY_RUNS_INFO = {
-    "run_id": "1",
+    "run_id": "0",
     "request": {
         # Json
         "workflow_params": {
@@ -165,4 +170,55 @@ DUMMY_RUNS_CANCEL = {
 DUMMY_RUNS_STATUS = {
     "run_id": "1",
     "state": "UNKNOWN",
+}
+
+# TODO our difinitions
+DUMMY_WORKFLOW_LIST = {
+    "workflows": [
+        {
+            "workflow_id": "0",
+            "workflow_name": "download-GRCh38",
+            "workflow_type_version": "CWL v1.0.2",
+            "workflow_description": "Workflow for downloading fasta file and bwa index of GRCh38",
+            "workflow_tools": [
+                "download-GRCh38-fa.cwl",
+                "download-GRCh38-alt.cwl",
+                "bwa-index.cwl",
+            ],
+            "workflow_job_file_template": "",
+        },
+        {
+            "workflow_id": "1",
+            "workflow_name": "test-workflow",
+            "workflow_type_version": "CWL v1.0.2",
+            "workflow_description": "BWA mapping of paired end",
+            "workflow_tools": [
+                "fastqc.cwl",
+                "trimmomaticPE.cwl",
+                "bwa-mem-PE.cwl",
+                "samtools-sam2bam.cwl",
+                "picard-mark-duplicates.cwl",
+                "picard-sort-sam.cwl",
+            ],
+            "workflow_job_file_template": test_workflow_job_template,
+        },
+        {
+            "workflow_id": "2",
+            "workflow_name": "test-workflow-from-SRA-Run-id",
+            "workflow_type_version": "CWL v1.0.2",
+            "workflow_description": "BWA mapping of paired end from SRA ID",
+            "workflow_tools": [
+                "download-sra.cwl",
+                "pfastq-dump.cwl",
+                "fastqc.cwl",
+                "trimmomaticPE.cwl",
+                "bwa-mem-PE.cwl",
+                "samtools-sam2bam.cwl",
+                "samtools-sort.cwl",
+            ],
+            "workflow_job_file_template": test_workflow_form_SRA_ID_job_template,
+        },
+    ],
+    # Optional
+    "next_page_token": "dummy_next_page_token",
 }
