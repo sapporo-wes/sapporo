@@ -108,6 +108,20 @@ class Service(CommonInfo):
 
         return ret_dict
 
+    def get_workflows_dict_response(self):
+        # Communication check with api server is validated in form
+        try:
+            api_server_url = self.api_server_url
+        except AttributeError:
+            return False
+        try:
+            d_res = requests.get(
+                "http://" + api_server_url + "/workflows").json()
+        except RequestException:
+            return False
+
+        return d_res
+
 
 class WorkflowEngine(CommonInfo):
     service = models.ForeignKey(Service, verbose_name=_(

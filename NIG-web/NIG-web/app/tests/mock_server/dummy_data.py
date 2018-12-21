@@ -1,8 +1,11 @@
 # coding: utf-8
+from pathlib import Path
 
-with open("./test_workflow_job_template.cwl") as f:
+cwd_dir = Path(__file__).parent
+
+with cwd_dir.joinpath("test_workflow_job_template.cwl").open(mode="r") as f:
     test_workflow_job_template = f.read()
-with open("./test_workflow_form_SRA_ID_job_template.cwl") as f:
+with cwd_dir.joinpath("test_workflow_form_SRA_ID_job_template.cwl").open(mode="r") as f:
     test_workflow_form_SRA_ID_job_template = f.read()
 
 DUMMY_SERVICE_INFO = {
@@ -176,8 +179,9 @@ DUMMY_RUNS_STATUS = {
 DUMMY_WORKFLOW_LIST = {
     "workflows": [
         {
-            "workflow_id": "0",
+            "workflow_id": 0,
             "workflow_name": "download-GRCh38",
+            "workflow_engine": "cwltool",
             "workflow_type_version": "CWL v1.0.2",
             "workflow_description": "Workflow for downloading fasta file and bwa index of GRCh38",
             "workflow_tools": [
@@ -188,8 +192,9 @@ DUMMY_WORKFLOW_LIST = {
             "workflow_job_file_template": "",
         },
         {
-            "workflow_id": "1",
+            "workflow_id": 1,
             "workflow_name": "test-workflow",
+            "workflow_engine": "cwltool",
             "workflow_type_version": "CWL v1.0.2",
             "workflow_description": "BWA mapping of paired end",
             "workflow_tools": [
@@ -203,8 +208,9 @@ DUMMY_WORKFLOW_LIST = {
             "workflow_job_file_template": test_workflow_job_template,
         },
         {
-            "workflow_id": "2",
+            "workflow_id": 2,
             "workflow_name": "test-workflow-from-SRA-Run-id",
+            "workflow_engine": "cwltool",
             "workflow_type_version": "CWL v1.0.2",
             "workflow_description": "BWA mapping of paired end from SRA ID",
             "workflow_tools": [

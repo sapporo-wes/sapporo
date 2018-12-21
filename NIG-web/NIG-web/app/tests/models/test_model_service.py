@@ -76,6 +76,18 @@ class ServiceModelTests(TestCase):
             self.assertIn(
                 system_state_count["count"], DUMMY_SERVICE_INFO["system_state_counts"].values())
 
+    def test_get_workflows_dict_response(self):
+        service = Service()
+        service.name = "TestService"
+        service.api_server_url = "localhost:9999"
+        d_res = service.get_workflows_dict_response()
+        self.assertIsInstance(d_res, dict)
+
+    def test_get_workflows_dict_response_error(self):
+        service = Service()
+        d_res = service.get_workflows_dict_response()
+        self.assertFalse(d_res)
+
 
 class WorkflowEngineModelTests(TestCase):
     def set_up_db(self):
@@ -92,7 +104,7 @@ class WorkflowEngineModelTests(TestCase):
             service__name="TestService")
         self.assertEqual(len(workflow_engines), len(
             DUMMY_SERVICE_INFO["workflow_type_versions"]))
-        for key, value in DUMMY_SERVICE_INFO["workflow_type_versions"].items():
+        for key in DUMMY_SERVICE_INFO["workflow_type_versions"].keys():
             workflow_engine = WorkflowEngine.objects.filter(
                 service__name="TestService").get(name=key)
             self.assertEqual(workflow_engine.version,

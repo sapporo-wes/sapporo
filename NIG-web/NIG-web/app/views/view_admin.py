@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.generic import View
 
 from app.forms import ServiceAdditionForm
-from app.models import Service
+from app.models import Service, Workflow
 
 
 class AdminHomeView(LoginRequiredMixin, View):
@@ -40,6 +40,13 @@ class AdminServiceView(LoginRequiredMixin, View):
                 d_res = service.get_dict_response()
                 service.insert_from_dict_response(d_res)
                 service.save()
+                l_workflow_d_res = service.get_workflows_dict_response()[
+                    "workflows"]
+                for workflow_d_res in l_workflow_d_res:
+                    workflow = Workflow()
+                    workflow.insert_from_dict_response(service, workflow_d_res)
+                    workflow.save()
+
         elif request.POST.get("button_delete_service"):
             for service_name in request.POST.getlist("delete_ckeck"):
                 if service_name:

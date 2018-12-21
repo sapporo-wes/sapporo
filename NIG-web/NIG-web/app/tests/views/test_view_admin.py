@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from app.models import Service
+from app.models import Service, Workflow
 
 
 class AdminHomeViewTests(TestCase):
@@ -99,7 +99,10 @@ class AdminServiceViewTests(TestCase):
         response = client.post(reverse("app:admin_service"), params)
         self.assertEquals(response.status_code, 200)
         service = Service.objects.get(name=params["service_name"])
+        workflows = Workflow.objects.filter(
+            service__name=params["service_name"])
         self.assertIsNotNone(service)
+        self.assertIsNotNone(workflows)
 
     def test_post_service_addition_form_error(self):
         client = Client()

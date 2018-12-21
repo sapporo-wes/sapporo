@@ -10,3 +10,6 @@ from .model_service import SystemStateCount
 from .model_run import Run
 from .model_run import Log
 from .model_run import Command
+
+from .model_workflow import Workflow
+from .model_workflow import WorkflowTool
