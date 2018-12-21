@@ -52,3 +52,22 @@ class WorkflowModelTests(TestCase):
             self.assertIsNotNone(workflow.job_file_template)
             for workflow_tool in WorkflowTool.objects.filter(workflow__id=workflow.id):
                 self.assertIn(workflow_tool.name, d_w["workflow_tools"])
+
+    def test_expand_to_dict(self):
+        self.set_up_db()
+        workflows = Workflow.objects.all()
+        for d_w in DUMMY_WORKFLOW_LIST["workflows"]:
+            workflow = Workflow.objects.get(name=d_w["workflow_name"])
+            d_workflow = workflow.expand_to_dict()
+
+            self.assertEqual(d_workflow["name"], d_w["workflow_name"])
+            self.assertEqual(d_workflow["id_in_service"], d_w["workflow_id"])
+            self.assertEqual(
+                d_workflow["workflow_engine"], d_w["workflow_engine"])
+            self.assertEqual(
+                d_workflow["workflow_type_version"], d_w["workflow_type_version"])
+            self.assertEqual(d_workflow["description"],
+                             d_w["workflow_description"])
+            self.assertIsNotNone(d_workflow["job_file_template"])
+            for workflow_tool in d_workflow["workflow_tools"]:
+                self.assertIn(workflow_tool, d_w["workflow_tools"])

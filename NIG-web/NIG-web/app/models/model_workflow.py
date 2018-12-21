@@ -44,6 +44,19 @@ class Workflow(CommonInfo):
             workflow_tool.workflow = self
             workflow_tool.save()
 
+    def expand_to_dict(self):
+        ret_dict = {
+            "name": self.name,
+            "id_in_service": self.id_in_service,
+            "workflow_engine": self.workflow_engine.name,
+            "workflow_type_version": self.workflow_type_version.type_version,
+            "description": self.description,
+            "job_file_template": self.job_file_template,
+            "workflow_tools": [workflow_tool.name for workflow_tool in WorkflowTool.objects.filter(workflow__id=self.id)],
+        }
+
+        return ret_dict
+
     class Meta:
         db_table = "workflow"
         verbose_name = "workflow"

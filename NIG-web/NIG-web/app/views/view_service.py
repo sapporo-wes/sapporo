@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.shortcuts import get_object_or_404
 
-from app.models import Service
+from app.models import Service, Workflow
 
 
 class ServiceListView(LoginRequiredMixin, View):
@@ -25,8 +25,11 @@ class ServiceDetailView(LoginRequiredMixin, View):
 
     def get(self, request, service_name):
         service = get_object_or_404(Service, name=service_name)
+        workflows = Workflow.objects.filter(service__id=service.id)
         service = service.expand_to_dict()
+        workflows = [workflow.expand_to_dict() for workflow in workflows]
         context = {
             "service": service,
+            "workflows": workflows,
         }
         return render(request, "app/service_detail.html", context)
