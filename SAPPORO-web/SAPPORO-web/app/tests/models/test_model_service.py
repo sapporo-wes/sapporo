@@ -88,6 +88,11 @@ class ServiceModelTests(TestCase):
         d_res = service.get_workflows_dict_response()
         self.assertFalse(d_res)
 
+    def test_return_str(self):
+        self.set_up_db()
+        service = Service.objects.get(name="TestService")
+        self.assertEqual(str(service), "Service: TestService")
+
 
 class WorkflowEngineModelTests(TestCase):
     def set_up_db(self):
@@ -111,6 +116,13 @@ class WorkflowEngineModelTests(TestCase):
                              DUMMY_SERVICE_INFO["workflow_engine_versions"][key])
             self.assertIsInstance(workflow_engine.created_at, datetime)
             self.assertIsInstance(workflow_engine.updated_at, datetime)
+
+    def test_return_str(self):
+        self.set_up_db()
+        workflow_engines = WorkflowEngine.objects.filter(
+            service__name="TestService")
+        for workflow_engine in workflow_engines:
+            self.assertIn("Workflow Engine:", str(workflow_engine))
 
 
 class WorkflowTypeVersionTests(TestCase):
@@ -139,6 +151,17 @@ class WorkflowTypeVersionTests(TestCase):
                 self.assertIsInstance(
                     workflow_type_version.updated_at, datetime)
 
+    def test_return_str(self):
+        self.set_up_db()
+        workflow_engines = WorkflowEngine.objects.filter(
+            service__name="TestService")
+        for workflow_engine in workflow_engines:
+            workflow_type_versions = WorkflowTypeVersion.objects.filter(
+                workflow_engine__name=workflow_engine.name)
+            for workflow_type_version in workflow_type_versions:
+                self.assertIn("Workflow Type Version:",
+                              str(workflow_type_version))
+
 
 class SupportedWesVersionModelTests(TestCase):
     def set_up_db(self):
@@ -160,6 +183,13 @@ class SupportedWesVersionModelTests(TestCase):
                           DUMMY_SERVICE_INFO["supported_wes_versions"])
             self.assertIsInstance(supported_wes_version.created_at, datetime)
             self.assertIsInstance(supported_wes_version.updated_at, datetime)
+
+    def test_return_str(self):
+        self.set_up_db()
+        supported_wes_versions = SupportedWesVersion.objects.filter(
+            service__name="TestService")
+        for supported_wes_version in supported_wes_versions:
+            self.assertIn("Supported Wes Version:", str(supported_wes_version))
 
 
 class SupportedFilesystemProtocolModelTests(TestCase):
@@ -185,6 +215,14 @@ class SupportedFilesystemProtocolModelTests(TestCase):
             self.assertIsInstance(
                 supported_filesystem_protocol.updated_at, datetime)
 
+    def test_return_str(self):
+        self.set_up_db()
+        supported_filesystem_protocols = SupportedFilesystemProtocol.objects.filter(
+            service__name="TestService")
+        for supported_filesystem_protocol in supported_filesystem_protocols:
+            self.assertIn("Supported Filesystem Protocol:",
+                          str(supported_filesystem_protocol))
+
 
 class SystemStateCountTests(TestCase):
     def set_up_db(self):
@@ -208,3 +246,10 @@ class SystemStateCountTests(TestCase):
                              DUMMY_SERVICE_INFO["system_state_counts"][system_state_count.state])
             self.assertIsInstance(system_state_count.created_at, datetime)
             self.assertIsInstance(system_state_count.updated_at, datetime)
+
+    def test_return_str(self):
+        self.set_up_db()
+        system_state_counts = SystemStateCount.objects.filter(
+            service__name="TestService")
+        for system_state_count in system_state_counts:
+            self.assertIn("System State Count:", str(system_state_count))

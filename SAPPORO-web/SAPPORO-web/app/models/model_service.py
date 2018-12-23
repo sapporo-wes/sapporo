@@ -31,10 +31,7 @@ class Service(CommonInfo):
 
     def get_dict_response(self):
         # Communication check with api server is validated in form
-        try:
-            api_server_url = self.api_server_url
-        except AttributeError:
-            return False
+        api_server_url = self.api_server_url
         try:
             d_res = requests.get(
                 "http://" + api_server_url + "/service-info").json()
@@ -110,10 +107,7 @@ class Service(CommonInfo):
 
     def get_workflows_dict_response(self):
         # Communication check with api server is validated in form
-        try:
-            api_server_url = self.api_server_url
-        except AttributeError:
-            return False
+        api_server_url = self.api_server_url
         try:
             d_res = requests.get(
                 "http://" + api_server_url + "/workflows").json()

@@ -28,3 +28,4 @@ db.sqlite3
 instance/
 .webassets-cache
 migrations/
+SAPPORO-web/SAPPORO-web/coverage_html

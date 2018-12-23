@@ -1,7 +1,9 @@
 # coding: utf-8
+from django.contrib.auth.models import User
+from django.forms import ValidationError
 from django.test import TestCase
-from app.forms import UserCreationForm
-from app.forms import ServiceAdditionForm
+
+from app.forms import ServiceAdditionForm, UserCreationForm
 
 
 class UserCreationFormTests(TestCase):
@@ -36,6 +38,35 @@ class UserCreationFormTests(TestCase):
         }
         form = UserCreationForm(params)
         self.assertFalse(form.is_valid())
+
+    def test_create_user_commit_true(self):
+        params = {
+            "username": "TestUser",
+            "email": "test@test.com",
+            "password1": "TestPass012",
+            "password2": "TestPass012",
+        }
+        form = UserCreationForm(params)
+        if form.is_valid():
+            user = form.save()
+            self.assertIsNotNone(user)
+            self.assertEqual(user.username, params["username"])
+            self.assertEqual(user.email, params["email"])
+
+    def test_create_user_commit_false(self):
+        params = {
+            "username": "TestUser",
+            "email": "test@test.com",
+            "password1": "TestPass012",
+            "password2": "TestPass012",
+        }
+        form = UserCreationForm(params)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.email = "test2@test.com"
+            user.save()
+            user = User.objects.get(username=params["username"])
+            self.assertNotEqual(params["email"], user.email)
 
 
 class ServiceAdditionFormTests(TestCase):

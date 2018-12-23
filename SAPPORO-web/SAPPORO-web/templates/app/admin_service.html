@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load bootstrap4 %}
 {% block title %}
   SAPPORO-web Admin Service
 {% endblock %}
@@ -64,7 +65,7 @@
                 <td class="align-middle">
                   <div class="text-center">
                     <div class="form-check">
-                      <input class="form-check-input position-static" type="checkbox" name="delete_ckeck" value="{{ service.name }}">
+                      <input class="form-check-input position-static" type="checkbox" name="delete_check" value="{{ service.name }}">
                     </div>
                   </div>
                 </td>

@@ -142,3 +142,27 @@ class AdminServiceViewTests(TestCase):
         response = client.post(reverse("app:admin_service"), params)
         self.assertEquals(response.status_code, 200)
         self.assertContains(response, "A form with that name already exists.")
+
+    def test_post_service_delete_form(self):
+        client = Client()
+        user = User()
+        user.username = "test_user"
+        user.is_superuser = True
+        user.save()
+        client.force_login(user)
+        params = {
+            "service_name": "test_service",
+            "api_server_url": "localhost:9999",
+            "button_add_service": "submit",
+        }
+        response = client.post(reverse("app:admin_service"), params)
+        params = {
+            "service_name": "test_service",
+            "api_server_url": "localhost:9999",
+            "button_delete_service": "submit",
+            "delete_check": [
+                "test_service",
+            ]
+        }
+        response = client.post(reverse("app:admin_service"), params)
+        self.assertEquals(response.status_code, 200)

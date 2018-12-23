@@ -48,10 +48,9 @@ class AdminServiceView(LoginRequiredMixin, View):
                     workflow.save()
 
         elif request.POST.get("button_delete_service"):
-            for service_name in request.POST.getlist("delete_ckeck"):
-                if service_name:
-                    service = Service.objects.get(name=service_name)
-                    service.delete()
+            for service_name in request.POST.getlist("delete_check"):
+                service = Service.objects.get(name=service_name)
+                service.delete()
             service_addition_form = ServiceAdditionForm()
         else:
             service_addition_form = ServiceAdditionForm()

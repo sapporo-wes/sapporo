@@ -71,3 +71,10 @@ class WorkflowModelTests(TestCase):
             self.assertIsNotNone(d_workflow["job_file_template"])
             for workflow_tool in d_workflow["workflow_tools"]:
                 self.assertIn(workflow_tool, d_w["workflow_tools"])
+
+    def test_return_str(self):
+        self.set_up_db()
+        for workflow in Workflow.objects.prefetch_related("workflowtool_set").all():
+            self.assertIn("Workflow:", str(workflow))
+            for workflow_tool in workflow.workflowtool_set.all():
+                self.assertIn("Workflow Tool:", str(workflow_tool))

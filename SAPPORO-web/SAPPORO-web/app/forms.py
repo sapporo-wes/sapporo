@@ -38,9 +38,6 @@ class ServiceAdditionForm(forms.Form):
         api_server_url = cleaned_data.get("api_server_url")
         try:
             r = requests.get("http://" + api_server_url + "/service-info")
-            if r.status_code != 200:
-                forms.ValidationError(
-                    "There are some problems with API Server.")
         except RequestException:
             raise forms.ValidationError("Please enter the correct URL.")
         if Service.objects.filter(name=service_name).exists():
