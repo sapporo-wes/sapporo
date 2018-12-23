@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% block title %}
+  SAPPORO-web Admin Service
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <h2>SAPPORO-web Admin Service</h2>
+      <p class="lead">
+        Add and delete services
+      </p>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <form action="{% url 'app:admin_service' %}" method="post">
+          {% csrf_token %}
+          {% bootstrap_form service_addition_form %}
+        {% buttons %}
+          <input type="submit" class="btn btn-outline-primary" name="button_add_service" value="submit" />
+        {% endbuttons %}
+      </form>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <h4>Service List</h4>
+    </div>
+  </div>
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-9">
+      <form action="{% url 'app:admin_service' %}" method="post">
+        {% csrf_token %}
+        <table class="table table-bordered table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col"><div class="text-center">Service Name</div></th>
+              <th scope="col"><div class="text-center">API URL</div></th>
+              <th scope="col"><div class="text-center">Workflow Engines</div></th>
+              <th scope="col"><div class="text-center">Delete</div></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for service in services %}
+              <tr>
+                <td class="align-middle"><a href="{% url 'app:service_detail' service_name=service.name %}">{{ service.name }}</a></td>
+                <td class="align-middle">{{ service.api_server_url }}</td>
+                <td class="align-middle">
+                  {% for workflow_engine in service.workflow_engines %}
+                    {% if forloop.counter == service.workflow_engines|length %}
+                      {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}
+                    {% else %}
+                      {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}<br />
+                    {% endif %}
+                  {% endfor %}
+                </td>
+                <td class="align-middle">
+                  <div class="text-center">
+                    <div class="form-check">
+                      <input class="form-check-input position-static" type="checkbox" name="delete_ckeck" value="{{ service.name }}">
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% if services|length != 0 %}
+          <div class="row justify-content-end">
+            <div class="col-2">
+              {% buttons %}
+                <input type="submit" class="btn btn-outline-danger btn-block" name="button_delete_service" value="Delete" />
+              {% endbuttons %}
+            </div>
+          </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <a class="btn btn-outline-secondary" href="{% url 'app:admin_home' %}" role="button">Back</a>
+    </div>
+  </div>
+{% endblock %}
