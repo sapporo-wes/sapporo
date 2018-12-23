@@ -1,77 +1,19 @@
-{% load static %}
-{% load bootstrap4 %}
 <!doctype html>
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery=True %}
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="SAPPORO web">
-    <meta name="author" content="SAPPORO-Ascade">
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
-    <link rel="stylesheet" href="{% static 'css/application.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
-    {% block extrastyle %}{% endblock %}
+    {% block extra_css %}{% endblock %}
   </head>
-
-
-</head>
   <body>
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <a class="navbar-brand" href="{% url 'app:home' %}">SAPPORO-web</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        {% if user.is_authenticated %}
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'app:service_list' %}">Services</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'app:workflow_list' %}">Workflows</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'app:run_list' %}">Runs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'app:data_list' %}">Data</a>
-            </li>
-            </ul>
-            <ul class="navbar-nav">
-            {% if user.is_superuser %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'app:admin_home' %}">Admin</a>
-              </li>
-            {% endif %}
-            &nbsp;&nbsp;&nbsp;
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'app:user_home' user_name=user.username %}">User</a>
-            </li>
-            &nbsp;&nbsp;&nbsp;
-            <li class="nav-item">
-              <a class="btn btn-outline-secondary" href="{% url 'app:signout' %}">Sign out</a>
-            </li>
-          </ul>
-        {% else %}
-          <ul class="navbar-nav mr-auto">
-          </ul>
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="btn btn-outline-secondary" href="{% url 'app:signin' %}">Sign in</a>
-            </li>
-            &nbsp;&nbsp;&nbsp;
-            <li class="nav-item">
-              <a class="btn btn-outline-secondary" href="{% url 'app:signup' %}">Sing up</a>
-            </li>
-          </ul>
-        {% endif %}
-      </div>
-    </nav>
+    {% include "./app/navbar.html" %}
     <div class="container">
       {% block content %}{% endblock %}
     </div>
-    <script src="{% static 'js/jquery-3.3.1.slim.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  {% block extra_js%}{% endblock %}
   </body>
 </html>
