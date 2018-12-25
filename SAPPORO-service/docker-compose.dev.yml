@@ -1,17 +1,18 @@
 version: "3"
 services:
   app:
-    image: nig-api-dev
+    image: sapporo-api-dev
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: NIG-api-dev
+      dockerfile: Dockerfile-dev
+    container_name: SAPPORO-api-dev
     restart: always
     volumes:
-      # - /var/run/docker.sock:/var/run/docker.sock
-      # - /var/lib/docker/volumes:/var/lib/docker/volumes
-      # - /usr/bin/docker:/usr/bin/docker
-      - .:/opt/NIG-api
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /usr/bin/docker:/usr/bin/docker
+      - .:/opt/SAPPORO-service
     ports:
-      - 8022:8000
+      - 8002:8002
+    env_file: ./SAPPORO-service.dev.env
     command: ["tail", "-f", "/dev/null"]
