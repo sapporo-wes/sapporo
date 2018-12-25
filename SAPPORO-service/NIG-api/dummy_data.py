@@ -41,7 +41,7 @@ DUMMY_SERVICE_INFO = {
     #         "run_file": "string",
     #     },
     # ],
-    "system_state_counts": {
+    "system_states": {
         "UNKNOWN": 3,
         "QUEUED": 5,
         "INITIALIZING": 2,

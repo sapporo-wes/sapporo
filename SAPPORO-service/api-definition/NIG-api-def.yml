@@ -30,25 +30,27 @@ paths:
             type: object
             properties:
               workflow_engines:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: "cwltool"
-                  version:
-                    type: string
-                    example: "1.0.20181201184214"
-                  excutable_workflows:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                          example: "CWL"
-                        version:
-                          type: string
-                          example: "v1.0.2"
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "cwltool"
+                    version:
+                      type: string
+                      example: "1.0.20181201184214"
+                    workflow_types:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: "CWL"
+                          version:
+                            type: string
+                            example: "v1.0.2"
               state_counts:
                 type: array
                 items:
@@ -114,6 +116,9 @@ paths:
                           name:
                             type: string
                             example: key_1
+                          type:
+                            type: string
+                            example: int
                           description:
                             type: string
                             example: "description_1"

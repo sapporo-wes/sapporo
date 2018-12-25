@@ -47,19 +47,19 @@
             <td class="align-middle">
               {% for workflow_engine in service.workflow_engines %}
                 {% if forloop.counter == service.workflow_engines|length %}
-                  {% for type_version in workflow_engine.type_versions %}
+                  {% for workflow_type in workflow_engine.workflow_types %}
                     {% if forloop.counter == workflow_engine.type_versions|length %}
-                      {{ type_version }}
+                      {{ workflow_type.type }}:&nbsp;{{ workflow_type.version }}
                     {% else %}
-                      {{ type_version }}<br />
+                      {{ workflow_type.type }}:&nbsp;{{ workflow_type.version }}<br />
                     {% endif %}
                   {% endfor %}
                 {% else %}
                   {% for type_version in workflow_engine.type_versions %}
                     {% if forloop.counter == workflow_engine.type_versions|length %}
-                      {{ type_version }}<br />
+                      {{ workflow_type.type }}:&nbsp;{{ workflow_type.version }}<br />
                     {% else %}
-                      {{ type_version }}<br />
+                      {{ workflow_type.type }}:&nbsp;{{ workflow_type.version }}<br />
                     {% endif %}
                   {% endfor %}
                 {% endif %}
@@ -79,25 +79,13 @@
             </td>
           </tr>
           <tr>
-            <td class="align-middle">Supported Filesystem Protocol</td>
+            <td class="align-middle">State Count</td>
             <td class="align-middle">
-              {% for supported_filesystem_protocol in service.supported_filesystem_protocols %}
-                {% if forloop.counter == service.supported_filesystem_protocols|length %}
-                  {{ supported_filesystem_protocol }}
+              {% for state_count in service.state_counts %}
+                {% if forloop.counter == service.state_counts|length %}
+                  {{ state_count.state }}:&nbsp;{{ state_count.count }}
                 {% else %}
-                  {{ supported_filesystem_protocol }}<br />
-                {% endif %}
-              {% endfor %}
-            </td>
-          </tr>
-          <tr>
-            <td class="align-middle">System State Count</td>
-            <td class="align-middle">
-              {% for system_state_count in service.system_state_counts %}
-                {% if forloop.counter == service.system_state_counts|length %}
-                  {{ system_state_count.state }}:&nbsp;{{ system_state_count.count }}
-                {% else %}
-                  {{ system_state_count.state }}:&nbsp;{{ system_state_count.count }}<br />
+                  {{ state_count.state }}:&nbsp;{{ state_count.count }}<br />
                 {% endif %}
               {% endfor %}
             </td>

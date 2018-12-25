@@ -42,40 +42,29 @@ class Service(CommonInfo):
 
     def insert_from_dict_response(self, d_res):
         self.save()
-        for key, value in d_res["workflow_type_versions"].items():
+        for item in d_res["workflow_engines"]:
             workflow_engine = WorkflowEngine()
             workflow_engine.service = self
-            workflow_engine.name = key  # cwltool
-            workflow_engine.version = d_res["workflow_engine_versions"][key]
+            workflow_engine.name = item["name"]
+            workflow_engine.version = item["version"]
             workflow_engine.save()
-            for item in value["workflow_type_version"]:
-                workflow_type_version = WorkflowTypeVersion()
-                workflow_type_version.workflow_engine = workflow_engine
-                workflow_type_version.type_version = item
-                workflow_type_version.save()
-        for item in d_res["supported_wes_versions"]:
+            for item_2 in item["workflow_types"]:
+                workflow_type = WorkflowType()
+                workflow_type.workflow_engine = workflow_engine
+                workflow_type.type = item_2["type"]
+                workflow_type.version = item_2["version"]
+                workflow_type.save()
+        for val in d_res["supported_wes_versions"]:
             supported_wes_version = SupportedWesVersion()
             supported_wes_version.service = self
-            supported_wes_version.wes_version = item
+            supported_wes_version.wes_version = val
             supported_wes_version.save()
-        for item in d_res["supported_filesystem_protocols"]:
-            supported_filesystem_protocol = SupportedFilesystemProtocol()
-            supported_filesystem_protocol.service = self
-            supported_filesystem_protocol.name = item
-            supported_filesystem_protocol.save()
-        # for default_workflow_engine_parameter in d_res["default_workflow_engine_parameters"]:
-        #     for key, value in default_workflow_engine_parameter.items():
-        #         default_workflow_engine_parameter = DefaultWorkflowEngineParameter()
-        #         default_workflow_engine_parameter.service = self
-        #         default_workflow_engine_parameter.key = key
-        #         default_workflow_engine_parameter.value = value
-        #         default_workflow_engine_parameter.save()
-        for key, value in d_res["system_state_counts"].items():
-            system_state_count = SystemStateCount()
-            system_state_count.service = self
-            system_state_count.state = key
-            system_state_count.count = int(value)
-            system_state_count.save()
+        for item in d_res["state_counts"]:
+            state_count = StateCount()
+            state_count.service = self
+            state_count.state = item["state"]
+            state_count.count = item["count"]
+            state_count.save()
         self.auth_instructions_url = d_res["auth_instructions_url"]
         self.contact_info_url = d_res["contact_info_url"]
 
@@ -86,22 +75,28 @@ class Service(CommonInfo):
             "auth_instructions_url": self.auth_instructions_url,
             "contact_info_url": self.contact_info_url,
             "workflow_engines": [],
-            "supported_wes_versions": [sup_wes_ver.wes_version for sup_wes_ver in SupportedWesVersion.objects.filter(service__id=self.id)],
-            "supported_filesystem_protocols": [sup_file_pro.name for sup_file_pro in SupportedFilesystemProtocol.objects.filter(service__id=self.id)],
-            "system_state_counts": [],
+            "supported_wes_versions": [],
+            "state_counts": [],
         }
         for workflow_engine in WorkflowEngine.objects.filter(service__id=self.id):
             d_engine = dict()
             d_engine["name"] = workflow_engine.name
             d_engine["version"] = workflow_engine.version
-            d_engine["type_versions"] = [
-                work_type_ver.type_version for work_type_ver in WorkflowTypeVersion.objects.filter(workflow_engine__id=workflow_engine.id)]
+            d_engine["workflow_types"] = []
+            for workflow_type in WorkflowType.objects.filter(workflow_engine__id=workflow_engine.id):
+                d_workflow_type = dict()
+                d_workflow_type["type"] = workflow_type.type
+                d_workflow_type["version"] = workflow_type.version
+                d_engine["workflow_types"].append(d_workflow_type)
             ret_dict["workflow_engines"].append(d_engine)
-        for system_state_count in SystemStateCount.objects.filter(service__id=self.id):
+        for supported_wes_version in SupportedWesVersion.objects.filter(service__id=self.id):
+            ret_dict["supported_wes_versions"].append(
+                supported_wes_version.wes_version)
+        for state_count in StateCount.objects.filter(service__id=self.id):
             d_state_count = dict()
-            d_state_count["state"] = system_state_count.state
-            d_state_count["count"] = system_state_count.count
-            ret_dict["system_state_counts"].append(d_state_count)
+            d_state_count["state"] = state_count.state
+            d_state_count["count"] = state_count.count
+            ret_dict["state_counts"].append(d_state_count)
 
         return ret_dict
 
@@ -132,18 +127,19 @@ class WorkflowEngine(CommonInfo):
         return "Workflow Engine: {}".format(self.name)
 
 
-class WorkflowTypeVersion(CommonInfo):
+class WorkflowType(CommonInfo):
     workflow_engine = models.ForeignKey(WorkflowEngine, verbose_name=_(
         "Belong workflow engine"), on_delete=models.CASCADE)
-    type_version = models.CharField(_("Workflow type version"), max_length=64)
+    type = models.CharField(_("Workflow type"), max_length=64)
+    version = models.CharField(_("Workflow version"), max_length=64)
 
     class Meta:
-        db_table = "workflow_type_version"
-        verbose_name = "workflow_type_version"
-        verbose_name_plural = "workflow_type_versions"
+        db_table = "workflow_type"
+        verbose_name = "workflow_type"
+        verbose_name_plural = "workflow_types"
 
     def __str__(self):
-        return "Workflow Type Version: {}".format(self.type_version)
+        return "Workflow Type: {} {}".format(self.type, self.version)
 
 
 class SupportedWesVersion(CommonInfo):
@@ -160,45 +156,16 @@ class SupportedWesVersion(CommonInfo):
         return "Supported Wes Version: {}".format(self.wes_version)
 
 
-class SupportedFilesystemProtocol(CommonInfo):
+class StateCount(CommonInfo):
     service = models.ForeignKey(Service, verbose_name=_(
         "Belong service"), on_delete=models.CASCADE)
-    name = models.CharField(_("Filesystem Protocol name"), max_length=64)
-
-    class Meta:
-        db_table = "supported_filesystem_protocol"
-        verbose_name = "supported_filesystem_protocol"
-        verbose_name_plural = "supported_filesystem_protocols"
-
-    def __str__(self):
-        return "Supported Filesystem Protocol: {}".format(self.name)
-
-
-# class DefaultWorkflowEngineParameter(CommonInfo):
-#     service = models.ForeignKey(Service, verbose_name=_(
-#         "Belong service"), on_delete=models.CASCADE)
-#     key = models.CharField(_("Parameter key"), max_length=64)
-#     value = models.CharField(_("Parameter value"), max_length=64)
-
-#     class Meta:
-#         db_table = "default_workflow_engine_parameter"
-#         verbose_name = "default_workflow_engine_parameter"
-#         verbose_name_plural = "default_workflow_engine_parameters"
-
-#     def __str__(self):
-#         return "Default Workflow Engine Parameter: {}, {}".format(self.key, self.value)
-
-
-class SystemStateCount(CommonInfo):
-    service = models.ForeignKey(Service, verbose_name=_(
-        "Belong service"), on_delete=models.CASCADE)
-    state = models.CharField(_("System state"), max_length=64)
+    state = models.CharField(_("State"), max_length=64)
     count = models.IntegerField(_("Counte"))
 
     class Meta:
-        db_table = "system_state_count"
-        verbose_name = "system_state_count"
-        verbose_name_plural = "system_state_counts"
+        db_table = "state_count"
+        verbose_name = "state_count"
+        verbose_name_plural = "state_counts"
 
     def __str__(self):
-        return "System State Count: {}, {}".format(self.state, str(self.count))
+        return "State Count: {}, {}".format(self.state, str(self.count))

@@ -3,10 +3,8 @@ from datetime import datetime
 
 from django.test import TestCase
 
-from app.models import (Service, SupportedFilesystemProtocol,
-                        SupportedWesVersion, SystemStateCount, WorkflowEngine,
-                        WorkflowTypeVersion)
-
+from app.models import (Service, StateCount, SupportedWesVersion,
+                        WorkflowEngine, WorkflowType)
 from app.tests.mock_server.dummy_data import DUMMY_SERVICE_INFO
 
 
@@ -63,18 +61,20 @@ class ServiceModelTests(TestCase):
         self.assertEqual(d_service["contact_info_url"],
                          DUMMY_SERVICE_INFO["contact_info_url"])
         for workflow_engine in d_service["workflow_engines"]:
-            self.assertIn(
-                workflow_engine["name"], DUMMY_SERVICE_INFO["workflow_type_versions"].keys())
-            self.assertIn(
-                workflow_engine["version"], DUMMY_SERVICE_INFO["workflow_engine_versions"].values())
-            for type_version in workflow_engine["type_versions"]:
-                self.assertIn(type_version, [t_v for value in DUMMY_SERVICE_INFO["workflow_type_versions"].values(
-                ) for t_v in value["workflow_type_version"]])
-        for system_state_count in d_service["system_state_counts"]:
-            self.assertIn(
-                system_state_count["state"], DUMMY_SERVICE_INFO["system_state_counts"].keys())
-            self.assertIn(
-                system_state_count["count"], DUMMY_SERVICE_INFO["system_state_counts"].values())
+            self.assertIn(workflow_engine["name"], [
+                          item["name"] for item in DUMMY_SERVICE_INFO["workflow_engines"]])
+            self.assertIn(workflow_engine["version"], [
+                          item["version"] for item in DUMMY_SERVICE_INFO["workflow_engines"]])
+            for workflow_type in workflow_engine["workflow_types"]:
+                self.assertIn(workflow_type["type"], [
+                              item_2["type"] for item in DUMMY_SERVICE_INFO["workflow_engines"] for item_2 in item["workflow_types"]])
+                self.assertIn(workflow_type["version"], [
+                              item_2["version"] for item in DUMMY_SERVICE_INFO["workflow_engines"] for item_2 in item["workflow_types"]])
+        for state_count in d_service["state_counts"]:
+            self.assertIn(state_count["state"], [
+                          item["state"] for item in DUMMY_SERVICE_INFO["state_counts"]])
+            self.assertIn(state_count["count"], [
+                          item["count"] for item in DUMMY_SERVICE_INFO["state_counts"]])
 
     def test_get_workflows_dict_response(self):
         service = Service()
@@ -108,14 +108,7 @@ class WorkflowEngineModelTests(TestCase):
         workflow_engines = WorkflowEngine.objects.filter(
             service__name="TestService")
         self.assertEqual(len(workflow_engines), len(
-            DUMMY_SERVICE_INFO["workflow_type_versions"]))
-        for key in DUMMY_SERVICE_INFO["workflow_type_versions"].keys():
-            workflow_engine = WorkflowEngine.objects.filter(
-                service__name="TestService").get(name=key)
-            self.assertEqual(workflow_engine.version,
-                             DUMMY_SERVICE_INFO["workflow_engine_versions"][key])
-            self.assertIsInstance(workflow_engine.created_at, datetime)
-            self.assertIsInstance(workflow_engine.updated_at, datetime)
+            DUMMY_SERVICE_INFO["workflow_engines"]))
 
     def test_return_str(self):
         self.set_up_db()
@@ -125,7 +118,7 @@ class WorkflowEngineModelTests(TestCase):
             self.assertIn("Workflow Engine:", str(workflow_engine))
 
 
-class WorkflowTypeVersionTests(TestCase):
+class WorkflowTypeTests(TestCase):
     def set_up_db(self):
         service = Service()
         service.name = "TestService"
@@ -134,33 +127,16 @@ class WorkflowTypeVersionTests(TestCase):
         service.insert_from_dict_response(d_res)
         service.save()
 
-    def test_workflow_type_version_entries(self):
-        self.set_up_db()
-        workflow_engines = WorkflowEngine.objects.filter(
-            service__name="TestService")
-        for workflow_engine in workflow_engines:
-            workflow_type_versions = WorkflowTypeVersion.objects.filter(
-                workflow_engine__name=workflow_engine.name)
-            self.assertEqual(len(workflow_type_versions), len(
-                DUMMY_SERVICE_INFO["workflow_type_versions"][workflow_engine.name]["workflow_type_version"]))
-            for workflow_type_version in workflow_type_versions:
-                self.assertIn(workflow_type_version.type_version,
-                              DUMMY_SERVICE_INFO["workflow_type_versions"][workflow_engine.name]["workflow_type_version"])
-                self.assertIsInstance(
-                    workflow_type_version.created_at, datetime)
-                self.assertIsInstance(
-                    workflow_type_version.updated_at, datetime)
-
     def test_return_str(self):
         self.set_up_db()
         workflow_engines = WorkflowEngine.objects.filter(
             service__name="TestService")
         for workflow_engine in workflow_engines:
-            workflow_type_versions = WorkflowTypeVersion.objects.filter(
-                workflow_engine__name=workflow_engine.name)
-            for workflow_type_version in workflow_type_versions:
-                self.assertIn("Workflow Type Version:",
-                              str(workflow_type_version))
+            workflow_types = WorkflowType.objects.filter(
+                workflow_engine__id=workflow_engine.id)
+            for workflow_type in workflow_types:
+                self.assertIn("Workflow Type:",
+                              str(workflow_type))
 
 
 class SupportedWesVersionModelTests(TestCase):
@@ -192,7 +168,7 @@ class SupportedWesVersionModelTests(TestCase):
             self.assertIn("Supported Wes Version:", str(supported_wes_version))
 
 
-class SupportedFilesystemProtocolModelTests(TestCase):
+class StateCountTests(TestCase):
     def set_up_db(self):
         service = Service()
         service.name = "TestService"
@@ -201,55 +177,23 @@ class SupportedFilesystemProtocolModelTests(TestCase):
         service.insert_from_dict_response(d_res)
         service.save()
 
-    def test_supported_filesystem_protocol_entries(self):
+    def test_state_count_entries(self):
         self.set_up_db()
-        supported_filesystem_protocols = SupportedFilesystemProtocol.objects.filter(
+        state_counts = StateCount.objects.filter(
             service__name="TestService")
-        self.assertEqual(len(supported_filesystem_protocols), len(
-            DUMMY_SERVICE_INFO["supported_filesystem_protocols"]))
-        for supported_filesystem_protocol in supported_filesystem_protocols:
-            self.assertIn(supported_filesystem_protocol.name,
-                          DUMMY_SERVICE_INFO["supported_filesystem_protocols"])
-            self.assertIsInstance(
-                supported_filesystem_protocol.created_at, datetime)
-            self.assertIsInstance(
-                supported_filesystem_protocol.updated_at, datetime)
+        self.assertEqual(len(state_counts), len(
+            DUMMY_SERVICE_INFO["state_counts"]))
+        for state_count in state_counts:
+            self.assertIn(state_count.state,
+                          [item["state"] for item in DUMMY_SERVICE_INFO["state_counts"]])
+            self.assertIn(state_count.count,
+                          [item["count"] for item in DUMMY_SERVICE_INFO["state_counts"]])
+            self.assertIsInstance(state_count.created_at, datetime)
+            self.assertIsInstance(state_count.updated_at, datetime)
 
     def test_return_str(self):
         self.set_up_db()
-        supported_filesystem_protocols = SupportedFilesystemProtocol.objects.filter(
+        state_counts = StateCount.objects.filter(
             service__name="TestService")
-        for supported_filesystem_protocol in supported_filesystem_protocols:
-            self.assertIn("Supported Filesystem Protocol:",
-                          str(supported_filesystem_protocol))
-
-
-class SystemStateCountTests(TestCase):
-    def set_up_db(self):
-        service = Service()
-        service.name = "TestService"
-        service.api_server_url = "localhost:9999"
-        d_res = service.get_dict_response()
-        service.insert_from_dict_response(d_res)
-        service.save()
-
-    def test_system_state_count_entries(self):
-        self.set_up_db()
-        system_state_counts = SystemStateCount.objects.filter(
-            service__name="TestService")
-        self.assertEqual(len(system_state_counts), len(
-            DUMMY_SERVICE_INFO["system_state_counts"].items()))
-        for system_state_count in system_state_counts:
-            self.assertIn(system_state_count.state,
-                          DUMMY_SERVICE_INFO["system_state_counts"])
-            self.assertEqual(system_state_count.count,
-                             DUMMY_SERVICE_INFO["system_state_counts"][system_state_count.state])
-            self.assertIsInstance(system_state_count.created_at, datetime)
-            self.assertIsInstance(system_state_count.updated_at, datetime)
-
-    def test_return_str(self):
-        self.set_up_db()
-        system_state_counts = SystemStateCount.objects.filter(
-            service__name="TestService")
-        for system_state_count in system_state_counts:
-            self.assertIn("System State Count:", str(system_state_count))
+        for state_count in state_counts:
+            self.assertIn("State Count:", str(state_count))

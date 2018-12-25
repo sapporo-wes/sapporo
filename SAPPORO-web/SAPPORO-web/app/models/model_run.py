@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from app.models import Service, WorkflowEngine, WorkflowTypeVersion
+from app.models import Service, WorkflowEngine, WorkflowType
 
 
 class CommonInfo(models.Model):
@@ -25,7 +25,7 @@ class Run(CommonInfo):
     status = models.CharField(_("Status"), max_length=64)
     workflow_engine = models.ForeignKey(WorkflowEngine, verbose_name=_(
         "Workflow engine"), on_delete=models.CASCADE)
-    workflow_type_version = models.ForeignKey(WorkflowTypeVersion, verbose_name=_(
+    workflow_type_version = models.ForeignKey(WorkflowType, verbose_name=_(
         "Workflow type version"), on_delete=models.CASCADE)
 
     class Meta:

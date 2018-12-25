@@ -1,7 +1,7 @@
 # coding: utf-8
 from django.test import TestCase
 
-from app.models import Service, Workflow, WorkflowTool
+from app.models import Service, Workflow, WorkflowParameter
 from app.tests.mock_server.dummy_data import DUMMY_WORKFLOW_LIST
 
 
@@ -41,40 +41,51 @@ class WorkflowModelTests(TestCase):
         self.assertEqual(workflows.count(), len(
             DUMMY_WORKFLOW_LIST["workflows"]))
         for d_w in DUMMY_WORKFLOW_LIST["workflows"]:
-            workflow = Workflow.objects.get(name=d_w["workflow_name"])
-            self.assertEqual(workflow.id_in_service, d_w["workflow_id"])
-            self.assertEqual(workflow.workflow_engine.name,
-                             d_w["workflow_engine"])
+            workflow = Workflow.objects.get(name=d_w["name"])
+            self.assertEqual(workflow.id_in_service, d_w["id"])
+            self.assertEqual(workflow.engine.name,
+                             d_w["engine"])
             self.assertEqual(
-                workflow.workflow_type_version.type_version, d_w["workflow_type_version"])
+                workflow.workflow_type.type, d_w["type"])
+            self.assertEqual(
+                workflow.workflow_type.version, d_w["version"])
             self.assertEqual(workflow.description,
-                             d_w["workflow_description"])
-            self.assertIsNotNone(workflow.job_file_template)
-            for workflow_tool in WorkflowTool.objects.filter(workflow__id=workflow.id):
-                self.assertIn(workflow_tool.name, d_w["workflow_tools"])
+                             d_w["description"])
+            for workflow_parameter in WorkflowParameter.objects.filter(workflow__id=workflow.id):
+                self.assertIn(workflow_parameter.name, [
+                              item["name"] for item in d_w["parameters"]])
+                self.assertIn(workflow_parameter.type, [
+                              item["type"] for item in d_w["parameters"]])
+                self.assertIn(workflow_parameter.description, [
+                              item["description"] for item in d_w["parameters"]])
 
     def test_expand_to_dict(self):
         self.set_up_db()
         workflows = Workflow.objects.all()
         for d_w in DUMMY_WORKFLOW_LIST["workflows"]:
-            workflow = Workflow.objects.get(name=d_w["workflow_name"])
+            workflow = Workflow.objects.get(name=d_w["name"])
             d_workflow = workflow.expand_to_dict()
-
-            self.assertEqual(d_workflow["name"], d_w["workflow_name"])
-            self.assertEqual(d_workflow["id_in_service"], d_w["workflow_id"])
+            self.assertEqual(d_workflow["name"], d_w["name"])
+            self.assertEqual(d_workflow["id_in_service"], d_w["id"])
             self.assertEqual(
-                d_workflow["workflow_engine"], d_w["workflow_engine"])
+                d_workflow["engine"], d_w["engine"])
             self.assertEqual(
-                d_workflow["workflow_type_version"], d_w["workflow_type_version"])
+                d_workflow["type"], d_w["type"])
+            self.assertEqual(
+                d_workflow["version"], d_w["version"])
             self.assertEqual(d_workflow["description"],
-                             d_w["workflow_description"])
-            self.assertIsNotNone(d_workflow["job_file_template"])
-            for workflow_tool in d_workflow["workflow_tools"]:
-                self.assertIn(workflow_tool, d_w["workflow_tools"])
+                             d_w["description"])
+            for workflow_parameter in d_workflow["parameters"]:
+                self.assertIn(workflow_parameter["name"], [
+                              item["name"] for item in d_w["parameters"]])
+                self.assertIn(workflow_parameter["type"], [
+                              item["type"] for item in d_w["parameters"]])
+                self.assertIn(workflow_parameter["description"], [
+                              item["description"] for item in d_w["parameters"]])
 
     def test_return_str(self):
         self.set_up_db()
-        for workflow in Workflow.objects.prefetch_related("workflowtool_set").all():
+        for workflow in Workflow.objects.prefetch_related("workflowparameter_set").all():
             self.assertIn("Workflow:", str(workflow))
-            for workflow_tool in workflow.workflowtool_set.all():
-                self.assertIn("Workflow Tool:", str(workflow_tool))
+            for workflow_parameter in workflow.workflowparameter_set.all():
+                self.assertIn("Workflow Paramter:", str(workflow_parameter))

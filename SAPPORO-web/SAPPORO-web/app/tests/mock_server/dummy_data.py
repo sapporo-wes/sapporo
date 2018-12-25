@@ -1,10 +1,10 @@
 # coding: utf-8
 DUMMY_SERVICE_INFO = {
-    "workflow_engines": {
+    "workflow_engines": [
         {
             "name": "cwltool",
             "version": "1.0.20181201184214",
-            "excutable_workflows": [
+            "workflow_types": [
                 {
                     "type": "CWL",
                     "version": "v1.0.2",
@@ -18,14 +18,14 @@ DUMMY_SERVICE_INFO = {
         {
             "name": "toil",
             "version": "3.18.0",
-            "excutable_workflows": [
+            "workflow_types": [
                 {
                     "type": "CWL",
                     "version": "v1.0.2",
                 },
             ],
         },
-    },
+    ],
     "state_counts": [
         {
             "state": "UNKNOWN",
@@ -67,14 +67,17 @@ DUMMY_WORKFLOW_LIST = {
             "parameters": [
                 {
                     "name": "key_1",
+                    "type": "int",
                     "description": "description_1",
                 },
                 {
                     "name": "key_2",
+                    "type": "string",
                     "description": "description_2",
                 },
                 {
                     "name": "key_3",
+                    "type": "file",
                     "description": "description_3",
                 },
             ],
@@ -89,14 +92,17 @@ DUMMY_WORKFLOW_LIST = {
             "parameters": [
                 {
                     "name": "key_1",
+                    "type": "int",
                     "description": "description_1",
                 },
                 {
                     "name": "key_2",
+                    "type": "string",
                     "description": "description_2",
                 },
                 {
                     "name": "key_3",
+                    "type": "file",
                     "description": "description_3",
                 },
             ],
@@ -107,18 +113,21 @@ DUMMY_WORKFLOW_LIST = {
             "engine": "cwltool",
             "type": "CWL",
             "version": "v1.0.2",
-            "description": "BWA mapping of paired end",
+            "description": "BWA mapping of paired end from SRA Run id",
             "parameters": [
                 {
                     "name": "key_1",
+                    "type": "int",
                     "description": "description_1",
                 },
                 {
                     "name": "key_2",
+                    "type": "string",
                     "description": "description_2",
                 },
                 {
                     "name": "key_3",
+                    "type": "file",
                     "description": "description_3",
                 },
             ],

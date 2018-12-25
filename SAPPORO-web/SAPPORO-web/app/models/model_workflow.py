@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from app.models import Service, WorkflowEngine, WorkflowTypeVersion
+from app.models import Service, WorkflowEngine, WorkflowType
 
 
 class CommonInfo(models.Model):
@@ -16,44 +16,49 @@ class CommonInfo(models.Model):
 
 class Workflow(CommonInfo):
     name = models.CharField(_("Workflow name"), max_length=256)
-    id_in_service = models.IntegerField(
-        _("ID in service"), null=True, blank=True)
+    id_in_service = models.IntegerField(_("ID in service"))
     service = models.ForeignKey(Service, verbose_name=_(
         "Service"), on_delete=models.CASCADE)
-    workflow_engine = models.ForeignKey(WorkflowEngine, verbose_name=_(
+    engine = models.ForeignKey(WorkflowEngine, verbose_name=_(
         "Workflow Engine"), on_delete=models.CASCADE)
-    workflow_type_version = models.ForeignKey(WorkflowTypeVersion, verbose_name=_(
-        "Workflow Type Version"), on_delete=models.CASCADE)
+    workflow_type = models.ForeignKey(WorkflowType, verbose_name=_(
+        "Workflow Engine"), on_delete=models.CASCADE)
     description = models.TextField(_("Workflow Description"))
-    job_file_template = models.TextField(_("Job File Template"))
 
     def insert_from_dict_response(self, service, d_res):
-        self.name = d_res["workflow_name"]
-        self.id_in_service = d_res["workflow_id"]
+        self.name = d_res["name"]
+        self.id_in_service = d_res["id"]
         self.service = service
-        self.workflow_engine = WorkflowEngine.objects.filter(service__id=service.id).get(
-            name=d_res["workflow_engine"])
-        self.workflow_type_version = WorkflowTypeVersion.objects.filter(workflow_engine__id=self.workflow_engine.id).get(
-            type_version=d_res["workflow_type_version"])
-        self.description = d_res["workflow_description"]
-        self.workflow_job_file_template = d_res["workflow_job_file_template"]
+        self.engine = WorkflowEngine.objects.filter(
+            service__id=service.id).get(name=d_res["engine"])
+        self.workflow_type = WorkflowType.objects.filter(
+            workflow_engine__id=self.engine.id, type=d_res["type"], version=d_res["version"]).first()
+        self.description = d_res["description"]
         self.save()
-        for item in d_res["workflow_tools"]:
-            workflow_tool = WorkflowTool()
-            workflow_tool.name = item
-            workflow_tool.workflow = self
-            workflow_tool.save()
+        for item in d_res["parameters"]:
+            parameter = WorkflowParameter()
+            parameter.workflow = self
+            parameter.name = item["name"]
+            parameter.type = item["type"]
+            parameter.description = item["description"]
+            parameter.save()
 
     def expand_to_dict(self):
         ret_dict = {
             "name": self.name,
             "id_in_service": self.id_in_service,
-            "workflow_engine": self.workflow_engine.name,
-            "workflow_type_version": self.workflow_type_version.type_version,
+            "engine": self.engine.name,
+            "type": self.workflow_type.type,
+            "version": self.workflow_type.version,
             "description": self.description,
-            "job_file_template": self.job_file_template,
-            "workflow_tools": [workflow_tool.name for workflow_tool in WorkflowTool.objects.filter(workflow__id=self.id)],
+            "parameters": [],
         }
+        for item in WorkflowParameter.objects.filter(workflow__id=self.id):
+            d_param = dict()
+            d_param["name"] = item.name
+            d_param["type"] = item.type
+            d_param["description"] = item.description
+            ret_dict["parameters"].append(d_param)
 
         return ret_dict
 
@@ -66,15 +71,17 @@ class Workflow(CommonInfo):
         return "Workflow: {}".format(self.name)
 
 
-class WorkflowTool(CommonInfo):
-    name = models.CharField(_("Workflow tool name"), max_length=256)
+class WorkflowParameter(CommonInfo):
+    name = models.CharField(_("Parameter name"), max_length=256)
     workflow = models.ForeignKey(Workflow, verbose_name=_(
         "workflow"), on_delete=models.CASCADE)
+    type = models.CharField(_("Parameter type"), max_length=64)
+    description = models.TextField(_("Parameter description"))
 
     class Meta:
-        db_table = "workflow_tool"
-        verbose_name = "workflow_tool"
-        verbose_name_plural = "workflow_tools"
+        db_table = "workflow_paramter"
+        verbose_name = "workflow_paramter"
+        verbose_name_plural = "workflow_paramters"
 
     def __str__(self):
-        return "Workflow Tool: {}".format(self.name)
+        return "Workflow Paramter: {}".format(self.name)
