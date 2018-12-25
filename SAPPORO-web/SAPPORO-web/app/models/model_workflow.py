@@ -1,6 +1,7 @@
 # coding: utf-8
 from django.db import models
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 
 from app.models import Service, WorkflowEngine, WorkflowType
@@ -24,6 +25,8 @@ class Workflow(CommonInfo):
     workflow_type = models.ForeignKey(WorkflowType, verbose_name=_(
         "Workflow Engine"), on_delete=models.CASCADE)
     description = models.TextField(_("Workflow Description"))
+    unique_id = models.CharField(
+        _("Unique Id"), max_length=8, unique=True, null=True)
 
     def insert_from_dict_response(self, service, d_res):
         self.name = d_res["name"]
@@ -52,6 +55,7 @@ class Workflow(CommonInfo):
             "version": self.workflow_type.version,
             "description": self.description,
             "parameters": [],
+            "unique_id": self.unique_id,
         }
         for item in WorkflowParameter.objects.filter(workflow__id=self.id):
             d_param = dict()
@@ -61,6 +65,14 @@ class Workflow(CommonInfo):
             ret_dict["parameters"].append(d_param)
 
         return ret_dict
+
+    def save(self):
+        if not self.unique_id:
+            unique_id = get_random_string(8)
+            while Workflow.objects.filter(unique_id=unique_id).exists():
+                unique_id = get_random_string(8)
+            self.unique_id = unique_id
+        super().save()
 
     class Meta:
         db_table = "workflow"

@@ -89,3 +89,8 @@ class WorkflowModelTests(TestCase):
             self.assertIn("Workflow:", str(workflow))
             for workflow_parameter in workflow.workflowparameter_set.all():
                 self.assertIn("Workflow Paramter:", str(workflow_parameter))
+
+    def test_unique_id(self):
+        self.set_up_db()
+        for workflow in Workflow.objects.all():
+            self.assertIsNotNone(workflow.unique_id)

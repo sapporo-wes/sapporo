@@ -14,7 +14,6 @@
       <hr />
     </div>
   </div>
-  <br />
 
   <div class="row justify-content-center">
     <div class="col-9">
@@ -96,16 +95,49 @@
           </tr>
           <tr>
             <td class="align-middle">Contact Info URL</td>
-            <td class="align-middle"><a href="{{ service.contact_indo_url }}">{{ service.contact_info_url }}</a></td>
+            <td class="align-middle"><a href="{{ service.contact_info_url }}">{{ service.contact_info_url }}</a></td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-  <br />
+
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <hr />
+      <h5>Excutable Workflow</h5>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-9">
+      <table class="table table-bordered table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col"><div class="text-center">Name</div></th>
+            <th scope="col"><div class="text-center">Engine</div></th>
+            <th scope="col"><div class="text-center">Type</div></th>
+            <th scope="col"><div class="text-center">Description</div></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for workflow in workflows %}
+          <tr>
+            <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_unique_id=workflow.unique_id %}">{{ workflow.name }}</a></td>
+            <td class="align-middle">{{ workflow.engine }}</td>
+            <td class="align-middle">{{ workflow.type }}:&nbsp;{{ workflow.version }}</td>
+            <td class="align-middle">{{ workflow.description }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="row justify-content-center">
     <div class="col-10">
       <a class="btn btn-outline-secondary" href="{% url 'app:service_list' %}" role="button">Back</a>
     </div>
   </div>
 {% endblock %}
+
