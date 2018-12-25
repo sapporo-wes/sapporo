@@ -1,16 +1,51 @@
 {% extends 'base.html' %}
 {% block title %}
-  SAPPORO-web Workflow
+  SAPPORO-web Service Detail
 {% endblock %}
+
 {% block content %}
   <br />
   <div class="row justify-content-center">
     <div class="col-10">
       <h2>SAPPORO-web Worlflow List</h2>
-      <hr />
       <p class="lead">
         Screen for managing Worlflow
       </p>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-9">
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col"><div class="text-center">Name</div></th>
+            <th scope="col"><div class="text-center">Service</div></th>
+            <th scope="col"><div class="text-center">Engine</div></th>
+            <th scope="col"><div class="text-center">Type</div></th>
+            <th scope="col"><div class="text-center">Description</div></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for workflow in workflows %}
+          <tr>
+            <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_unique_id=workflow.unique_id %}">{{ workflow.name }}</a></td>
+            <td class="align-middle"><a href="{% url 'app:service_detail' service_name=workflow.service.name %}">{{ workflow.service.name }}</a></td>
+            <td class="align-middle">{{ workflow.engine.name }}</td>
+            <td class="align-middle">{{ workflow.workflow_type.type }}:&nbsp;{{ workflow.workflow_type.version }}</td>
+            <td class="align-middle">{{ workflow.description }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <a class="btn btn-outline-secondary" href="{% url 'app:home' %}" role="button">Back</a>
     </div>
   </div>
 {% endblock %}
+
