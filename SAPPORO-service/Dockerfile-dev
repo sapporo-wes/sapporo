@@ -1,6 +1,6 @@
 FROM python:3.7-slim
 
-WORKDIR /opt/SAPPORO-service
+WORKDIR /tmp
 
 RUN apt update \
  && apt install -y \
@@ -15,7 +15,7 @@ RUN apt update \
  && apt clean \
  && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.dev.txt /opt/SAPPORO-service
+COPY requirements.dev.txt /tmp
 COPY .tmux.conf /root
 
 RUN pip install -r requirements.dev.txt
