@@ -1,0 +1,12 @@
+fq1: # type "File"
+  class: File
+  path: ../../data/test_data/small.ERR034597_1.fastq
+  format: http://edamontology.org/format_1930
+fq2: # type "File"
+  class: File
+  path: ../../data/test_data/small.ERR034597_2.fastq
+  format: http://edamontology.org/format_1930
+fadir: # type "Directory"
+  class: Directory
+  path: ../../data/test_data
+ref: small.chr22 # type "string"

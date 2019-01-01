@@ -1,0 +1,4 @@
+fa: # type "File"
+  class: File
+  path: ../../data/test_data/small.chr22.fa
+  format: http://edamontology.org/format_1929
