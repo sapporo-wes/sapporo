@@ -127,3 +127,9 @@ paths:
                 example: "dummy_next_page_token"
       tags:
         - WorkflowExecutionService
+  /runs:
+    post:
+      responses:
+
+      tags:
+        - WorkflowExecutionService
