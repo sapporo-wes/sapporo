@@ -4,14 +4,15 @@ WORKDIR /tmp
 
 RUN apt update \
  && apt install -y \
+    vim \
     build-essential \
     curl \
     jq \
     libltdl7 \
+    procps \
     silversearcher-ag \
     tree \
     unzip \
-    vim \
  && apt clean \
  && rm -rf /var/lib/apt/lists/*
 

@@ -1,7 +1,7 @@
 # coding: utf-8
 from flask import Blueprint, jsonify, request
 
-from .lib.runs import execute, get_run_status_list, get_run_info
+from .lib.runs import cancel_run, execute, get_run_info, get_run_status_list
 from .lib.util import read_service_info
 from .lib.workflows import read_workflow_setting_file
 
@@ -51,6 +51,16 @@ def post_runs():
 @bp_app.route("/runs/<uuid:run_id>", methods=["GET"])
 def get_runs_uuid(run_id):
     data = get_run_info(run_id)
+    response = jsonify(data)
+    response.status_code = 200
+    return response
+
+
+# curl -X POST localhost:8002/runs/317c8109-e259-4b31-9bfd-581a3170ae7a/cancel
+# curl -X POST localhost:8002/runs/92504da8-9858-4ce5-b445-6e63c9f4be96/cancel
+@bp_app.route("/runs/<uuid:run_id>/cancel", methods=["POST"])
+def post_runs_cancel(run_id):
+    data = cancel_run(run_id)
     response = jsonify(data)
     response.status_code = 200
     return response

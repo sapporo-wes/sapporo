@@ -13,7 +13,7 @@ run_wf() {
 }
 
 run_cwltool() {
-  cwltool --outdir ${output_dir} ${workflow_file} ${run_order_file} 1> ${log_stdout_file} 2> ${log_stderr_file} || echo "ERROR" > ${state_file}
+  cwltool --outdir ${output_dir} ${workflow_file} ${run_order_file} 1> ${log_stdout_file} 2> ${log_stderr_file} || echo "EXECUTOR_ERROR" > ${state_file}
 }
 
 run_nextflow() {
@@ -62,10 +62,10 @@ for i in $(seq 0 $(($(cat ${workflow_info_file} | yq '.workflows | length') - 1)
   fi
 done
 
-trap 'echo "ERROR" > ${state_file}' 1 2 3 9 15
+trap 'echo "SYSTEM_ERROR" > ${state_file}' 1 2 3 9 15
 
-echo "START" > ${state_file}
+echo "RUNNING" > ${state_file}
 
 run_wf
 
-echo "FINISH" > ${state_file}
+echo "COMPLETE" > ${state_file}

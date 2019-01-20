@@ -2,8 +2,10 @@
 import shlex
 from copy import copy
 from json import dumps, loads
-from subprocess import Popen
+from subprocess import Popen, PIPE
 from uuid import uuid4
+import os
+import signal
 
 from flask import abort
 
@@ -37,11 +39,11 @@ def execute(parameters):
 def validate_parameters(parameters):
     for param in POST_REQUEST_REQUIRED_PARAMETERS:
         if param not in parameters.keys():
-            abort(404)
+            abort(400)
     workflow_type, workflow_version, workflow_location = confirm_exist_workflow(
         parameters["workflow_name"])
     if resolve_workflow_file_path(workflow_location) is None:
-        abort(404)
+        abort(400)
     validate_engine(parameters["workflow_engine"],
                     workflow_type, workflow_version)
 
@@ -50,7 +52,7 @@ def confirm_exist_workflow(workflow_name):
     for workflow in workflow_info["workflows"]:
         if workflow["name"] == workflow_name:
             return workflow["type"], workflow["version"], workflow["location"]
-    abort(404)
+    abort(400)
 
 
 def validate_engine(engine, workflow_type, workflow_version):
@@ -59,7 +61,7 @@ def validate_engine(engine, workflow_type, workflow_version):
             for type_version in workflow_engine["workflow_types"]:
                 if type_version["type"] == workflow_type and type_version["version"] == workflow_version:
                     return True
-    abort(404)
+    abort(400)
 
 
 def prepare_run_dir(uuid, parameters):
@@ -67,7 +69,7 @@ def prepare_run_dir(uuid, parameters):
     run_dir.mkdir(parents=True)
     run_dir.joinpath("output").mkdir(parents=True)
     with run_dir.joinpath(STATUS_FILE_NAME).open(mode="w") as f:
-        f.write("PENDING")
+        f.write("QUEUED")
     with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="w") as f:
         f.write(parameters["run_order"].stream.read().decode("utf-8"))
         f.write("\n")
@@ -117,3 +119,29 @@ def get_run_info(run_id):
         run_info["stderr"] = f.read()
 
     return run_info
+
+
+def cancel_run(run_id):
+    run_dir = list(RUN_BASE_DIR.glob("**/{}".format(run_id)))[0]
+    with run_dir.joinpath(STATUS_FILE_NAME).open(mode="r") as f:
+        status = f.read().strip()
+        if status not in ["QUEUED", "RUNNING"]:
+            abort(400)
+    with run_dir.joinpath(PID_INFO_FILE_NAME).open(mode="r") as f:
+        pid = int(f.read().strip())
+    ps = Popen(["ps", "aux"], stdout=PIPE).communicate()[0]
+    processes = ps.decode("utf-8").split("\n")
+    for process in processes:
+        try:
+            ps_pid = int(process.split[1])
+            l_command = process.split()[10:]
+        except:
+            continue
+        if ps_pid == pid:
+            if "bash" in l_command and str(run_id) in l_command:
+                os.kill(pid, signal.SIGKILL)
+                with run_dir.joinpath(STATUS_FILE_NAME).open(mode="w") as f:
+                    f.write("CANCELED")
+                return {"run_id": run_id}
+
+    abort(400)
