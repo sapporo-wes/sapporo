@@ -1,7 +1,7 @@
 # coding: utf-8
-from flask import Blueprint, abort, jsonify, request
+from flask import Blueprint, jsonify, request
 
-from .lib.runs import execute, get_run_status_list
+from .lib.runs import execute, get_run_status_list, get_run_info
 from .lib.util import read_service_info
 from .lib.workflows import read_workflow_setting_file
 
@@ -28,7 +28,7 @@ def get_workflows_list():
 
 # curl -X GET localhost:8002/runs
 @bp_app.route("/runs", methods=["GET"])
-def get_run_status_list():
+def get_runs():
     data = get_run_status_list()
     response = jsonify(data)
     response.status_code = 200
@@ -42,9 +42,15 @@ def post_runs():
     values = [request.form[field] for field in request.form]
     parameters = dict(zip(fields, values))
     parameters["run_order"] = request.files["run_order"]
-    uuid = execute(parameters)
-    if uuid is None:
-        abort(400)
-    response = jsonify({"run_id": uuid})
+    data = execute(parameters)
+    response = jsonify(data)
+    response.status_code = 200
+    return response
+
+
+@bp_app.route("/runs/<uuid:run_id>", methods=["GET"])
+def get_runs_uuid(run_id):
+    data = get_run_info(run_id)
+    response = jsonify(data)
     response.status_code = 200
     return response

@@ -21,9 +21,6 @@ def read_workflow_setting_file():
 
 
 def resolve_workflow_file_path(location):
-    if location is None:
-        return None
-
     if location[0] == "/":
         path = Path(location)
     elif location[0] == ".":

@@ -43,7 +43,6 @@ service_base_dir=$(cd $(dirname $0)/.. && pwd)
 workflow_info_file=${service_base_dir}/workflow-info.yml
 run_dir=${service_base_dir}/run/$(echo ${uuid} | cut -c 1-2)/${uuid}
 output_dir=${run_dir}/output
-mkdir -p ${output_dir}
 run_order_file=${run_dir}/${RUN_ORDER_FILE_NAME}
 run_info_file=${run_dir}/${RUN_INFO_FILE_NAME}
 state_file=${run_dir}/${STATE_FILE_NAME}

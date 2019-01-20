@@ -1,9 +1,11 @@
 # coding: utf-8
-from copy import copy
-from json import dumps
-from uuid import uuid4
 import shlex
+from copy import copy
+from json import dumps, loads
 from subprocess import Popen
+from uuid import uuid4
+
+from flask import abort
 
 from .util import SERVICE_BASE_DIR, read_service_info, read_workflow_info
 from .workflows import resolve_workflow_file_path
@@ -24,36 +26,31 @@ workflow_info = read_workflow_info()
 
 
 def execute(parameters):
-    if validate_post_parameters(parameters) is False:
-        return None
-    workflow_type, workflow_version, workflow_location = confirm_exist_workflow(
-        parameters["workflow_name"])
-    workflow_location = resolve_workflow_file_path(workflow_location)
-    if workflow_location is None:
-        return None
-    if validate_engine(parameters["workflow_engine"], workflow_type, workflow_version) is False:
-        return None
+    validate_parameters(parameters)
     uuid = str(uuid4())
     prepare_run_dir(uuid, parameters)
     fork_run(uuid)
 
-    return uuid
+    return {"run_id": uuid}
 
 
-def validate_post_parameters(parameters):
+def validate_parameters(parameters):
     for param in POST_REQUEST_REQUIRED_PARAMETERS:
         if param not in parameters.keys():
-            return False
-
-    return True
+            abort(404)
+    workflow_type, workflow_version, workflow_location = confirm_exist_workflow(
+        parameters["workflow_name"])
+    if resolve_workflow_file_path(workflow_location) is None:
+        abort(404)
+    validate_engine(parameters["workflow_engine"],
+                    workflow_type, workflow_version)
 
 
 def confirm_exist_workflow(workflow_name):
     for workflow in workflow_info["workflows"]:
         if workflow["name"] == workflow_name:
             return workflow["type"], workflow["version"], workflow["location"]
-
-    return None, None, None
+    abort(404)
 
 
 def validate_engine(engine, workflow_type, workflow_version):
@@ -62,13 +59,13 @@ def validate_engine(engine, workflow_type, workflow_version):
             for type_version in workflow_engine["workflow_types"]:
                 if type_version["type"] == workflow_type and type_version["version"] == workflow_version:
                     return True
-
-    return False
+    abort(404)
 
 
 def prepare_run_dir(uuid, parameters):
     run_dir = RUN_BASE_DIR.joinpath(uuid[:2]).joinpath(uuid)
     run_dir.mkdir(parents=True)
+    run_dir.joinpath("output").mkdir(parents=True)
     with run_dir.joinpath(STATUS_FILE_NAME).open(mode="w") as f:
         f.write("PENDING")
     with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="w") as f:
@@ -100,3 +97,23 @@ def get_run_status_list():
         run_state_list.append(run_state)
 
     return run_state_list
+
+
+def get_run_info(run_id):
+    run_info = dict()
+    run_dir = list(RUN_BASE_DIR.glob("**/{}".format(run_id)))[0]
+    run_info["run_id"] = run_dir.name
+    with run_dir.joinpath(STATUS_FILE_NAME).open(mode="r") as f:
+        run_info["status"] = f.read().strip()
+    with run_dir.joinpath(RUN_INFO_FILE_NAME).open(mode="r") as f:
+        d_info = loads(f.read())
+        run_info["workflow_name"] = d_info["workflow_name"]
+        run_info["workflow_engine"] = d_info["workflow_engine"]
+    with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="r") as f:
+        run_info["run_order"] = f.read()
+    with run_dir.joinpath("stdout.log").open(mode="r") as f:
+        run_info["stdout"] = f.read()
+    with run_dir.joinpath("stderr.log").open(mode="r") as f:
+        run_info["stderr"] = f.read()
+
+    return run_info
