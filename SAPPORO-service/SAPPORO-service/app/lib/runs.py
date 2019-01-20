@@ -88,3 +88,15 @@ def fork_run(uuid):
     run_dir = RUN_BASE_DIR.joinpath(uuid[:2]).joinpath(uuid)
     with run_dir.joinpath(PID_INFO_FILE_NAME).open(mode="w") as f:
         f.write(str(proc.pid))
+
+
+def get_run_status_list():
+    run_state_list = []
+    for status_file in RUN_BASE_DIR.glob("**/{}".format(STATUS_FILE_NAME)):
+        run_state = dict()
+        run_state["run_id"] = status_file.parent.name
+        with status_file.open(mode="r") as f:
+            run_state["status"] = f.read().strip()
+        run_state_list.append(run_state)
+
+    return run_state_list
