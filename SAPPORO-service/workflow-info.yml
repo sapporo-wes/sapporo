@@ -1,0 +1,3 @@
+workflows:
+  - name: trimming_and_qc
+    location: ./test_workflow/trimming_and_qc.cwl
