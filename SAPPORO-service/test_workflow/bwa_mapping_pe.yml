@@ -1,0 +1,4 @@
+nthreads: 2 # default value of type "int". (optional)
+fastq1_url: https://github.com/suecharo/test-workflow/raw/master/data/small.ERR034597_1.fastq # type "string"
+fastq2_url: https://github.com/suecharo/test-workflow/raw/master/data/small.ERR034597_2.fastq # type "string"
+fasta_url: https://github.com/suecharo/test-workflow/raw/master/data/small.chr22.fa # type "string"

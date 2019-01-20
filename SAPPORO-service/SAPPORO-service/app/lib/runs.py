@@ -5,74 +5,86 @@ from uuid import uuid4
 import shlex
 from subprocess import Popen
 
-from .util import RUN_BASE_DIR, WORKFLOW_BASE_DIR
+from .util import SERVICE_BASE_DIR, read_service_info, read_workflow_info
+from .workflows import resolve_workflow_file_path
 
-WORKFLOW_DIR_PATH = WORKFLOW_BASE_DIR.joinpath("workflow")
-RUN_ORDER_FILE_NAME = "run-order.json"
-RUN_INFO_FILE_NAME = "run-info.json"
-PID_INFO_FILE_NAME = "run.pid"
+RUN_BASE_DIR = SERVICE_BASE_DIR.joinpath("run")
 STATUS_FILE_NAME = "state.txt"
-POST_REQUEST_REQUIRED_PARAMETERS = ["parameters",
-                                    "name",
-                                    "engine",
-                                    "type",
-                                    "version"]
-RUN_EXECUTION_SCRIPT_PATH = RUN_BASE_DIR.joinpath("run.sh")
+RUN_ORDER_FILE_NAME = "run_order.json"
+RUN_INFO_FILE_NAME = "run_info.json"
+PID_INFO_FILE_NAME = "run.pid"
+POST_REQUEST_REQUIRED_PARAMETERS = ["run_order",
+                                    "workflow_name",
+                                    "workflow_engine"]
+RUN_EXECUTION_SCRIPT_PATH = SERVICE_BASE_DIR.joinpath(
+    "SAPPORO-service").joinpath("run_workflow.sh")
+
+service_info = read_service_info()
+workflow_info = read_workflow_info()
 
 
-def execute_run(data):
-    if validate_post_data(data) is False:
+def execute(parameters):
+    if validate_post_parameters(parameters) is False:
         return None
-    if exist_workflow(data["name"], data["type"]) is False:
+    workflow_type, workflow_version, workflow_location = confirm_exist_workflow(
+        parameters["workflow_name"])
+    workflow_location = resolve_workflow_file_path(workflow_location)
+    if workflow_location is None:
+        return None
+    if validate_engine(parameters["workflow_engine"], workflow_type, workflow_version) is False:
         return None
     uuid = str(uuid4())
-    run_dir = RUN_BASE_DIR.joinpath(uuid)
-    run_dir.mkdir()
-    with run_dir.joinpath(STATUS_FILE_NAME).open(mode="w") as f:
-        f.write("PENDING")
-    with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="w") as f:
-        f.write(data["parameters"])
-    with run_dir.joinpath(RUN_INFO_FILE_NAME).open(mode="w") as f:
-        write_data = copy(data)
-        del write_data["parameters"]
-        f.write(dumps(write_data))
+    prepare_run_dir(uuid, parameters)
     fork_run(uuid)
 
     return uuid
 
 
-def validate_post_data(data):
+def validate_post_parameters(parameters):
     for param in POST_REQUEST_REQUIRED_PARAMETERS:
-        if param not in data.keys():
+        if param not in parameters.keys():
             return False
 
     return True
 
 
-def exist_workflow(name, type):
-    if type == "CWL":
-        ext = "cwl"
-    elif type == "WDL":
-        ext = "wdl"
-    elif type == "Nextflow":
-        ext = "nf"
-    else:
-        return False
-    workflow_file_path = WORKFLOW_DIR_PATH.joinpath("{}.{}".format(name, ext))
-    if workflow_file_path.exists() is False:
-        return False
+def confirm_exist_workflow(workflow_name):
+    for workflow in workflow_info["workflows"]:
+        if workflow["name"] == workflow_name:
+            return workflow["type"], workflow["version"], workflow["location"]
 
-    return True
+    return None, None, None
+
+
+def validate_engine(engine, workflow_type, workflow_version):
+    for workflow_engine in service_info["workflow_engines"]:
+        if workflow_engine["name"] == engine:
+            for type_version in workflow_engine["workflow_types"]:
+                if type_version["type"] == workflow_type and type_version["version"] == workflow_version:
+                    return True
+
+    return False
+
+
+def prepare_run_dir(uuid, parameters):
+    run_dir = RUN_BASE_DIR.joinpath(uuid[:2]).joinpath(uuid)
+    run_dir.mkdir(parents=True)
+    with run_dir.joinpath(STATUS_FILE_NAME).open(mode="w") as f:
+        f.write("PENDING")
+    with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="w") as f:
+        f.write(parameters["run_order"].stream.read().decode("utf-8"))
+        f.write("\n")
+    with run_dir.joinpath(RUN_INFO_FILE_NAME).open(mode="w") as f:
+        write_parameters = copy(parameters)
+        del write_parameters["run_order"]
+        f.write(dumps(write_parameters, ensure_ascii=False, indent=4))
+        f.write("\n")
 
 
 def fork_run(uuid):
     cmd = "bash {} {}".format(RUN_EXECUTION_SCRIPT_PATH, uuid)
     l_cmd = shlex.split(cmd)
     proc = Popen(l_cmd)
-    with RUN_BASE_DIR.joinpath(uuid).joinpath(PID_INFO_FILE_NAME).open(mode="w") as f:
+    run_dir = RUN_BASE_DIR.joinpath(uuid[:2]).joinpath(uuid)
+    with run_dir.joinpath(PID_INFO_FILE_NAME).open(mode="w") as f:
         f.write(str(proc.pid))
-
-
-"""
-curl -X POST "localhost:8002/runs" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "parameters=param" -F "type=CWL" -F "version=v1.0" -F "engine=cwltool" -F "name=test-workflow"
-"""

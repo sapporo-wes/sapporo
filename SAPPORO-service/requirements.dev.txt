@@ -20,6 +20,8 @@ prov==1.5.1
 psutil==5.4.8
 pyparsing==2.3.0
 python-dateutil==2.7.5
+python-dotenv==0.10.1
+PyYAML==3.13
 rdflib==4.2.2
 rdflib-jsonld==0.4.0
 requests==2.21.0

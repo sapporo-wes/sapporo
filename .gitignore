@@ -1,5 +1,5 @@
-SAPPORO-service/.tmux.conf
-SAPPORO-service/data/
+PPORO-service/.tmux.conf
+SAPPORO-service/run/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

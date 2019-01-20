@@ -9,7 +9,6 @@ RUN apt update \
     jq \
     libltdl7 \
     silversearcher-ag \
-    tmux \
     tree \
     unzip \
     vim \
@@ -17,7 +16,6 @@ RUN apt update \
  && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.dev.txt /tmp
-COPY .tmux.conf /root
 
 RUN pip install -r requirements.dev.txt
 

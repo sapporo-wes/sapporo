@@ -1,77 +1,72 @@
 #!/bin/bash
-set -eux
+# set -eux
+set -eu
 
 run_wf() {
-  if [[ "${workflow_engine}" == "cwltool" ]]; then
+  if [[ ${workflow_engine} == "cwltool" ]]; then
     run_cwltool
-  elif [[ "${workflow_engine}" == "nextflow" ]]; then
+  elif [[ ${workflow_engine} == "nextflow" ]]; then
     run_nextflow
-  elif [[ "${workflow_engine}" == "toil" ]]; then
+  elif [[ ${workflow_engine} == "toil" ]]; then
     run_toil
   fi
 }
 
 run_cwltool() {
-  cwltool "${workflow_file_path}" "${run_order_file_path}" 1> ${log_stdout_file_path} 2> ${log_stderr_file_path} || echo "ERROR" > "${state_file_path}"
+  cwltool --outdir ${output_dir} ${workflow_file} ${run_order_file} 1> ${log_stdout_file} 2> ${log_stderr_file} || echo "ERROR" > ${state_file}
 }
 
 run_nextflow() {
-  # hogehoge
+  :
 }
 
 run_toil() {
-  # hogehoge
+  :
 }
 
 # =============
 
-RUN_ORDER_FILE_NAME="run-order.json"
-RUN_INFO_FILE_NAME="run-info.json"
+RUN_ORDER_FILE_NAME="run_order.json"
+RUN_INFO_FILE_NAME="run_info.json"
 STATE_FILE_NAME="state.txt"
-LOG_STDOUT_FILE_NAME="log.out"
-LOG_STDERR_FILE_NAME="log.err"
+LOG_STDOUT_FILE_NAME="stdout.log"
+LOG_STDERR_FILE_NAME="stderr.log"
 
 CMDNAME=$(basename $0)
-if [[ "$#" -ne 1 ]]; then
+if [[ $# -ne 1 ]]; then
   echo "Usage: $CMDNAME uuid" 1>&2
   exit 1
 fi
 
-uuid="$1"
-run_base_dir_path=$(cd $(dirname $0) && pwd)
-run_dir_path="${run_base_dir_path}/${uuid}"
-run_order_file_path="${run_dir_path}/${RUN_ORDER_FILE_NAME}"
-run_info_file_path="${run_dir_path}/${RUN_INFO_FILE_NAME}"
-state_file_path="${run_dir_path}/${STATE_FILE_NAME}"
-log_stdout_file_path="${run_dir_path}/${LOG_STDOUT_FILE_NAME}"
-log_stderr_file_path="${run_dir_path}/${LOG_STDERR_FILE_NAME}"
-workflow_dir_path="${run_base_dir_path%run}workflow/workflow"
+uuid=$1
+service_base_dir=$(cd $(dirname $0)/.. && pwd)
+workflow_info_file=${service_base_dir}/workflow-info.yml
+run_dir=${service_base_dir}/run/$(echo ${uuid} | cut -c 1-2)/${uuid}
+output_dir=${run_dir}/output
+mkdir -p ${output_dir}
+run_order_file=${run_dir}/${RUN_ORDER_FILE_NAME}
+run_info_file=${run_dir}/${RUN_INFO_FILE_NAME}
+state_file=${run_dir}/${STATE_FILE_NAME}
+log_stdout_file=${run_dir}/${LOG_STDOUT_FILE_NAME}
+log_stderr_file=${run_dir}/${LOG_STDERR_FILE_NAME}
+workflow_engine=$(cat ${run_info_file} | jq -r '.workflow_engine')
+workflow_name=$(cat ${run_info_file} | jq -r '.workflow_name')
+for i in $(seq 0 $(($(cat ${workflow_info_file} | yq '.workflows | length') - 1))); do
+  name=$(cat ${workflow_info_file} | yq -r .workflows[$i].name)
+  location=$(cat ${workflow_info_file} | yq -r .workflows[$i].location)
+  if [[ ${name} == ${workflow_name} ]]; then
+    if [[ $(echo ${location} | cut -c 1 ) == "/" ]]; then
+      workflow_file=location
+    else
+      workflow_file=$(cd $(dirname ${service_base_dir}/${location}) && pwd)/$(basename ${location})
+    fi
+  fi
+done
 
-workflow_name=$(cat ${run_info_file_path} | jq -r '.name')
-workflow_engine=$(cat ${run_info_file_path} | jq -r '.engine')
-workflow_type=$(cat ${run_info_file_path} | jq -r '.type')
-workflow_version=$(cat ${run_info_file_path} | jq -r '.version')
+trap 'echo "ERROR" > ${state_file}' 1 2 3 9 15
 
-if [[ ${workflow_type} == "CWL" ]]; then
-  ext="cwl"
-elif [[ ${workflow_type} == "WDL" ]]; then
-  ext="wdl"
-elif [[ ${workflow_type} == "Nextflow" ]]; then
-  ext="nf"
-else
-  echo "ERROR" > "${state_file_path}"
-fi
-
-workflow_file_path="${workflow_dir_path}/${workflow_name}.${ext}"
-
-if [[ ! -e ${workflow_file_path} ]]; then
-  echo "ERROR" > "${state_file_path}"
-fi
-
-trap 'echo "ERROR" > "${state_file_path}"' 1 2 3 9 15
-
-echo "START" > "${state_file_path}"
+echo "START" > ${state_file}
 
 run_wf
 
-echo "FINISH" > "${state_file_path}"
+echo "FINISH" > ${state_file}
