@@ -1,5 +1,5 @@
-basePath: '/ga4gh/wes/v1'
-swagger: '2.0'
+basePath: "/ga4gh/wes/v1"
+swagger: "2.0"
 info:
   title: Workflow Execution Service
   version: 1.0.0
@@ -18,26 +18,26 @@ paths:
       x-swagger-router-controller: ga4gh.wes.server
       operationId: GetServiceInfo
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           schema:
-            $ref: '#/definitions/ServiceInfo'
-        '400':
+            $ref: "#/definitions/ServiceInfo"
+        "400":
           description: The request is malformed.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
+            $ref: "#/definitions/ErrorResponse"
+        "401":
           description: The request is unauthorized.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
+            $ref: "#/definitions/ErrorResponse"
+        "403":
           description: The requester is not authorized to perform this action.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
+            $ref: "#/definitions/ErrorResponse"
+        "500":
           description: An unexpected error occurred.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       tags:
         - WorkflowExecutionService
   /runs:
@@ -54,26 +54,26 @@ paths:
       x-swagger-router-controller: ga4gh.wes.server
       operationId: ListRuns
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           schema:
-            $ref: '#/definitions/RunListResponse'
-        '400':
+            $ref: "#/definitions/RunListResponse"
+        "400":
           description: The request is malformed.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
+            $ref: "#/definitions/ErrorResponse"
+        "401":
           description: The request is unauthorized.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
+            $ref: "#/definitions/ErrorResponse"
+        "403":
           description: The requester is not authorized to perform this action.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
+            $ref: "#/definitions/ErrorResponse"
+        "500":
           description: An unexpected error occurred.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: page_size
           description: >-
@@ -134,13 +134,13 @@ paths:
         `workflow_attachment`.  The WES endpoint must understand and
         be able to access URLs supplied in the input.  This is
         implementation specific.
- 
- 
+
+
         The `workflow_type` is the type of workflow language and
         must be "CWL" or "WDL" currently (or another alternative 
         supported by this WES instance).
- 
- 
+
+
         The `workflow_type_version` is the version of the workflow language
         submitted and must be one supported by this WES instance.
 
@@ -149,28 +149,28 @@ paths:
       x-swagger-router-controller: ga4gh.wes.server
       operationId: RunWorkflow
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           schema:
-            $ref: '#/definitions/RunId'
-        '400':
+            $ref: "#/definitions/RunId"
+        "400":
           description: The request is malformed.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
+            $ref: "#/definitions/ErrorResponse"
+        "401":
           description: The request is unauthorized.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
+            $ref: "#/definitions/ErrorResponse"
+        "403":
           description: The requester is not authorized to perform this action.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
+            $ref: "#/definitions/ErrorResponse"
+        "500":
           description: An unexpected error occurred.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       consumes:
-         - multipart/form-data
+        - multipart/form-data
       parameters:
         - in: formData
           name: workflow_params
@@ -219,26 +219,26 @@ paths:
       x-swagger-router-controller: ga4gh.wes.server
       operationId: GetRunLog
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           schema:
-            $ref: '#/definitions/RunLog'
-        '401':
+            $ref: "#/definitions/RunLog"
+        "401":
           description: The request is unauthorized.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
+            $ref: "#/definitions/ErrorResponse"
+        "404":
           description: The requested workflow run not found.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
+            $ref: "#/definitions/ErrorResponse"
+        "403":
           description: The requester is not authorized to perform this action.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
+            $ref: "#/definitions/ErrorResponse"
+        "500":
           description: An unexpected error occurred.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: run_id
           in: path
@@ -252,26 +252,26 @@ paths:
       x-swagger-router-controller: ga4gh.wes.server
       operationId: CancelRun
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           schema:
-            $ref: '#/definitions/RunId'
-        '401':
+            $ref: "#/definitions/RunId"
+        "401":
           description: The request is unauthorized.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
+            $ref: "#/definitions/ErrorResponse"
+        "404":
           description: The requested workflow run wasn't found.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
+            $ref: "#/definitions/ErrorResponse"
+        "403":
           description: The requester is not authorized to perform this action.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
+            $ref: "#/definitions/ErrorResponse"
+        "500":
           description: An unexpected error occurred.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: run_id
           in: path
@@ -289,26 +289,26 @@ paths:
       x-swagger-router-controller: ga4gh.wes.server
       operationId: GetRunStatus
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           schema:
-            $ref: '#/definitions/RunStatus'
-        '401':
+            $ref: "#/definitions/RunStatus"
+        "401":
           description: The request is unauthorized.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
+            $ref: "#/definitions/ErrorResponse"
+        "404":
           description: The requested workflow run wasn't found.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
+            $ref: "#/definitions/ErrorResponse"
+        "403":
           description: The requester is not authorized to perform this action.
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
+            $ref: "#/definitions/ErrorResponse"
+        "500":
           description: An unexpected error occurred.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: run_id
           in: path
@@ -376,7 +376,7 @@ definitions:
       workflow_type_versions:
         type: object
         additionalProperties:
-          $ref: '#/definitions/WorkflowTypeVersion'
+          $ref: "#/definitions/WorkflowTypeVersion"
         description: >-
           A map with keys as the workflow format type name (currently only CWL and WDL are used
           although a service may support others) and value is a workflow_type_version object which
@@ -404,7 +404,7 @@ definitions:
       default_workflow_engine_parameters:
         type: array
         items:
-          $ref: '#/definitions/DefaultWorkflowEngineParameter'
+          $ref: "#/definitions/DefaultWorkflowEngineParameter"
         description: >-
           Each workflow engine can present additional parameters that can be sent to the
           workflow engine. This message will list the default values, and their types for each
@@ -421,7 +421,7 @@ definitions:
         type: string
         description: >-
           A web page URL with human-readable instructions on how to get an
-          authorization token for use with a specific WES endpoint.          
+          authorization token for use with a specific WES endpoint.
       contact_info_url:
         type: string
         description: >-
@@ -491,14 +491,14 @@ definitions:
        - CANCELED: The task was canceled by the user.
 
 
-        - CANCELING: The task was canceled by the user, and is in the process of stopping.       
+        - CANCELING: The task was canceled by the user, and is in the process of stopping.
   RunListResponse:
     type: object
     properties:
       runs:
         type: array
         items:
-          $ref: '#/definitions/RunStatus'
+          $ref: "#/definitions/RunStatus"
         description: >-
           A list of workflow runs that the service has executed or is executing.
           The list is filtered to only include runs that the caller has permission to see.
@@ -515,18 +515,18 @@ definitions:
         type: string
         description: workflow run ID
       request:
-        $ref: '#/definitions/RunRequest'
+        $ref: "#/definitions/RunRequest"
         description: The original request message used to initiate this execution.
       state:
-        $ref: '#/definitions/State'
+        $ref: "#/definitions/State"
         description: The state of the run e.g. RUNNING (see State)
       run_log:
-        $ref: '#/definitions/Log'
+        $ref: "#/definitions/Log"
         description: The logs, and other key info like timing and exit code, for the overall run of this workflow.
       task_logs:
         type: array
         items:
-          $ref: '#/definitions/Log'
+          $ref: "#/definitions/Log"
         description: The logs, and other key info like timing and exit code, for each step in the workflow run.
       outputs:
         type: object
@@ -562,14 +562,14 @@ definitions:
           type: string
         description: >-
           OPTIONAL
-          
+
           Additional parameters can be sent to the workflow engine using this field. Default values
           for these parameters can be obtained using the ServiceInfo endpoint.
       workflow_url:
         type: string
         description: >-
           REQUIRED
-          
+
           The workflow CWL or WDL document.
           When `workflow_attachments` is used to attach files, the `workflow_url` may be a relative path
           to one of the attachments.
@@ -585,12 +585,12 @@ definitions:
   RunStatus:
     type: object
     required:
-     - run_id
+      - run_id
     properties:
       run_id:
         type: string
       state:
-        $ref: '#/definitions/State'
+        $ref: "#/definitions/State"
     description: Small description of a workflow run, returned by server during listing
   WorkflowTypeVersion:
     type: object
