@@ -35,7 +35,7 @@ def get_runs():
     return response
 
 
-# python3 ./tests/runs_post.py
+# python3 ./tests/post_runs_mock/post_runs_mock_trim.py
 @bp_app.route("/runs", methods=["POST"])
 def post_runs():
     fields = [field for field in request.form]
@@ -48,6 +48,7 @@ def post_runs():
     return response
 
 
+# curl -X GET localhost:8002/runs/317c8109-e259-4b31-9bfd-581a3170ae7a
 @bp_app.route("/runs/<uuid:run_id>", methods=["GET"])
 def get_runs_uuid(run_id):
     data = get_run_info(run_id)
@@ -57,7 +58,6 @@ def get_runs_uuid(run_id):
 
 
 # curl -X POST localhost:8002/runs/317c8109-e259-4b31-9bfd-581a3170ae7a/cancel
-# curl -X POST localhost:8002/runs/92504da8-9858-4ce5-b445-6e63c9f4be96/cancel
 @bp_app.route("/runs/<uuid:run_id>/cancel", methods=["POST"])
 def post_runs_cancel(run_id):
     data = cancel_run(run_id)

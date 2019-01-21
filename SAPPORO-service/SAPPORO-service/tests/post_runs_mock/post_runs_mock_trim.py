@@ -3,8 +3,7 @@ import requests
 from pathlib import Path
 
 
-RUN_ORDER_FILE_PATH = Path(__file__).absolute(
-).parent.parent.parent.joinpath("test_workflow").joinpath("trimming_and_qc.yml")
+RUN_ORDER_FILE_PATH = Path(__file__).absolute().parent.joinpath("trim.yml")
 URL = "http://localhost:8002/runs"
 
 
@@ -20,7 +19,6 @@ def post_runs():
         r = requests.post(URL, files=files, data=data)
     print(r.status_code)
     print(r.json())
-
 
 
 if __name__ == "__main__":

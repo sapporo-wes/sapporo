@@ -1,5 +1,6 @@
-PPORO-service/.tmux.conf
 SAPPORO-service/run/
+SAPPORO-service/SAPPORO-service/tests/post_runs_mock/trim.yml
+SAPPORO-service/SAPPORO-service/tests/post_runs_mock/bwa.yml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

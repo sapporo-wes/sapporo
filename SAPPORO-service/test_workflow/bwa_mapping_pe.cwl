@@ -1,6 +1,8 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: Workflow
+requirements:
+  MultipleInputFeatureRequirement: {}
 doc: BWA-mapping-PE is a mapping workflow using BWA for Peared-end reads. It receives two fastq files and one reference genome. Please enter download link of fastq files and reference genome. The reference genome will be indexed by BWA. Trimming, QC and bam sort will do too. QC result and sam / bam file will be output.
 
 inputs:
@@ -17,6 +19,15 @@ inputs:
     type: int?
     default: 2
     label: (optional) Number of cpu cores to be used
+  aws_access_key_id:
+    type: string
+  aws_secret_access_key:
+    type: string
+  s3_bucket:
+    type: string
+  s3_upload_dir_name:
+    type: string
+    default: cwl_upload
 
 steps:
   download_fastq1:
@@ -188,131 +199,72 @@ steps:
       - sorted_bam
       - stdout_log
       - stderr_log
+  s3_upload:
+    run: https://github.com/suecharo/test-workflow/raw/master/tool/s3_upload.cwl
+    in:
+      aws_access_key_id: aws_access_key_id
+      aws_secret_access_key: aws_secret_access_key
+      upload_file_list:
+        source:
+          - download_fastq1/downloaded_file
+          - download_fastq1/stderr_log
+          - download_fastq2/downloaded_file
+          - download_fastq2/stderr_log
+          - download_fasta/downloaded_file
+          - download_fasta/stderr_log
+          - qc_fastq1/qc_result
+          - qc_fastq1/stdout_log
+          - qc_fastq1/stderr_log
+          - qc_fastq1/qc_result
+          - qc_fastq1/stdout_log
+          - qc_fastq1/stderr_log
+          - trimming/trimed_fastq1P
+          - trimming/trimed_fastq1U
+          - trimming/trimed_fastq2P
+          - trimming/trimed_fastq2U
+          - trimming/stdout_log
+          - trimming/stderr_log
+          - qc_trimed_fastq1/qc_result
+          - qc_trimed_fastq1/stdout_log
+          - qc_trimed_fastq1/stderr_log
+          - qc_trimed_fastq1/qc_result
+          - qc_trimed_fastq1/stdout_log
+          - qc_trimed_fastq1/stderr_log
+          - bwa_index_build/amb
+          - bwa_index_build/ann
+          - bwa_index_build/bwt
+          - bwa_index_build/pac
+          - bwa_index_build/sa
+          - bwa_index_build/stdout_log
+          - bwa_index_build/stderr_log
+          - bwa_mapping/sam
+          - bwa_mapping/stderr_log
+          - sam2bam/bam
+          - sam2bam/stderr_log
+          - mark_duplicates/marked_bam
+          - mark_duplicates/metrix
+          - mark_duplicates/stdout_log
+          - mark_duplicates/stderr_log
+          - sort_bam/sorted_bam
+          - sort_bam/stdout_log
+          - sort_bam/stderr_log
+      s3_bucket: s3_bucket
+      s3_upload_dir_name: s3_upload_dir_name
+      stdout_log_file_name:
+        default: s3_upload_stdout.log
+      stderr_log_file_name:
+        default: s3_upload_stderr.log
+    out: []
+  echo_s3_upload_url:
+    run: https://github.com/suecharo/test-workflow/raw/master/tool/echo_s3_upload_url.cwl
+    in:
+      s3_bucket: s3_bucket
+      s3_upload_dir_name: s3_upload_dir_name
+      file_name:
+        default: upload_url.txt
+    out: [upload_url]
 
 outputs:
-  fastq1:
+  upload_url:
     type: File
-    outputSource: download_fastq1/downloaded_file
-  curl_fastq1_stderr:
-    type: File
-    outputSource: download_fastq1/stderr_log
-  fastq2:
-    type: File
-    outputSource: download_fastq2/downloaded_file
-  curl_fastq2_stderr:
-    type: File
-    outputSource: download_fastq2/stderr_log
-  fasta:
-    type: File
-    outputSource: download_fasta/downloaded_file
-  curl_fasta_stderr:
-    type: File
-    outputSource: download_fasta/stderr_log
-  qc_fastq1_result:
-    type: File
-    outputSource: qc_fastq1/qc_result
-  qc_fastq1_stdout_log:
-    type: File
-    outputSource: qc_fastq1/stdout_log
-  qc_fastq1_stderr_log:
-    type: File
-    outputSource: qc_fastq1/stderr_log
-  qc_fastq2_result:
-    type: File
-    outputSource: qc_fastq1/qc_result
-  qc_fastq2_stdout_log:
-    type: File
-    outputSource: qc_fastq1/stdout_log
-  qc_fastq2_stderr_log:
-    type: File
-    outputSource: qc_fastq1/stderr_log
-  trimed_fastq1P:
-    type: File
-    outputSource: trimming/trimed_fastq1P
-  trimed_fastq1U:
-    type: File
-    outputSource: trimming/trimed_fastq1U
-  trimed_fastq2P:
-    type: File
-    outputSource: trimming/trimed_fastq2P
-  trimed_fastq2U:
-    type: File
-    outputSource: trimming/trimed_fastq2U
-  trimming_stdout_log:
-    type: File
-    outputSource: trimming/stdout_log
-  trimming_stderr_log:
-    type: File
-    outputSource: trimming/stderr_log
-  qc_trimed_fastq1_result:
-    type: File
-    outputSource: qc_trimed_fastq1/qc_result
-  qc_trimed_fastq1_stdout_log:
-    type: File
-    outputSource: qc_trimed_fastq1/stdout_log
-  qc_trimed_fastq1_stderr_log:
-    type: File
-    outputSource: qc_trimed_fastq1/stderr_log
-  qc_trimed_fastq2_result:
-    type: File
-    outputSource: qc_trimed_fastq1/qc_result
-  qc_trimed_fastq2_stdout_log:
-    type: File
-    outputSource: qc_trimed_fastq1/stdout_log
-  qc_trimed_fastq2_stderr_log:
-    type: File
-    outputSource: qc_trimed_fastq1/stderr_log
-  bwa_index_amb:
-    type: File
-    outputSource: bwa_index_build/amb
-  bwa_index_ann:
-    type: File
-    outputSource: bwa_index_build/ann
-  bwa_index_bwt:
-    type: File
-    outputSource: bwa_index_build/bwt
-  bwa_index_pac:
-    type: File
-    outputSource: bwa_index_build/pac
-  bwa_index_sa:
-    type: File
-    outputSource: bwa_index_build/sa
-  bwa_index_stdout_log:
-    type: File
-    outputSource: bwa_index_build/stdout_log
-  bwa_index_stderr_log:
-    type: File
-    outputSource: bwa_index_build/stderr_log
-  sam:
-    type: File
-    outputSource: bwa_mapping/sam
-  bwa_mapping_stderr_log:
-    type: File
-    outputSource: bwa_mapping/stderr_log
-  bam:
-    type: File
-    outputSource: sam2bam/bam
-  sam2bam_stderr_log:
-    type: File
-    outputSource: sam2bam/stderr_log
-  marked_bam:
-    type: File
-    outputSource: mark_duplicates/marked_bam
-  metrix:
-    type: File
-    outputSource: mark_duplicates/metrix
-  mark_duplicates_stdout_log:
-    type: File
-    outputSource: mark_duplicates/stdout_log
-  mark_duplicates_stderr_log:
-    type: File
-    outputSource: mark_duplicates/stderr_log
-  sorted_bam:
-    type: File
-    outputSource: sort_bam/sorted_bam
-  sort_bam_stdout_log:
-    type: File
-    outputSource: sort_bam/stdout_log
-  sort_bam_stderr_log:
-    type: File
-    outputSource: sort_bam/stderr_log
+    outputSource: echo_s3_upload_url/upload_url

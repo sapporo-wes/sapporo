@@ -1,6 +1,8 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: Workflow
+requirements:
+  MultipleInputFeatureRequirement: {}
 doc: Use fastq file as input and do trimming and quality check. Quality checks are done before trimming and after trimming.
 
 inputs:
@@ -11,6 +13,15 @@ inputs:
     type: int?
     default: 2
     label: (optional) Number of cpu cores to be used
+  aws_access_key_id:
+    type: string
+  aws_secret_access_key:
+    type: string
+  s3_bucket:
+    type: string
+  s3_upload_dir_name:
+    type: string
+    default: cwl_upload
 
 steps:
   download_fastq:
@@ -63,38 +74,41 @@ steps:
       - qc_result
       - stdout_log
       - stderr_log
+  s3_upload:
+    run: https://github.com/suecharo/test-workflow/raw/master/tool/s3_upload.cwl
+    in:
+      aws_access_key_id: aws_access_key_id
+      aws_secret_access_key: aws_secret_access_key
+      upload_file_list:
+        source:
+          - download_fastq/downloaded_file
+          - download_fastq/stderr_log
+          - qc_fastq/qc_result
+          - qc_fastq/stdout_log
+          - qc_fastq/stderr_log
+          - trimming/trimed_fastq
+          - trimming/stdout_log
+          - trimming/stderr_log
+          - qc_trimed_fastq/qc_result
+          - qc_trimed_fastq/stdout_log
+          - qc_trimed_fastq/stderr_log
+      s3_bucket: s3_bucket
+      s3_upload_dir_name: s3_upload_dir_name
+      stdout_log_file_name:
+        default: s3_upload_stdout.log
+      stderr_log_file_name:
+        default: s3_upload_stderr.log
+    out: []
+  echo_s3_upload_url:
+    run: https://github.com/suecharo/test-workflow/raw/master/tool/echo_s3_upload_url.cwl
+    in:
+      s3_bucket: s3_bucket
+      s3_upload_dir_name: s3_upload_dir_name
+      file_name:
+        default: upload_url.txt
+    out: [upload_url]
 
 outputs:
-  fastq:
+  upload_url:
     type: File
-    outputSource: download_fastq/downloaded_file
-  curl_fastq_stderr:
-    type: File
-    outputSource: download_fastq/stderr_log
-  qc_fastq_result:
-    type: File
-    outputSource: qc_fastq/qc_result
-  qc_fastq_stdout_log:
-    type: File
-    outputSource: qc_fastq/stdout_log
-  qc_fastq_stderr_log:
-    type: File
-    outputSource: qc_fastq/stderr_log
-  trimed_fastq:
-    type: File
-    outputSource: trimming/trimed_fastq
-  trimming_stdout_log:
-    type: File
-    outputSource: trimming/stdout_log
-  trimming_stderr_log:
-    type: File
-    outputSource: trimming/stderr_log
-  qc_trimed_fastq_result:
-    type: File
-    outputSource: qc_trimed_fastq/qc_result
-  qc_trimed_fastq_stdout_log:
-    type: File
-    outputSource: qc_trimed_fastq/stdout_log
-  qc_trimed_fastq_stderr_log:
-    type: File
-    outputSource: qc_trimed_fastq/stderr_log
+    outputSource: echo_s3_upload_url/upload_url

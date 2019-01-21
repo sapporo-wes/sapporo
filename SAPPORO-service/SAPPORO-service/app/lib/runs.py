@@ -17,6 +17,7 @@ STATUS_FILE_NAME = "state.txt"
 RUN_ORDER_FILE_NAME = "run_order.json"
 RUN_INFO_FILE_NAME = "run_info.json"
 PID_INFO_FILE_NAME = "run.pid"
+UPLOAD_URL_FILE_NAME = "upload_url.txt"
 POST_REQUEST_REQUIRED_PARAMETERS = ["run_order",
                                     "workflow_name",
                                     "workflow_engine"]
@@ -67,7 +68,6 @@ def validate_engine(engine, workflow_type, workflow_version):
 def prepare_run_dir(uuid, parameters):
     run_dir = RUN_BASE_DIR.joinpath(uuid[:2]).joinpath(uuid)
     run_dir.mkdir(parents=True)
-    run_dir.joinpath("output").mkdir(parents=True)
     with run_dir.joinpath(STATUS_FILE_NAME).open(mode="w") as f:
         f.write("QUEUED")
     with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="w") as f:
@@ -78,6 +78,10 @@ def prepare_run_dir(uuid, parameters):
         del write_parameters["run_order"]
         f.write(dumps(write_parameters, ensure_ascii=False, indent=4))
         f.write("\n")
+    run_dir.joinpath("stdout.log").touch()
+    run_dir.joinpath("stderr.log").touch()
+    run_dir.joinpath(PID_INFO_FILE_NAME).touch()
+    run_dir.joinpath(UPLOAD_URL_FILE_NAME).touch()
 
 
 def fork_run(uuid):
@@ -113,6 +117,8 @@ def get_run_info(run_id):
         run_info["workflow_engine"] = d_info["workflow_engine"]
     with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="r") as f:
         run_info["run_order"] = f.read()
+    with run_dir.joinpath(UPLOAD_URL_FILE_NAME).open(mode="r") as f:
+        run_info["upload_url"] = f.read().strip()
     with run_dir.joinpath("stdout.log").open(mode="r") as f:
         run_info["stdout"] = f.read()
     with run_dir.joinpath("stderr.log").open(mode="r") as f:
