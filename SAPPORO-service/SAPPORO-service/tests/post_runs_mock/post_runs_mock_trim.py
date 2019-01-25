@@ -3,7 +3,7 @@ import requests
 from pathlib import Path
 
 
-RUN_ORDER_FILE_PATH = Path(__file__).absolute().parent.joinpath("trim.yml")
+RUN_ORDER_FILE_PATH = Path(__file__).resolve().parent.joinpath("trim.yml")
 URL = "http://localhost:8002/runs"
 
 

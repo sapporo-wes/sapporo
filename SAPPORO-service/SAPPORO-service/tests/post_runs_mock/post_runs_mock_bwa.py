@@ -3,7 +3,7 @@ import requests
 from pathlib import Path
 
 
-RUN_ORDER_FILE_PATH = Path(__file__).absolute().parent.joinpath("bwa.yml")
+RUN_ORDER_FILE_PATH = Path(__file__).resolve().parent.joinpath("bwa.yml")
 URL = "http://localhost:8002/runs"
 
 

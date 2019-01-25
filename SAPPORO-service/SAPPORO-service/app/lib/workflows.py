@@ -10,8 +10,6 @@ def read_workflow_setting_file():
     data["workflows"] = []
     for workflow in workflow_info["workflows"]:
         location = resolve_workflow_file_path(workflow["location"])
-        if location is None:
-            continue
         del workflow["location"]
         with location.open(mode="r") as f:
             workflow["content"] = f.read()
@@ -22,12 +20,12 @@ def read_workflow_setting_file():
 
 def resolve_workflow_file_path(location):
     if location[0] == "/":
-        path = Path(location)
+        path = Path(location).absolute()
     elif location[0] == ".":
         path = WORKFLOW_INFO_FILE_PATH.parent.joinpath(location).absolute()
     else:
         path = WORKFLOW_INFO_FILE_PATH.parent.joinpath(location).absolute()
-    if path.exists() is False:
-        return None
+    assert path.exists() is True, "File does not exist, Check your workflow-info.yml: {}".format(location)
+    assert path.is_dir() is False, "Location is Dir, Check your workflow-info.yml: {}".format(location)
 
     return path
