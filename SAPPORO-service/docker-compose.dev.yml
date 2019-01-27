@@ -1,11 +1,11 @@
 version: "3"
 services:
   app:
-    image: sapporo-api-dev
+    image: sapporo-service-dev
     build:
       context: .
       dockerfile: Dockerfile-dev
-    container_name: SAPPORO-api-dev
+    container_name: SAPPORO-service-dev
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
