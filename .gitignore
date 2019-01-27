@@ -3,7 +3,8 @@ SAPPORO-service/SAPPORO-service/tests/post_runs_mock/trim.yml
 SAPPORO-service/SAPPORO-service/tests/post_runs_mock/bwa.yml
 .DS_Store
 .vscode/
-
+Pipfile
+Pipfile.lock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

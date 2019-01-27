@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 ENV_FILE_NAME = "SAPPORO-service.dev.env"
 ENV_FILE_PATH = Path(__file__).absolute(
-).parent.parent.joinpath(ENV_FILE_NAME)
+).parent.parent.parent.joinpath(ENV_FILE_NAME)
 load_dotenv(dotenv_path=ENV_FILE_PATH)
 
 PARAMS = [
