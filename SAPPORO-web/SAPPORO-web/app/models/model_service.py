@@ -1,14 +1,26 @@
 # coding: utf-8
+from secrets import token_hex
+
 import requests
 from django.db import models
+from django.http import Http404
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from factory import LazyAttribute, fuzzy
+from factory.django import DjangoModelFactory
 from requests.exceptions import RequestException
+
+
+def _get_token():
+    # Cannot use lambda in Django model default
+    return token_hex(16)
 
 
 class CommonInfo(models.Model):
     created_at = models.DateTimeField(_("Created date"), default=timezone.now)
     updated_at = models.DateTimeField(_("Updated date"), auto_now=True)
+    token = models.CharField(_("Token"), max_length=16,
+                             unique=True, default=_get_token, primary_key=True)
 
     class Meta:
         abstract = True
@@ -29,92 +41,64 @@ class Service(CommonInfo):
     def __str__(self):
         return "Service: {}".format(self.name)
 
-    def get_dict_response(self):
-        # Communication check with api server is validated in form
-        api_server_url = self.api_server_url
-        try:
-            d_res = requests.get(
-                "http://" + api_server_url + "/service-info").json()
-        except RequestException:
-            return False
-
-        return d_res
-
-    def insert_from_dict_response(self, d_res):
+    def insert_from_form(self, api_server_url, server_name, d_response):
+        self.name = server_name
+        self.api_server_url = api_server_url
+        self.auth_instructions_url = d_response["auth_instructions_url"]
+        self.contact_info_url = d_response["contact_info_url"]
         self.save()
-        for item in d_res["workflow_engines"]:
-            workflow_engine = WorkflowEngine()
-            workflow_engine.service = self
-            workflow_engine.name = item["name"]
-            workflow_engine.version = item["version"]
-            workflow_engine.save()
-            for item_2 in item["workflow_types"]:
-                workflow_type = WorkflowType()
-                workflow_type.workflow_engine = workflow_engine
-                workflow_type.type = item_2["type"]
-                workflow_type.version = item_2["version"]
-                workflow_type.save()
-        for val in d_res["supported_wes_versions"]:
-            supported_wes_version = SupportedWesVersion()
-            supported_wes_version.service = self
-            supported_wes_version.wes_version = val
-            supported_wes_version.save()
-        for item in d_res["state_counts"]:
-            state_count = StateCount()
-            state_count.service = self
-            state_count.state = item["state"]
-            state_count.count = item["count"]
-            state_count.save()
-        self.auth_instructions_url = d_res["auth_instructions_url"]
-        self.contact_info_url = d_res["contact_info_url"]
+        for workflow_engine in d_response["workflow_engines"]:
+            obj_workflow_engine = WorkflowEngineFactory(
+                service=self,
+                name=workflow_engine["name"],
+                version=workflow_engine["version"],
+            )
+            for workflow_type in workflow_engine["workflow_types"]:
+                WorkflowTypeFactory(
+                    workflow_engine=obj_workflow_engine,
+                    type=workflow_type["type"],
+                    version=workflow_type["version"],
+                )
+        for wes_version in d_response["supported_wes_versions"]:
+            SupportedWesVersionFactory(
+                service=self,
+                wes_version=wes_version,
+            )
 
-    def expand_to_dict(self):
-        ret_dict = {
-            "name": self.name,
-            "api_server_url": self.api_server_url,
-            "auth_instructions_url": self.auth_instructions_url,
-            "contact_info_url": self.contact_info_url,
-            "workflow_engines": [],
-            "supported_wes_versions": [],
-            "state_counts": [],
-        }
-        for workflow_engine in WorkflowEngine.objects.filter(service__id=self.id):
-            d_engine = dict()
-            d_engine["name"] = workflow_engine.name
-            d_engine["version"] = workflow_engine.version
-            d_engine["workflow_types"] = []
-            for workflow_type in WorkflowType.objects.filter(workflow_engine__id=workflow_engine.id):
-                d_workflow_type = dict()
-                d_workflow_type["type"] = workflow_type.type
-                d_workflow_type["version"] = workflow_type.version
-                d_engine["workflow_types"].append(d_workflow_type)
-            ret_dict["workflow_engines"].append(d_engine)
-        for supported_wes_version in SupportedWesVersion.objects.filter(service__id=self.id):
-            ret_dict["supported_wes_versions"].append(
-                supported_wes_version.wes_version)
-        for state_count in StateCount.objects.filter(service__id=self.id):
-            d_state_count = dict()
-            d_state_count["state"] = state_count.state
-            d_state_count["count"] = state_count.count
-            ret_dict["state_counts"].append(d_state_count)
-
-        return ret_dict
-
-    def get_workflows_dict_response(self):
-        # Communication check with api server is validated in form
-        api_server_url = self.api_server_url
+    def fetch_workflows(self):
+        # TODO update case
+        from .model_workflow import WorkflowFactory
         try:
-            d_res = requests.get(
-                "http://" + api_server_url + "/workflows").json()
+            d_response = requests.get(
+                "http://" + self.api_server_url + "/workflows").json()
         except RequestException:
-            return False
+            raise Http404
+        for workflow in d_response["workflows"]:
+            workflow = WorkflowFactory(
+                service=self,
+                name=workflow["name"],
+                type=workflow["type"],
+                version=workflow["version"],
+                content=workflow["content"],
+            )
 
-        return d_res
+
+class ServiceFactory(DjangoModelFactory):
+    class Meta:
+        model = Service
+
+    name = fuzzy.FuzzyText()
+    api_server_url = LazyAttribute(
+        lambda o: "{}_api_server_url@sapporo-example.com".format(o.name))
+    auth_instructions_url = LazyAttribute(
+        lambda o: "{}_auth_instructions_url@sapporo-example.com".format(o.name))
+    contact_info_url = LazyAttribute(
+        lambda o: "{}_contact_info_url@sapporo-example.com".format(o.name))
 
 
 class WorkflowEngine(CommonInfo):
     service = models.ForeignKey(Service, verbose_name=_(
-        "Belong service"), on_delete=models.CASCADE)
+        "Belong service"), on_delete=models.CASCADE, related_name="workflow_engines")
     name = models.CharField(_("Workflow engine name"), max_length=64)
     version = models.CharField(_("Workflow engine version"), max_length=64)
 
@@ -127,9 +111,14 @@ class WorkflowEngine(CommonInfo):
         return "Workflow Engine: {}".format(self.name)
 
 
+class WorkflowEngineFactory(DjangoModelFactory):
+    class Meta:
+        model = WorkflowEngine
+
+
 class WorkflowType(CommonInfo):
     workflow_engine = models.ForeignKey(WorkflowEngine, verbose_name=_(
-        "Belong workflow engine"), on_delete=models.CASCADE)
+        "Belong workflow engine"), on_delete=models.CASCADE, related_name="workflow_types")
     type = models.CharField(_("Workflow type"), max_length=64)
     version = models.CharField(_("Workflow version"), max_length=64)
 
@@ -142,9 +131,14 @@ class WorkflowType(CommonInfo):
         return "Workflow Type: {} {}".format(self.type, self.version)
 
 
+class WorkflowTypeFactory(DjangoModelFactory):
+    class Meta:
+        model = WorkflowType
+
+
 class SupportedWesVersion(CommonInfo):
     service = models.ForeignKey(Service, verbose_name=_(
-        "Belong service"), on_delete=models.CASCADE)
+        "Belong service"), on_delete=models.CASCADE, related_name="supported_wes_versions")
     wes_version = models.CharField(_("Wes version"), max_length=64)
 
     class Meta:
@@ -156,16 +150,6 @@ class SupportedWesVersion(CommonInfo):
         return "Supported Wes Version: {}".format(self.wes_version)
 
 
-class StateCount(CommonInfo):
-    service = models.ForeignKey(Service, verbose_name=_(
-        "Belong service"), on_delete=models.CASCADE)
-    state = models.CharField(_("State"), max_length=64)
-    count = models.IntegerField(_("Counte"))
-
+class SupportedWesVersionFactory(DjangoModelFactory):
     class Meta:
-        db_table = "state_count"
-        verbose_name = "state_count"
-        verbose_name_plural = "state_counts"
-
-    def __str__(self):
-        return "State Count: {}, {}".format(self.state, str(self.count))
+        model = SupportedWesVersion

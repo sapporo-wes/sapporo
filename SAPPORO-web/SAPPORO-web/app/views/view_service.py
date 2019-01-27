@@ -2,7 +2,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views.generic import View
-from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 from app.models import Service, Workflow
 
@@ -24,12 +24,13 @@ class ServiceDetailView(LoginRequiredMixin, View):
     raise_exception = True
 
     def get(self, request, service_name):
-        service = get_object_or_404(Service, name=service_name)
-        workflows = Workflow.objects.filter(service__id=service.id)
-        service = service.expand_to_dict()
-        workflows = [workflow.expand_to_dict() for workflow in workflows]
+        service = Service.objects.filter(name=service_name).prefetch_related("workflows").prefetch_related(
+            "workflow_engines__workflow_types").prefetch_related(
+            "supported_wes_versions")
+        if len(service) == 0:
+            raise Http404
         context = {
             "service": service,
-            "workflows": workflows,
         }
+
         return render(request, "app/service_detail.html", context)

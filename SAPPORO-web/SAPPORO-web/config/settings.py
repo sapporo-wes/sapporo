@@ -1,20 +1,15 @@
 # coding: utf-8
 import os
 from distutils.util import strtobool
-from .env_loader import return_env_dict
-
-env_dict = return_env_dict()
+from .env_loader import d_config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ALLOWED_HOSTS = [env_dict["SAPPORO_web_HOST"],
-                 "localhost",
-                 "0.0.0.0",
-                 "127.0.0.1",
-                 ]
-DEBUG = bool(strtobool(env_dict["SAPPORO_web_DEBUG"]))
-LANGUAGE_CODE = env_dict["SAPPORO_web_LANGUAGE_CODE"]
-TIME_ZONE = env_dict["SAPPORO_web_TIME_ZONE"]
-SECRET_KEY = env_dict["SAPPORO_web_SECRET_KEY"]
+
+ALLOWED_HOSTS = [d_config["SAPPORO_web_HOST"]]
+DEBUG = d_config["SAPPORO_web_DEBUG"]
+LANGUAGE_CODE = d_config["SAPPORO_web_LANGUAGE_CODE"]
+TIME_ZONE = d_config["SAPPORO_web_TIME_ZONE"]
+SECRET_KEY = d_config["SAPPORO_web_SECRET_KEY"]
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -93,3 +88,13 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+if DEBUG:
+    INTERNAL_IPS = ["172.20.0.1", "172.18.0.1"]
+    MIDDLEWARE += [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
+
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]

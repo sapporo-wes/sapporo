@@ -5,11 +5,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-dev
-    container_name: SAPPORO-web-dev
+    container_name: sapporo-web-dev
     restart: always
     volumes:
       - .:/opt/SAPPORO-web
     ports:
       - 8001:8001
+    networks:
+      - default
+      - sapporo-service_default
     env_file: ./SAPPORO-web.dev.env
     command: ["tail", "-f", "/dev/null"]
+networks:
+  sapporo-service_default:
+    external: true

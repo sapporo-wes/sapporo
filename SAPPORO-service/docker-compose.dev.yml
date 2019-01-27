@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-dev
-    container_name: SAPPORO-service-dev
+    container_name: sapporo-service-dev
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

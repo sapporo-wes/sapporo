@@ -54,7 +54,7 @@
                 <td class="align-middle"><a href="{% url 'app:service_detail' service_name=service.name %}">{{ service.name }}</a></td>
                 <td class="align-middle">{{ service.api_server_url }}</td>
                 <td class="align-middle">
-                  {% for workflow_engine in service.workflow_engines %}
+                  {% for workflow_engine in service.workflow_engines.all %}
                     {% if forloop.counter == service.workflow_engines|length %}
                       {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}
                     {% else %}
