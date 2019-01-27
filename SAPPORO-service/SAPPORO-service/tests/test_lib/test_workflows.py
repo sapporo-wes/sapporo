@@ -1,7 +1,7 @@
 # coding: utf-8
+import unittest
 from pathlib import Path
 from sys import path
-import unittest
 
 try:
     base_dir = Path(__file__).resolve().parent.parent.parent
@@ -11,11 +11,6 @@ except:
 
 
 class TestWorkflows(unittest.TestCase):
-    def setUp(self):
-        from app.lib.util import read_workflow_info, read_service_info
-        self.workflow_info = read_workflow_info()
-        self.read_service_info = read_service_info()
-
     def test_read_workflow_setting_file(self):
         from app.lib.workflows import read_workflow_setting_file
         data = read_workflow_setting_file()

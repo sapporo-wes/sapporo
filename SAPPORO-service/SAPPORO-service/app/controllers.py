@@ -1,11 +1,39 @@
 # coding: utf-8
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from .lib.runs import cancel_run, execute, get_run_info, get_run_status_list
 from .lib.util import read_service_info
 from .lib.workflows import read_workflow_setting_file
 
 bp_app = Blueprint("app", __name__)
+
+
+@bp_app.errorhandler(400)
+@bp_app.errorhandler(403)
+@bp_app.errorhandler(404)
+@bp_app.errorhandler(500)
+def error_handler(error):
+    response = {
+        "msg": error.description,
+        "status_code": error.code,
+    }
+    response = jsonify(response)
+    response.status_code = error.code
+    return response
+
+
+@bp_app.errorhandler(Exception)
+def error_handler_exception(exception):
+    import traceback
+    current_app.logger.error(exception.args[0])
+    traceback.print_exc()
+    response = {
+        "msg": "The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.: {}".format(exception.args[0]),
+        "status_code": 500,
+    }
+    response = jsonify(response)
+    response.status_code = 500
+    return response
 
 
 # curl -X GET localhost:8002/service-info
@@ -38,9 +66,7 @@ def get_runs():
 # python3 ./tests/post_runs_mock/post_runs_mock_trim.py
 @bp_app.route("/runs", methods=["POST"])
 def post_runs():
-    fields = [field for field in request.form]
-    values = [request.form[field] for field in request.form]
-    parameters = dict(zip(fields, values))
+    parameters = dict(request.form)
     parameters["run_order"] = request.files["run_order"]
     data = execute(parameters)
     response = jsonify(data)

@@ -25,7 +25,7 @@ def resolve_workflow_file_path(location):
         path = WORKFLOW_INFO_FILE_PATH.parent.joinpath(location).absolute()
     else:
         path = WORKFLOW_INFO_FILE_PATH.parent.joinpath(location).absolute()
-    assert path.exists() is True, "File does not exist, Check your workflow-info.yml: {}".format(location)
-    assert path.is_dir() is False, "Location is Dir, Check your workflow-info.yml: {}".format(location)
+    assert path.exists() is True, "File does not exist, Check workflow-info.yml: {}".format(location)
+    assert path.is_dir() is False, "Location is Dir, Check workflow-info.yml: {}".format(location)
 
     return path
