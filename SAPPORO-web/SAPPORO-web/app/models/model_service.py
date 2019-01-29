@@ -54,11 +54,11 @@ class Service(CommonInfo):
                 version=workflow_engine["version"],
             )
             for workflow_type in workflow_engine["workflow_types"]:
-                WorkflowTypeFactory(
-                    workflow_engine=obj_workflow_engine,
+                workflow_type = WorkflowTypeFactory(
                     type=workflow_type["type"],
                     version=workflow_type["version"],
                 )
+                obj_workflow_engine.workflow_types.add(workflow_type)
         for wes_version in d_response["supported_wes_versions"]:
             SupportedWesVersionFactory(
                 service=self,
@@ -74,12 +74,21 @@ class Service(CommonInfo):
         except RequestException:
             raise Http404
         for workflow in d_response["workflows"]:
+            workflow_type = WorkflowType.objects.filter(
+                type=workflow["type"], version=workflow["version"])
+            if len(workflow_type) == 0:
+                workflow_type = WorkflowTypeFactory(
+                    type=workflow["type"],
+                    version=workflow["version"],
+                )
+            else:
+                workflow_type = workflow_type.first()
             workflow = WorkflowFactory(
                 service=self,
                 name=workflow["name"],
-                type=workflow["type"],
-                version=workflow["version"],
+                workflow_type=workflow_type,
                 content=workflow["content"],
+                job_template=workflow["job_template"]
             )
 
 
@@ -96,29 +105,7 @@ class ServiceFactory(DjangoModelFactory):
         lambda o: "{}_contact_info_url@sapporo-example.com".format(o.name))
 
 
-class WorkflowEngine(CommonInfo):
-    service = models.ForeignKey(Service, verbose_name=_(
-        "Belong service"), on_delete=models.CASCADE, related_name="workflow_engines")
-    name = models.CharField(_("Workflow engine name"), max_length=64)
-    version = models.CharField(_("Workflow engine version"), max_length=64)
-
-    class Meta:
-        db_table = "workflow_engine"
-        verbose_name = "workflow_engine"
-        verbose_name_plural = "workflow_engines"
-
-    def __str__(self):
-        return "Workflow Engine: {}".format(self.name)
-
-
-class WorkflowEngineFactory(DjangoModelFactory):
-    class Meta:
-        model = WorkflowEngine
-
-
 class WorkflowType(CommonInfo):
-    workflow_engine = models.ForeignKey(WorkflowEngine, verbose_name=_(
-        "Belong workflow engine"), on_delete=models.CASCADE, related_name="workflow_types")
     type = models.CharField(_("Workflow type"), max_length=64)
     version = models.CharField(_("Workflow version"), max_length=64)
 
@@ -134,6 +121,28 @@ class WorkflowType(CommonInfo):
 class WorkflowTypeFactory(DjangoModelFactory):
     class Meta:
         model = WorkflowType
+
+
+class WorkflowEngine(CommonInfo):
+    service = models.ForeignKey(Service, verbose_name=_(
+        "Belong service"), on_delete=models.CASCADE, related_name="workflow_engines")
+    name = models.CharField(_("Workflow engine name"), max_length=64)
+    version = models.CharField(_("Workflow engine version"), max_length=64)
+    workflow_types = models.ManyToManyField(
+        WorkflowType, verbose_name=_("Excutable workflow types"), related_name="workflow_engines")
+
+    class Meta:
+        db_table = "workflow_engine"
+        verbose_name = "workflow_engine"
+        verbose_name_plural = "workflow_engines"
+
+    def __str__(self):
+        return "Workflow Engine: {}".format(self.name)
+
+
+class WorkflowEngineFactory(DjangoModelFactory):
+    class Meta:
+        model = WorkflowEngine
 
 
 class SupportedWesVersion(CommonInfo):

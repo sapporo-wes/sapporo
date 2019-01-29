@@ -7,6 +7,7 @@ Django==2.1.4
 django-allauth==0.38.0
 django-bootstrap4==0.0.7
 django-debug-toolbar==1.11
+django-extensions==2.1.4
 factory-boy==2.11.1
 Faker==1.0.2
 Flask==1.0.2
@@ -15,6 +16,9 @@ itsdangerous==1.1.0
 Jinja2==2.10
 MarkupSafe==1.1.0
 oauthlib==2.1.0
+pydotplus==2.0.2
+pygraphviz==1.5
+pyparsing==2.3.1
 python-dateutil==2.7.5
 python-dotenv==0.10.1
 python3-openid==3.1.0
