@@ -45,6 +45,7 @@
               <th scope="col"><div class="text-center">Service Name</div></th>
               <th scope="col"><div class="text-center">API URL</div></th>
               <th scope="col"><div class="text-center">Workflow Engines</div></th>
+              <th scope="col"><div class="text-center">Workflows</div></th>
               <th scope="col"><div class="text-center">Delete</div></th>
             </tr>
           </thead>
@@ -55,10 +56,19 @@
                 <td class="align-middle">{{ service.api_server_url }}</td>
                 <td class="align-middle">
                   {% for workflow_engine in service.workflow_engines.all %}
-                    {% if forloop.counter == service.workflow_engines|length %}
+                    {% if forloop.counter == service.workflow_engines.all|length %}
                       {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}
                     {% else %}
                       {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}<br />
+                    {% endif %}
+                  {% endfor %}
+                </td>
+                <td class="align-middle">
+                  {% for workflow in service.workflows.all %}
+                    {% if forloop.counter == service.workflows.all|length %}
+                      <a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a>
+                    {% else %}
+                      <a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a><br />
                     {% endif %}
                   {% endfor %}
                 </td>

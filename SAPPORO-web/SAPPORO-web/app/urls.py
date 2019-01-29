@@ -20,10 +20,10 @@ urlpatterns = [
     path("services/<str:service_name>/",
          ServiceDetailView.as_view(), name="service_detail"),
     path("workflows/", WorkflowListView.as_view(), name="workflow_list"),
-    path("workflows/<slug:workflow_unique_id>/",
+    path("workflows/<slug:workflow_token>/",
          WorkflowDetailView.as_view(), name="workflow_detail"),
     path("runs/", RunListView.as_view(), name="run_list"),
-    path("runs/<slug:run_unique_id>/",
+    path("runs/<slug:run_token>/",
          RunDetailView.as_view(), name="run_detail"),
     path("<str:user_name>/", UserHomeView.as_view(), name="user_home"),
 ]

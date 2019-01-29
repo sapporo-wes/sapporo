@@ -13,11 +13,17 @@ class WorkflowListView(LoginRequiredMixin, View):
         context = {
             "workflows": workflows,
         }
+
         return render(request, "app/workflow_list.html", context)
 
 
 class WorkflowDetailView(LoginRequiredMixin, View):
     raise_exception = True
 
-    def get(self, request, workflow_unique_id):
-        return render(request, "app/workflow_detail.html")
+    def get(self, request, workflow_token):
+        workflow = Workflow.objects.get(token=workflow_token)
+        context = {
+            "workflow": workflow,
+        }
+
+        return render(request, "app/workflow_detail.html", context)

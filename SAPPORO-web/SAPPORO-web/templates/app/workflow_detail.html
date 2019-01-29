@@ -7,10 +7,46 @@
   <div class="row justify-content-center">
     <div class="col-10">
       <h2>SAPPORO-web Workflow Detail</h2>
-      <hr />
       <p class="lead">
         Screen for managing Workflow
       </p>
+      <hr />
     </div>
   </div>
+
+  <div class="row justify-content-center">
+    <div class="col-9">
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col"><div class="text-center">Name</div></th>
+            <th scope="col"><div class="text-center">Service</div></th>
+            <th scope="col"><div class="text-center">Type</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="align-middle">{{ workflow.name }}</td>
+            <td class="align-middle"><a href="{% url 'app:service_detail' service_name=workflow.service.name %}">{{ workflow.service.name }}</a></td>
+            <td class="align-middle">{{ workflow.type }}:&nbsp;{{ workflow.version }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <h5>Workflow file content</h5>
+<pre class="prettyprint linenums lang-yaml">
+{{ workflow.content }}
+</pre>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <a class="btn btn-outline-secondary" href="{% url 'app:workflow_list' %}" role="button">Back</a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sunburst"></script>
 {% endblock %}

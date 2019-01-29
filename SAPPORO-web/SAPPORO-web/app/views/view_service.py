@@ -4,15 +4,15 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.http import Http404
 
-from app.models import Service, Workflow
+from app.models import Service
 
 
 class ServiceListView(LoginRequiredMixin, View):
     raise_exception = True
 
     def get(self, request):
-        services = [service.expand_to_dict()
-                    for service in Service.objects.all()]
+        services = Service.objects.all().prefetch_related(
+            "workflow_engines").prefetch_related("workflows")
         context = {
             "services": services,
         }
@@ -24,8 +24,8 @@ class ServiceDetailView(LoginRequiredMixin, View):
     raise_exception = True
 
     def get(self, request, service_name):
-        service = Service.objects.filter(name=service_name).prefetch_related("workflows").prefetch_related(
-            "workflow_engines__workflow_types").prefetch_related(
+        service = Service.objects.filter(name=service_name).prefetch_related(
+            "workflows").prefetch_related("workflow_engines__workflow_types").prefetch_related(
             "supported_wes_versions")
         if len(service) == 0:
             raise Http404

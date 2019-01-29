@@ -52,7 +52,8 @@ class AdminServiceView(LoginRequiredMixin, View):
         return self.general_render(request, service_addition_form)
 
     def general_render(self, request, service_addition_form):
-        services = Service.objects.prefetch_related("workflow_engines")
+        services = Service.objects.all().prefetch_related(
+            "workflow_engines").prefetch_related("workflows")
         context = {
             "services": services,
             "service_addition_form": service_addition_form,
