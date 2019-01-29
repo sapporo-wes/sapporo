@@ -1,9 +1,11 @@
 workflows:
   - name: trimming_and_qc
-    location: ./test_workflow/trimming_and_qc.cwl
+    workflow_location: ./test_workflow/trimming_and_qc.cwl
+    job_template_location: ./test_workflow/trimming_and_qc.json
     type: CWL
     version: v1.0
   - name: bwa_mapping_pe
-    location: ./test_workflow/bwa_mapping_pe.cwl
+    workflow_location: ./test_workflow/bwa_mapping_pe.cwl
+    job_template_location: ./test_workflow/bwa_mapping_pe.json
     type: CWL
     version: v1.0

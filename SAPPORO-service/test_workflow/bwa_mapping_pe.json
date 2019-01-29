@@ -1,0 +1,8 @@
+s3_upload_dir_name: cwl_upload  # default value of type "string".
+s3_bucket: a_string  # type "string"
+nthreads: 2  # default value of type "int". (optional)
+fastq2_url: a_string  # type "string"
+fastq1_url: a_string  # type "string"
+fasta_url: a_string  # type "string"
+aws_secret_access_key: a_string  # type "string"
+aws_access_key_id: a_string  # type "string"

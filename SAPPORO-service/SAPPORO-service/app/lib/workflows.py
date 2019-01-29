@@ -9,10 +9,16 @@ def read_workflow_setting_file():
     data = dict()
     data["workflows"] = []
     for workflow in workflow_info["workflows"]:
-        location = resolve_workflow_file_path(workflow["location"])
-        del workflow["location"]
-        with location.open(mode="r") as f:
+        workflow_location = resolve_workflow_file_path(
+            workflow["workflow_location"])
+        job_template_location = resolve_workflow_file_path(
+            workflow["job_template_location"])
+        del workflow["workflow_location"]
+        del workflow["job_template_location"]
+        with workflow_location.open(mode="r") as f:
             workflow["content"] = f.read()
+        with job_template_location.open(mode="r") as f:
+            workflow["job_template"] = f.read()
         data["workflows"].append(workflow)
 
     return data

@@ -262,6 +262,9 @@ definitions:
             content:
               type: string
               description: Workflow file's content.
+            job_template:
+              type: string
+              description: Workflow job template.
   ErrorResponse:
     description: >-
       An object that can optionally include information about the error.

@@ -51,7 +51,7 @@ def confirm_exist_workflow(workflow_name):
     for workflow in workflow_info["workflows"]:
         if workflow["name"] == workflow_name:
             workflow_location = resolve_workflow_file_path(
-                workflow["location"])
+                workflow["workflow_location"])
             return workflow["type"], workflow["version"], workflow_location
     abort(400, "Workflow does not exist: {}".format(workflow_name))
 

@@ -8,7 +8,7 @@ from .config import d_config
 
 bp_app = Blueprint("app", __name__)
 
-if d_config["DEBUG"]:
+if d_config["DEBUG"] is False:
     @bp_app.errorhandler(400)
     @bp_app.errorhandler(403)
     @bp_app.errorhandler(404)
