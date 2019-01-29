@@ -11,8 +11,8 @@ class ServiceListView(LoginRequiredMixin, View):
     raise_exception = True
 
     def get(self, request):
-        services = Service.objects.all().prefetch_related(
-            "workflow_engines").prefetch_related("workflows")
+        services = Service.objects.prefetch_related(
+            "workflow_engines", "workflows").all()
         context = {
             "services": services,
         }
@@ -25,9 +25,8 @@ class ServiceDetailView(LoginRequiredMixin, View):
 
     def get(self, request, service_name):
         service = Service.objects.filter(name=service_name).prefetch_related(
-            "workflows").prefetch_related("workflow_engines__workflow_types").prefetch_related(
-            "supported_wes_versions")
-        if len(service) == 0:
+            "workflows", "workflow_engines__workflow_types", "supported_wes_versions").first()
+        if service is None:
             raise Http404
         context = {
             "service": service,

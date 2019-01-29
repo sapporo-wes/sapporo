@@ -3,7 +3,7 @@ from app.views import (AdminHomeView, AdminServiceView, HomeView,
                        RunDetailView, RunListView, ServiceDetailView,
                        ServiceListView, SignupView, UserHomeView,
                        WorkflowDetailView, WorkflowListView,
-                       WorkflowPreparationView)
+                       WorkflowPrepareView)
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
 
@@ -22,8 +22,8 @@ urlpatterns = [
     path("workflows/", WorkflowListView.as_view(), name="workflow_list"),
     path("workflows/<slug:workflow_token>/",
          WorkflowDetailView.as_view(), name="workflow_detail"),
-    path("workflows/<slug:workflow_token>/preparation",
-         WorkflowPreparationView.as_view(), name="workflow_preparation"),
+    path("workflows/<slug:workflow_token>/prepare",
+         WorkflowPrepareView.as_view(), name="workflow_prepare"),
     path("runs/", RunListView.as_view(), name="run_list"),
     path("runs/<slug:run_token>/",
          RunDetailView.as_view(), name="run_detail"),

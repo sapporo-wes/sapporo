@@ -7,7 +7,7 @@
   <br />
   <div class="row justify-content-center">
     <div class="col-10">
-      <h2>SAPPORO-web Service Detail: {{ service.0.name }}</h2>
+      <h2>SAPPORO-web Service Detail: {{ service.name }}</h2>
       <p class="lead">
         Details about registered services
       </p>
@@ -27,13 +27,13 @@
         <tbody>
           <tr>
             <td class="align-middle">API Service URL</td>
-            <td class="align-middle">{{ service.0.api_server_url }}</td>
+            <td class="align-middle">{{ service.api_server_url }}</td>
           </tr>
           <tr>
             <td class="align-middle">Worfklow Engines</td>
             <td class="align-middle">
-              {% for workflow_engine in service.0.workflow_engines.all %}
-                {% if forloop.counter == service.0.workflow_engines.all|length %}
+              {% for workflow_engine in service.workflow_engines.all %}
+                {% if forloop.counter == service.workflow_engines.all|length %}
                   {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}
                 {% else %}
                   {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}<br />
@@ -44,8 +44,8 @@
           <tr>
             <td class="align-middle">Workflow Types</td>
             <td class="align-middle">
-              {% for workflow_engine in service.0.workflow_engines.all %}
-                {% if forloop.counter == service.0.workflow_engines.all|length %}
+              {% for workflow_engine in service.workflow_engines.all %}
+                {% if forloop.counter == service.workflow_engines.all|length %}
                   {% for workflow_type in workflow_engine.workflow_types.all %}
                     {% if forloop.counter == workflow_engine.workflow_types.all|length %}
                       {{ workflow_type.type }}:&nbsp;{{ workflow_type.version }}
@@ -68,8 +68,8 @@
           <tr>
             <td class="align-middle">Supported WES Versions</td>
             <td class="align-middle">
-              {% for supported_wes_version in service.0.supported_wes_versions.all %}
-                {% if forloop.counter == service.0.supported_wes_versions.all|length %}
+              {% for supported_wes_version in service.supported_wes_versions.all %}
+                {% if forloop.counter == service.supported_wes_versions.all|length %}
                   {{ supported_wes_version.wes_version }}
                 {% else %}
                   {{ supported_wes_version.wes_version }}<br />
@@ -79,11 +79,11 @@
           </tr>
           <tr>
             <td class="align-middle">Auth Instructions URL</td>
-            <td class="align-middle"><a href="{{ service.0.auth_instructions_url }}">{{ service.0.auth_instructions_url }}</a></td>
+            <td class="align-middle"><a href="{{ service.auth_instructions_url }}">{{ service.auth_instructions_url }}</a></td>
           </tr>
           <tr>
             <td class="align-middle">Contact Info URL</td>
-            <td class="align-middle"><a href="{{ service.0.contact_info_url }}">{{ service.0.contact_info_url }}</a></td>
+            <td class="align-middle"><a href="{{ service.contact_info_url }}">{{ service.contact_info_url }}</a></td>
           </tr>
         </tbody>
       </table>
@@ -108,7 +108,7 @@
           </tr>
         </thead>
         <tbody>
-        {% for workflow in service.0.workflows.all %}
+        {% for workflow in service.workflows.all %}
           <tr>
             <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a></td>
             <td class="align-middle">{{ workflow.workflow_type.type }}:&nbsp;{{ workflow.workflow_type.version }}</td>

@@ -23,6 +23,15 @@ class Workflow(CommonInfo):
     def __str__(self):
         return "Workflow: {}".format(self.name)
 
+    def find_excutable_engines(self):
+        excutable_engines = []
+        for workflow_engine in self.service.workflow_engines.all():
+            for workflow_type in workflow_engine.workflow_types.all():
+                if workflow_type.pk == self.workflow_type.pk:
+                    excutable_engines.append(workflow_engine)
+
+        return excutable_engines
+
 
 class WorkflowFactory(DjangoModelFactory):
     class Meta:

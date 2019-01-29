@@ -22,6 +22,7 @@
             <th scope="col"><div class="text-center">Name</div></th>
             <th scope="col"><div class="text-center">Service</div></th>
             <th scope="col"><div class="text-center">Type</div></th>
+            <th scope="col"><div class="text-center">Excutable engines</div></th>
           </tr>
         </thead>
         <tbody>
@@ -29,9 +30,23 @@
             <td class="align-middle">{{ workflow.name }}</td>
             <td class="align-middle"><a href="{% url 'app:service_detail' service_name=workflow.service.name %}">{{ workflow.service.name }}</a></td>
             <td class="align-middle">{{ workflow.workflow_type.type }}:&nbsp;{{ workflow.workflow_type.version }}</td>
+            <td class="align-middle">
+              {% for excutable_engine in excutable_engines %}
+                {% if forloop.counter == excutable_engines|length %}
+                  {{ excutable_engine.name }}:&nbsp;{{ excutable_engine.version }}
+                {% else %}
+                  {{ excutable_engine.name }}:&nbsp;{{ excutable_engine.version }}<br />
+                {% endif %}
+              {% endfor %}
+            </td>
           </tr>
         </tbody>
       </table>
+      <div class="row justify-content-center">
+        <div class="col-6">
+          <a class="btn btn-outline-primary btn-block" href="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" role="button">Prepare Run</a>
+        </div>
+      </div>
       <hr />
       <h5>Workflow file content</h5>
 <pre class="prettyprint linenums lang-yaml">

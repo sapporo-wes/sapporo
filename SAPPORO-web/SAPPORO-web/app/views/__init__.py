@@ -10,4 +10,4 @@ from .view_service import ServiceDetailView
 from .view_user import UserHomeView
 from .view_workflow import WorkflowListView
 from .view_workflow import WorkflowDetailView
-from .view_workflow import WorkflowPreparationView
+from .view_workflow import WorkflowPrepareView

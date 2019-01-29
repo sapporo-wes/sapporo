@@ -45,6 +45,7 @@
                     {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}<br />
                   {% endif %}
                 {% endfor %}
+              </td>
               <td class="align-middle">
                 {% for workflow in service.workflows.all %}
                   {% if forloop.counter == service.workflows.all|length %}
@@ -53,7 +54,6 @@
                     <a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a><br />
                   {% endif %}
                 {% endfor %}
-              </td>
               </td>
             </tr>
           {% endfor %}
