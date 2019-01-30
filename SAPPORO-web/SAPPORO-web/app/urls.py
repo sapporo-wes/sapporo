@@ -25,7 +25,7 @@ urlpatterns = [
     path("workflows/<slug:workflow_token>/prepare",
          WorkflowPrepareView.as_view(), name="workflow_prepare"),
     path("runs/", RunListView.as_view(), name="run_list"),
-    path("runs/<slug:run_token>/",
+    path("runs/<slug:run_id>/",
          RunDetailView.as_view(), name="run_detail"),
     path("<str:user_name>/", UserHomeView.as_view(), name="user_home"),
 ]

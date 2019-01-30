@@ -7,10 +7,58 @@
   <div class="row justify-content-center">
     <div class="col-10">
       <h2>SAPPORO-web Run Detail</h2>
-      <hr />
       <p class="lead">
         Screen for managing Run executed by User
       </p>
+      <hr />
     </div>
   </div>
+
+  <div class="row justify-content-center">
+    <div class="col-9">
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col"><div class="text-center">Workflow Name</div></th>
+            <th scope="col"><div class="text-center">Workflow Engine</div></th>
+            <th scope="col"><div class="text-center">Status</div></th>
+            <th scope="col"><div class="text-center">Upload URL</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_token=run.workflow.token %}">{{ run.workflow.name }}</a></td>
+            <td class="align-middle">{{ run.engine.name }}</td>
+            <td class="align-middle">{{ run.status }}</td>
+            <td class="align-middle">{{ run.upload_url }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <h5>Run Order</h5>
+<pre class="prettyprint linenums">
+{{ run.run_order }}
+</pre>
+      <hr />
+      <h5>Stdout</h5>
+<pre class="prettyprint linenums">
+{{ run.stdout }}
+</pre>
+      <hr />
+      <h5>Stderr</h5>
+<pre class="prettyprint linenums">
+{{ run.stderr }}
+</pre>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <a class="btn btn-outline-secondary" href="{% url 'app:run_list' %}" role="button">Back</a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sunburst"></script>
 {% endblock %}

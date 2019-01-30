@@ -49,7 +49,7 @@ class ServiceAdditionForm(forms.Form):
 class WorkflowPrepareForm(forms.Form):
     execution_engine = forms.ChoiceField(required=True)
 
-    def __init__(self, input_params, excutable_engines):
+    def __init__(self, input_params, excutable_engines, *args, **kwargs):
         """
         input_params -> list
             {
@@ -61,7 +61,7 @@ class WorkflowPrepareForm(forms.Form):
                 doc: str or None
             }
         """
-        super().__init__()
+        super().__init__(*args, **kwargs)
         for input_param in input_params:
             if input_param["type"] == "boolean":
                 self.fields[input_param["label"]] = forms.BooleanField()

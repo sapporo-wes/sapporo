@@ -10,3 +10,6 @@ from .model_service import SupportedWesVersionFactory
 
 from .model_workflow import Workflow
 from .model_workflow import WorkflowFactory
+
+from .model_run import Run
+from .model_run import RunFactory

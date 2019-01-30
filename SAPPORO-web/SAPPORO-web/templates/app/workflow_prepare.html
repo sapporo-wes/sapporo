@@ -18,9 +18,9 @@
       <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post">
           {% csrf_token %}
           {% bootstrap_form workflow_prepare_form %}
-        {% buttons %}
-          <input type="submit" class="btn btn-outline-primary" name="workflow_prepare_service" value="submit" />
-        {% endbuttons %}
+          {% buttons %}
+            <input type="submit" class="btn btn-outline-primary" name="workflow_prepare_form" value="Run" />
+          {% endbuttons %}
       </form>
     </div>
   </div>
