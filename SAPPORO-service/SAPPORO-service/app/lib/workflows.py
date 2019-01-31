@@ -11,14 +11,14 @@ def read_workflow_setting_file():
     for workflow in workflow_info["workflows"]:
         workflow_location = resolve_workflow_file_path(
             workflow["workflow_location"])
-        job_template_location = resolve_workflow_file_path(
-            workflow["job_template_location"])
+        run_order_template_location = resolve_workflow_file_path(
+            workflow["run_order_template_location"])
         del workflow["workflow_location"]
-        del workflow["job_template_location"]
+        del workflow["run_order_template_location"]
         with workflow_location.open(mode="r") as f:
             workflow["content"] = f.read()
-        with job_template_location.open(mode="r") as f:
-            workflow["job_template"] = f.read()
+        with run_order_template_location.open(mode="r") as f:
+            workflow["run_order_template"] = f.read()
         data["workflows"].append(workflow)
 
     return data

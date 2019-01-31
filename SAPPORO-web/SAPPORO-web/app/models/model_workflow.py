@@ -13,7 +13,7 @@ class Workflow(CommonInfo):
     workflow_type = models.ForeignKey(WorkflowType, verbose_name=_(
         "Workflow type"), on_delete=models.CASCADE, related_name="workflow")
     content = models.TextField(_("Workflow content"))
-    job_template = models.TextField(_("Workflow job template"))
+    run_order_template = models.TextField(_("Workflow run template"))
 
     class Meta:
         db_table = "workflow"

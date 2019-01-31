@@ -6,6 +6,8 @@ from pathlib import Path
 from sys import path
 from unittest.mock import MagicMock
 
+from werkzeug.exceptions import HTTPException
+
 try:
     base_dir = Path(__file__).resolve().parent.parent
     path.append(str(base_dir))
@@ -58,8 +60,7 @@ class TestControllers(unittest.TestCase):
         self.assertIsInstance(data, list)
 
     def test_post_runs_no_post_data(self):
-        response = self.app.post("/runs")
-        self.assertEqual(response.status_code, 400)
+        self.assertRaises(HTTPException, lambda: self.app.post("/runs"))
 
     def test_post_runs(self):
         import app.controllers

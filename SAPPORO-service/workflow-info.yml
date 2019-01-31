@@ -1,11 +1,11 @@
 workflows:
   - name: trimming_and_qc
     workflow_location: ./test_workflow/trimming_and_qc.cwl
-    job_template_location: ./test_workflow/trimming_and_qc_job_template.yml
+    run_order_template_location: ./test_workflow/trimming_and_qc_run_template.yml
     type: CWL
     version: v1.0
   - name: bwa_mapping_pe
     workflow_location: ./test_workflow/bwa_mapping_pe.cwl
-    job_template_location: ./test_workflow/bwa_mapping_pe_job_template.yml
+    run_order_template_location: ./test_workflow/bwa_mapping_pe_run_template.yml
     type: CWL
     version: v1.0

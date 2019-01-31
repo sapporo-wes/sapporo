@@ -240,8 +240,8 @@
 <p id="t14" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t15" class="stm run hide_run"><span class="nam">RUN_BASE_DIR</span> <span class="op">=</span> <span class="nam">SERVICE_BASE_DIR</span><span class="op">.</span><span class="nam">joinpath</span><span class="op">(</span><span class="str">"run"</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t16" class="stm run hide_run"><span class="nam">STATUS_FILE_NAME</span> <span class="op">=</span> <span class="str">"state.txt"</span><span class="strut">&nbsp;</span></p>
-<p id="t17" class="stm run hide_run"><span class="nam">RUN_ORDER_FILE_NAME</span> <span class="op">=</span> <span class="str">"run_order.json"</span><span class="strut">&nbsp;</span></p>
-<p id="t18" class="stm run hide_run"><span class="nam">RUN_INFO_FILE_NAME</span> <span class="op">=</span> <span class="str">"run_info.json"</span><span class="strut">&nbsp;</span></p>
+<p id="t17" class="stm run hide_run"><span class="nam">RUN_ORDER_FILE_NAME</span> <span class="op">=</span> <span class="str">"run_order.yaml"</span><span class="strut">&nbsp;</span></p>
+<p id="t18" class="stm run hide_run"><span class="nam">RUN_INFO_FILE_NAME</span> <span class="op">=</span> <span class="str">"run_info.yaml"</span><span class="strut">&nbsp;</span></p>
 <p id="t19" class="stm run hide_run"><span class="nam">PID_INFO_FILE_NAME</span> <span class="op">=</span> <span class="str">"run.pid"</span><span class="strut">&nbsp;</span></p>
 <p id="t20" class="stm run hide_run"><span class="nam">UPLOAD_URL_FILE_NAME</span> <span class="op">=</span> <span class="str">"upload_url.txt"</span><span class="strut">&nbsp;</span></p>
 <p id="t21" class="stm run hide_run"><span class="nam">POST_REQUEST_REQUIRED_PARAMETERS</span> <span class="op">=</span> <span class="op">[</span><span class="str">"run_order"</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
@@ -277,7 +277,7 @@
 <p id="t51" class="stm run hide_run">    <span class="key">for</span> <span class="nam">workflow</span> <span class="key">in</span> <span class="nam">workflow_info</span><span class="op">[</span><span class="str">"workflows"</span><span class="op">]</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t52" class="stm run hide_run">        <span class="key">if</span> <span class="nam">workflow</span><span class="op">[</span><span class="str">"name"</span><span class="op">]</span> <span class="op">==</span> <span class="nam">workflow_name</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t53" class="stm run hide_run">            <span class="nam">workflow_location</span> <span class="op">=</span> <span class="nam">resolve_workflow_file_path</span><span class="op">(</span><span class="strut">&nbsp;</span></p>
-<p id="t54" class="pln">                <span class="nam">workflow</span><span class="op">[</span><span class="str">"location"</span><span class="op">]</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t54" class="pln">                <span class="nam">workflow</span><span class="op">[</span><span class="str">"workflow_location"</span><span class="op">]</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t55" class="stm run hide_run">            <span class="key">return</span> <span class="nam">workflow</span><span class="op">[</span><span class="str">"type"</span><span class="op">]</span><span class="op">,</span> <span class="nam">workflow</span><span class="op">[</span><span class="str">"version"</span><span class="op">]</span><span class="op">,</span> <span class="nam">workflow_location</span><span class="strut">&nbsp;</span></p>
 <p id="t56" class="stm run hide_run">    <span class="nam">abort</span><span class="op">(</span><span class="num">400</span><span class="op">,</span> <span class="str">"Workflow does not exist: {}"</span><span class="op">.</span><span class="nam">format</span><span class="op">(</span><span class="nam">workflow_name</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t57" class="pln"><span class="strut">&nbsp;</span></p>
@@ -386,7 +386,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.5.2</a>,
-            created at 2019-01-27 14:03
+            created at 2019-01-31 08:14
         </p>
     </div>
 </div>

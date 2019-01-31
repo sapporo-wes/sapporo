@@ -26,8 +26,8 @@ run_toil() {
 
 # =============
 
-RUN_ORDER_FILE_NAME="run_order.json"
-RUN_INFO_FILE_NAME="run_info.json"
+RUN_ORDER_FILE_NAME="run_order.yaml"
+RUN_INFO_FILE_NAME="run_info.yaml"
 STATE_FILE_NAME="state.txt"
 LOG_STDOUT_FILE_NAME="stdout.log"
 LOG_STDERR_FILE_NAME="stderr.log"
@@ -62,6 +62,7 @@ for i in $(seq 0 $(($(cat ${workflow_info_file} | yq '.workflows | length') - 1)
   fi
 done
 
+# TODO SIGKILL = cancel
 trap 'echo "SYSTEM_ERROR" > ${state_file}' 1 2 3 9 15
 
 echo "RUNNING" > ${state_file}

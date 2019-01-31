@@ -14,8 +14,8 @@ from .workflows import resolve_workflow_file_path
 
 RUN_BASE_DIR = SERVICE_BASE_DIR.joinpath("run")
 STATUS_FILE_NAME = "state.txt"
-RUN_ORDER_FILE_NAME = "run_order.json"
-RUN_INFO_FILE_NAME = "run_info.json"
+RUN_ORDER_FILE_NAME = "run_order.yaml"
+RUN_INFO_FILE_NAME = "run_info.yaml"
 PID_INFO_FILE_NAME = "run.pid"
 UPLOAD_URL_FILE_NAME = "upload_url.txt"
 POST_REQUEST_REQUIRED_PARAMETERS = ["run_order",

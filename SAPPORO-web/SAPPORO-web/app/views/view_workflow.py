@@ -98,7 +98,7 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
         }
         response = requests.post(api_server_url, files=files, data=data)
         assert response.status_code == 200, "Workflow post error"
-        d_response = json.loads(response.text)
+        d_response = json.loads(response.json())
         run = RunFactory(
             user=user,
             run_id=d_response["run_id"],

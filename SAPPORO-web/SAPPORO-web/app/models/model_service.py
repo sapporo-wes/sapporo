@@ -88,7 +88,7 @@ class Service(CommonInfo):
                 name=workflow["name"],
                 workflow_type=workflow_type,
                 content=workflow["content"],
-                job_template=workflow["job_template"]
+                run_order_template=workflow["run_order_template"]
             )
 
 
