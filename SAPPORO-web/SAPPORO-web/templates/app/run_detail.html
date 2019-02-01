@@ -30,7 +30,7 @@
             <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_token=run.workflow.token %}">{{ run.workflow.name }}</a></td>
             <td class="align-middle">{{ run.engine.name }}</td>
             <td class="align-middle">{{ run.status }}</td>
-            <td class="align-middle">{{ run.upload_url }}</td>
+            <td class="align-middle"><a href="{{ run.upload_url }}">{{ run.upload_url }}</a></td>
           </tr>
         </tbody>
       </table>

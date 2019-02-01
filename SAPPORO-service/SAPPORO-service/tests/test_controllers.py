@@ -4,6 +4,7 @@ import json
 import unittest
 from pathlib import Path
 from sys import path
+from copy import deepcopy
 from unittest.mock import MagicMock
 
 from werkzeug.exceptions import HTTPException
@@ -64,6 +65,7 @@ class TestControllers(unittest.TestCase):
 
     def test_post_runs(self):
         import app.controllers
+        copy_execute = deepcopy(app.controllers.execute)
         app.controllers.execute = MagicMock(
             return_value={
                 "run_id": "cb934824-385d-46a2-b8bf-1204b9ac6d04"})
@@ -79,15 +81,19 @@ class TestControllers(unittest.TestCase):
         self.assertIn("run_id", data)
         self.assertEqual(
             "cb934824-385d-46a2-b8bf-1204b9ac6d04", data["run_id"])
+        app.controllers.execute = copy_execute
 
     def test_get_runs_uuid_int_id(self):
         import app.controllers
+        copy_get_run_info = deepcopy(app.controllers.get_run_info)
         app.controllers.get_run_info = MagicMock(return_value={"foo": "bar"})
         response = self.app.get("/runs/cb934824-385d-46a2-b8bf-1204b9ac6d04")
         self.assertEqual(response.status_code, 200)
+        app.controllers.get_run_info = copy_get_run_info
 
     def test_post_runs_cancel(self):
         import app.controllers
+        copy_cancel_run = deepcopy(app.controllers.cancel_run)
         app.controllers.cancel_run = MagicMock(
             return_value={
                 "run_id": "cb934824-385d-46a2-b8bf-1204b9ac6d04"})
@@ -98,3 +104,4 @@ class TestControllers(unittest.TestCase):
         self.assertIn("run_id", data)
         self.assertEqual(
             "cb934824-385d-46a2-b8bf-1204b9ac6d04", data["run_id"])
+        app.controllers.cancel_run = copy_cancel_run

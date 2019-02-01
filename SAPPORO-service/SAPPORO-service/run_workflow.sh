@@ -52,12 +52,12 @@ workflow_engine=$(cat ${run_info_file} | jq -r '.workflow_engine')
 workflow_name=$(cat ${run_info_file} | jq -r '.workflow_name')
 for i in $(seq 0 $(($(cat ${workflow_info_file} | yq '.workflows | length') - 1))); do
   name=$(cat ${workflow_info_file} | yq -r .workflows[$i].name)
-  location=$(cat ${workflow_info_file} | yq -r .workflows[$i].location)
+  workflow_location=$(cat ${workflow_info_file} | yq -r .workflows[$i].workflow_location)
   if [[ ${name} == ${workflow_name} ]]; then
-    if [[ $(echo ${location} | cut -c 1 ) == "/" ]]; then
-      workflow_file=location
+    if [[ $(echo ${workflow_location} | cut -c 1 ) == "/" ]]; then
+      workflow_file=workflow_location
     else
-      workflow_file=$(cd $(dirname ${service_base_dir}/${location}) && pwd)/$(basename ${location})
+      workflow_file=$(cd $(dirname ${service_base_dir}/${workflow_location}) && pwd)/$(basename ${workflow_location})
     fi
   fi
 done

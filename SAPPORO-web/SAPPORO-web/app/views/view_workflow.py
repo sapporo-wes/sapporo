@@ -67,8 +67,10 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
             workflow_prepare_form = WorkflowPrepareForm(
                 input_params, excutable_engines, request.POST)
             if workflow_prepare_form.is_valid():
-                workflow_engine = [engine for engine in excutable_engines if engine.token == workflow_prepare_form.cleaned_data["execution_engine"]][0]
-                run = self._post_run(request.user, workflow, workflow_engine, workflow_prepare_form.cleaned_data)
+                workflow_engine = [engine for engine in excutable_engines if engine.token ==
+                                   workflow_prepare_form.cleaned_data["execution_engine"]][0]
+                run = self._post_run(
+                    request.user, workflow, workflow_engine, workflow_prepare_form.cleaned_data)
                 return HttpResponseRedirect(reverse_lazy("app:run_detail", kwargs={"run_id": run.run_id}))
         else:
             workflow_prepare_form = WorkflowPrepareForm(
@@ -98,7 +100,7 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
         }
         response = requests.post(api_server_url, files=files, data=data)
         assert response.status_code == 200, "Workflow post error"
-        d_response = json.loads(response.json())
+        d_response = json.loads(response.text)
         run = RunFactory(
             user=user,
             run_id=d_response["run_id"],

@@ -38,8 +38,7 @@ class Run(CommonInfo):
             self.workflow.service.api_server_url + "/runs/" + str(self.run_id)
         response = requests.get(api_server_url)
         assert response.status_code == 200, "Get run error"
-        d_response = json.loads(response.json())
-        print(d_response)
+        d_response = json.loads(response.text)
         self.status = d_response["status"]
         self.stdout = d_response["stdout"]
         self.stderr = d_response["stderr"]
