@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+  SAPPORO-web Workflow Prepare
+{% endblock %}
+{% block content %}
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <h2>SAPPORO-web Workflow Prepare</h2>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post">
+          {% csrf_token %}
+          {% bootstrap_form workflow_prepare_form %}
+          {% buttons %}
+            <input type="submit" class="btn btn-outline-primary" name="workflow_prepare_form" value="Run" />
+          {% endbuttons %}
+      </form>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <a class="btn btn-outline-secondary" href="{% url 'app:workflow_list' %}" role="button">Back</a>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+input_string_default: default_string  # default value of type "string". (optional)
+input_string: a_string  # type "string"
+input_long_default: 1000000000000  # default value of type "long". (optional)
+input_long: 0  # type "long"
+input_int_default: 1  # default value of type "int". (optional)
+input_int: 0  # type "int"
+input_float_default: 10  # default value of type "float". (optional)
+input_float: 0.1  # type "float"
+input_double_default: 10000000000000000000000000000000000000000000000000  # default value of type "double". (optional)
+input_double: 0.1  # type "double"
+input_boolean_default: true  # default value of type "boolean". (optional)
+input_boolean: false  # type "boolean"
+input_File_default: ./test.txt  # default value of type "File". (optional)
+input_File:  # type "File"
+    class: File
+    path: a/file/path
+input_Directory_default: ./test_dir  # default value of type "Directory". (optional)
+input_Directory:  # type "Directory"
+    class: Directory
+    path: a/directory/path

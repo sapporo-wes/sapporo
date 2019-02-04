@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}
+  SAPPORO-web Workflow
+{% endblock %}
+{% block content %}
+  <br />
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <h2>SAPPORO-web Workflow Detail</h2>
+      <p class="lead">
+        Screen for managing Workflow
+      </p>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-9">
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col"><div class="text-center">Name</div></th>
+            <th scope="col"><div class="text-center">Service</div></th>
+            <th scope="col"><div class="text-center">Type</div></th>
+            <th scope="col"><div class="text-center">Excutable engines</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="align-middle">{{ workflow.name }}</td>
+            <td class="align-middle"><a href="{% url 'app:service_detail' service_name=workflow.service.name %}">{{ workflow.service.name }}</a></td>
+            <td class="align-middle">{{ workflow.workflow_type.type }}:&nbsp;{{ workflow.workflow_type.version }}</td>
+            <td class="align-middle">
+              {% for excutable_engine in excutable_engines %}
+                {% if forloop.counter == excutable_engines|length %}
+                  {{ excutable_engine.name }}:&nbsp;{{ excutable_engine.version }}
+                {% else %}
+                  {{ excutable_engine.name }}:&nbsp;{{ excutable_engine.version }}<br />
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="row justify-content-center">
+        <div class="col-6">
+          <a class="btn btn-outline-primary btn-block" href="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" role="button">Prepare Run</a>
+        </div>
+      </div>
+      <hr />
+      <h5>Workflow file content</h5>
+<pre class="prettyprint linenums lang-yaml">
+{{ workflow.content }}
+</pre>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <a class="btn btn-outline-secondary" href="{% url 'app:workflow_list' %}" role="button">Back</a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sunburst"></script>
+{% endblock %}

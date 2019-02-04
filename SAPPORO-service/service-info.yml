@@ -1,0 +1,10 @@
+workflow_engines:
+  - name: cwltool
+    version: 1.0.20181201184214
+    workflow_types:
+      - type: CWL
+        version: v1.0
+supported_wes_versions:
+  - v1.0.0
+auth_instructions_url: https://dummy_auth_instructions_url/
+contact_info_url: https://dummy_contact_info_url/

@@ -1,0 +1,23 @@
+FROM python:3.7-slim
+
+WORKDIR /opt/SAPPORO-web
+
+RUN apt update \
+ && apt install -y \
+    build-essential \
+    curl \
+    graphviz \
+    libgraphviz-dev \
+    pkg-config \
+    silversearcher-ag \
+    tree \
+    unzip \
+    vim \
+ && apt clean \
+ && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.dev.txt /opt/SAPPORO-web
+
+RUN pip install -r requirements.dev.txt
+
+CMD ["tail", "-f", "/dev/null"]

@@ -1,3 +1,9 @@
+SAPPORO-service/run/
+SAPPORO-service/SAPPORO-service/tests/post_runs_mock/trim.yml
+SAPPORO-service/SAPPORO-service/tests/post_runs_mock/bwa.yml
+.DS_Store
+.vscode/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -27,3 +33,5 @@ db.sqlite3
 # Flask stuff:
 instance/
 .webassets-cache
+migrations/
+SAPPORO-web/SAPPORO-web/coverage_html

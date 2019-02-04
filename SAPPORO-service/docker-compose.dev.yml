@@ -1,0 +1,19 @@
+version: "3"
+services:
+  app:
+    image: sapporo-service-dev
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    container_name: sapporo-service-dev
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /tmp:/tmp
+      - ${PWD}:${PWD}
+    working_dir: ${PWD}
+    ports:
+      - 8002:8002
+    env_file: ./SAPPORO-service.dev.env
+    command: ["tail", "-f", "/dev/null"]

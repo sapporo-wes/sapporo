@@ -1,0 +1,19 @@
+<!doctype html>
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery=True %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    {% include "./app/navbar.html" %}
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  {% block extra_js%}{% endblock %}
+  </body>
+</html>
