@@ -1,0 +1,33 @@
+version: "3"
+services:
+  app:
+    image: sapporo-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sapporo-service-app
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /tmp:/tmp
+      - ./SAPPORO-service:/opt/SAPPORO-service/SAPPORO-service
+      - ./config:/opt/SAPPORO-service/config
+      - ./log:/opt/SAPPORO-service/log
+      - ./run:/opt/SAPPORO-service/run
+    environment:
+      - DEBUG=True
+      - ENABLE_GET_RUNS=True
+    command: ["uwsgi", "/opt/SAPPORO-service/config/uwsgi.ini"]
+  web:
+    image: nginx:stable-alpine
+    container_name: sapporo-service-web
+    depends_on:
+      - app
+    restart: always
+    volumes:
+      - /tmp:/tmp
+      - ./log:/opt/SAPPORO-service/log
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 1122:80

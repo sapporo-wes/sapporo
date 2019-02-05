@@ -4,7 +4,7 @@ from flask import Blueprint, current_app, jsonify, request
 from .lib.runs import cancel_run, execute, get_run_info, get_run_status_list
 from .lib.util import read_service_info
 from .lib.workflows import read_workflow_setting_file
-from .config import d_config
+from .config import d_config, ENABLE_GET_RUNS
 
 bp_app = Blueprint("app", __name__)
 
@@ -54,13 +54,14 @@ def get_workflows_list():
     return response
 
 
-# curl -X GET localhost:8002/runs
-@bp_app.route("/runs", methods=["GET"])
-def get_runs():
-    data = get_run_status_list()
-    response = jsonify(data)
-    response.status_code = 200
-    return response
+if ENABLE_GET_RUNS:
+    # curl -X GET localhost:8002/runs
+    @bp_app.route("/runs", methods=["GET"])
+    def get_runs():
+        data = get_run_status_list()
+        response = jsonify(data)
+        response.status_code = 200
+        return response
 
 
 # python3 ./tests/post_runs_mock/post_runs_mock_trim.py

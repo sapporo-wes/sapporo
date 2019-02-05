@@ -5,8 +5,8 @@ import yaml
 
 SERVICE_BASE_DIR = Path(__file__).absolute(
 ).parent.parent.parent.parent
-SERVICE_INFO_FILE_PATH = SERVICE_BASE_DIR.joinpath("service-info.yml")
-WORKFLOW_INFO_FILE_PATH = SERVICE_BASE_DIR.joinpath("workflow-info.yml")
+SERVICE_INFO_FILE_PATH = SERVICE_BASE_DIR.joinpath("config").joinpath("service-info.yml")
+WORKFLOW_INFO_FILE_PATH = SERVICE_BASE_DIR.joinpath("config").joinpath("workflow-info.yml")
 
 
 def read_workflow_info():

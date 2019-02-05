@@ -1,4 +1,6 @@
 SAPPORO-service/run/
+SAPPORO-service/log/
+
 SAPPORO-service/SAPPORO-service/tests/post_runs_mock/trim.yml
 SAPPORO-service/SAPPORO-service/tests/post_runs_mock/bwa.yml
 .DS_Store
