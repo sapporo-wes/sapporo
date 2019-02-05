@@ -16,8 +16,8 @@ services:
       - ./log:/opt/SAPPORO-service/log
       - ./run:/opt/SAPPORO-service/run
     environment:
-      - DEBUG=True
-      - ENABLE_GET_RUNS=True
+      - DEBUG=False
+      - ENABLE_GET_RUNS=False
     command: ["uwsgi", "/opt/SAPPORO-service/config/uwsgi.ini"]
   web:
     image: nginx:stable-alpine

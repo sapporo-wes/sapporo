@@ -1,23 +1,19 @@
-FROM python:3.7-slim
+FROM python:alpine
 
-WORKDIR /tmp
+WORKDIR /opt/SAPPORO-service
 
-RUN apt update \
- && apt install -y \
-    build-essential \
-    curl \
-    jq \
-    libltdl7 \
-    procps \
-    silversearcher-ag \
-    tree \
-    unzip \
-    vim \
- && apt clean \
- && rm -rf /var/lib/apt/lists/*
+RUN apk --update add --no-cache \
+    gcc \
+    libc-dev \
+    libxml2-dev \
+    libxslt-dev \
+    linux-headers \
+    pcre-dev
 
 COPY requirements.dev.txt /tmp
 
-RUN pip install -r requirements.dev.txt
+RUN pip install -U pip && \
+    pip install -r /tmp/requirements.dev.txt && \
+    rm -rf /tmp/requirements.dev.txt
 
 CMD ["tail", "-f", "/dev/null"]

@@ -5,15 +5,21 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-dev
-    container_name: sapporo-service-dev
+    container_name: sapporo-service-app-dev
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
       - /tmp:/tmp
-      - ${PWD}:${PWD}
-    working_dir: ${PWD}
-    ports:
-      - 8002:8002
-    env_file: ./SAPPORO-service.dev.env
+      - ../SAPPORO-service:/opt/SAPPORO-service/SAPPORO-service
+      - ../develop:/opt/SAPPORO-service/develop
+      - ./service-info.dev.yml:/opt/SAPPORO-service/config/service-info.yml
+      - ./workflow-info.dev.yml:/opt/SAPPORO-service/config/workflow-info.yml
+      - ../run:/opt/SAPPORO-service/run
+      - ../coverage-html:/opt/SAPPORO-service/coverage-html
+    environment:
+      - DEBUG=True
+      - ENABLE_GET_RUNS=True
     command: ["tail", "-f", "/dev/null"]
+    ports:
+      - 1122:80

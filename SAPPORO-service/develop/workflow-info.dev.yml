@@ -1,11 +1,13 @@
 workflows:
-  - name: trimming_and_qc
-    workflow_location: ./test_workflow/trimming_and_qc.cwl
-    run_order_template_location: ./test_workflow/trimming_and_qc_run_template.yml
-    type: CWL
-    version: v1.0
-  - name: bwa_mapping_pe
-    workflow_location: ./test_workflow/bwa_mapping_pe.cwl
-    run_order_template_location: ./test_workflow/bwa_mapping_pe_run_template.yml
-    type: CWL
-    version: v1.0
+  - workflow_name: trimming_and_qc
+    workflow_version: 0c33f861553629b1e6fb4161686ab47670c9ed97
+    workflow_location: https://github.com/suecharo/SAPPORO/raw/develop/SAPPORO-service/test_workflow/trimming_and_qc.cwl
+    workflow_parameters_template_location: https://github.com/suecharo/SAPPORO/raw/develop/SAPPORO-service/test_workflow/trimming_and_qc_run_template.yml
+    language_type: CWL
+    language_version: v1.0
+  - workflow_name: bwa_mapping_pe
+    workflow_version: 0c33f861553629b1e6fb4161686ab47670c9ed97
+    workflow_location: https://github.com/suecharo/SAPPORO/raw/develop/SAPPORO-service/test_workflow/bwa_mapping_pe.cwl
+    workflow_parameters_template_location: https://github.com/suecharo/SAPPORO/raw/develop/SAPPORO-service/test_workflow/bwa_mapping_pe_run_template.yml
+    language_type: CWL
+    language_version: v1.0
