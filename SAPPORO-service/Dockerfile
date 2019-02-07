@@ -4,7 +4,10 @@ WORKDIR /opt/SAPPORO-service
 
 RUN apk --update add --no-cache \
     gcc \
+    jq \
     libc-dev \
+    libc6-compat \
+    libltdl \
     libxml2-dev \
     libxslt-dev \
     linux-headers \

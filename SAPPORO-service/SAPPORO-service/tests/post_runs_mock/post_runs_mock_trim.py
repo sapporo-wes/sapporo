@@ -3,22 +3,22 @@ import requests
 from pathlib import Path
 
 
-RUN_ORDER_FILE_PATH = Path(__file__).resolve().parent.joinpath("trim.yml")
-URL = "http://localhost:8002/runs"
+WORKFLOW_PARAMETERS_FILE = Path(__file__).resolve().parent.joinpath("trim.yml")
+URL = "http://localhost:80/runs"
 
 
 def post_runs():
-    with RUN_ORDER_FILE_PATH.open(mode="rb") as f:
+    with WORKFLOW_PARAMETERS_FILE.open(mode="rb") as f:
         data = {
             "workflow_name": "trimming_and_qc",
-            "workflow_engine": "cwltool",
+            "execution_engine_name": "cwltool",
         }
         files = {
-            "run_order": ("run_order.yml", f, "application/yaml;charset=UTF-8")
+            "workflow_parameters": ("workflow_parameters.yml", f, "application/yaml;charset=UTF-8")
         }
         r = requests.post(URL, files=files, data=data)
     print(r.status_code)
-    print(r.json())
+    print(r.content)
 
 
 if __name__ == "__main__":

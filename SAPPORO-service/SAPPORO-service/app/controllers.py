@@ -1,10 +1,11 @@
 # coding: utf-8
 from flask import Blueprint, current_app, jsonify, request
 
-from .lib.runs import cancel_run, execute, get_run_info, get_run_status_list
+from .config import ENABLE_GET_RUNS, d_config
+from .lib.runs import (cancel_run, execute, get_run_state_list, get_run_info,
+                       validate_and_format_post_runs_request)
 from .lib.util import read_service_info
 from .lib.workflows import read_workflow_setting_file
-from .config import d_config, ENABLE_GET_RUNS
 
 bp_app = Blueprint("app", __name__)
 
@@ -58,7 +59,7 @@ if ENABLE_GET_RUNS:
     # curl -X GET localhost:8002/runs
     @bp_app.route("/runs", methods=["GET"])
     def get_runs():
-        data = get_run_status_list()
+        data = get_run_state_list()
         response = jsonify(data)
         response.status_code = 200
         return response
@@ -67,8 +68,7 @@ if ENABLE_GET_RUNS:
 # python3 ./tests/post_runs_mock/post_runs_mock_trim.py
 @bp_app.route("/runs", methods=["POST"])
 def post_runs():
-    parameters = dict(request.form)
-    parameters["run_order"] = request.files["run_order"]
+    parameters = validate_and_format_post_runs_request(request)
     data = execute(parameters)
     response = jsonify(data)
     response.status_code = 200
