@@ -7,4 +7,4 @@ omit =
     */manage.py
 
 [html]
-directory = coverage_html
+directory = /opt/SAPPORO-web/develop/coverage_html

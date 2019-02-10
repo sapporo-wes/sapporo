@@ -1,15 +1,34 @@
 # coding: utf-8
 import os
+import random
+import string
 from distutils.util import strtobool
-from .env_loader import d_config
+
+
+def str2bool(str):
+    try:
+        if strtobool(str):
+            return True
+        else:
+            return False
+    except ValueError:
+        raise Exception(
+            "Please check your docker-compose.yml:environment, The bool value should be 'true value are y, yes, t, true, on and 1; false values are n, no, f, false, off and 0'")
+
+
+def generate_secret_key(n):
+    c = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    return "".join([random.choice(c) for i in range(n)])
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-ALLOWED_HOSTS = [d_config["SAPPORO_web_HOST"]]
-DEBUG = d_config["SAPPORO_web_DEBUG"]
-LANGUAGE_CODE = d_config["SAPPORO_web_LANGUAGE_CODE"]
-TIME_ZONE = d_config["SAPPORO_web_TIME_ZONE"]
-SECRET_KEY = d_config["SAPPORO_web_SECRET_KEY"]
+ALLOWED_HOSTS = [os.environ.get("HOST_NAME")]
+DEBUG = str2bool(os.environ.get("DEBUG"))
+DEVELOP = str2bool(os.environ.get("DEVELOP"))
+LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE")
+TIME_ZONE = os.environ.get("TIME_ZONE")
+SECRET_KEY = generate_secret_key(32)
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -29,7 +48,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_extensions",
     "bootstrap4",
     "app",
 ]
@@ -91,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 if DEBUG:
-    INTERNAL_IPS = ["172.20.0.1", "172.18.0.1"]
+    INTERNAL_IPS = ["172.24.0.1"]
     MIDDLEWARE += [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]

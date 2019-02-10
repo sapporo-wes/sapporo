@@ -1,0 +1,22 @@
+version: "3"
+services:
+  app:
+    image: sapporo-web-app-dev
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    container_name: sapporo-web-app-dev
+    restart: always
+    volumes:
+      - ../SAPPORO-web:/opt/SAPPORO-web/SAPPORO-web
+      - ../develop:/opt/SAPPORO-web/develop
+      - ./coverage_html:/opt/SAPPORO-web/develop/coverage_html
+    environment:
+      - DEBUG=True
+      - LANGUAGE_CODE=en
+      - TIME_ZONE=Asia/Tokyo
+      - HOST_NAME=0.0.0.0
+      - DEVELOP=True
+    ports:
+      - 1121:8000
+    command: ["tail", "-f", "/dev/null"]
