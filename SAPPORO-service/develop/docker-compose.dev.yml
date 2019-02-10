@@ -1,7 +1,7 @@
 version: "3"
 services:
   app:
-    image: sapporo-service-dev
+    image: sapporo-service-app-dev
     build:
       context: .
       dockerfile: Dockerfile-dev
@@ -13,13 +13,12 @@ services:
       - /tmp:/tmp
       - ../SAPPORO-service:/opt/SAPPORO-service/SAPPORO-service
       - ../develop:/opt/SAPPORO-service/develop
+      - ../run:/opt/SAPPORO-service/run
       - ./service-info.dev.yml:/opt/SAPPORO-service/config/service-info.yml
       - ./workflow-info.dev.yml:/opt/SAPPORO-service/config/workflow-info.yml
-      - ../run:/opt/SAPPORO-service/run
-      - ../coverage-html:/opt/SAPPORO-service/coverage-html
     environment:
       - DEBUG=True
       - ENABLE_GET_RUNS=True
-    command: ["tail", "-f", "/dev/null"]
     ports:
       - 1122:80
+    command: ["tail", "-f", "/dev/null"]

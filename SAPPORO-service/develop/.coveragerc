@@ -4,4 +4,4 @@ omit =
     */tests/* 
  
 [html] 
-directory = /opt/SAPPORO-service/coverage-html
+directory = /opt/SAPPORO-service/develop/coverage_html

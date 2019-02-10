@@ -1,7 +1,7 @@
 version: "3"
 services:
   app:
-    image: sapporo-service
+    image: sapporo-service-app
     build:
       context: .
       dockerfile: Dockerfile
@@ -26,8 +26,8 @@ services:
       - app
     restart: always
     volumes:
-      - /tmp:/tmp
-      - ./log:/opt/SAPPORO-service/log
       - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./config:/opt/SAPPORO-service/config
+      - ./log:/opt/SAPPORO-service/log
     ports:
       - 1122:80

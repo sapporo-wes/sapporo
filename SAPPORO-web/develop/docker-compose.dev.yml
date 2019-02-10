@@ -10,7 +10,6 @@ services:
     volumes:
       - ../SAPPORO-web:/opt/SAPPORO-web/SAPPORO-web
       - ../develop:/opt/SAPPORO-web/develop
-      - ./coverage_html:/opt/SAPPORO-web/develop/coverage_html
     environment:
       - DEBUG=True
       - LANGUAGE_CODE=en

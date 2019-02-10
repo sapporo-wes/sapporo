@@ -2,11 +2,12 @@ SAPPORO-service/run/
 SAPPORO-service/log/
 SAPPORO-service/SAPPORO-service/tests/post_runs_mock/trim.yml
 SAPPORO-service/SAPPORO-service/tests/post_runs_mock/bwa.yml
-.DS_Store
-.vscode/
 
 SAPPORO-web/config/uwsgi.sock
 SAPPORO-web/log/
+
+.DS_Store
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
