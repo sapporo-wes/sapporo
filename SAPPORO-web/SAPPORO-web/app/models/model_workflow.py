@@ -10,10 +10,13 @@ class Workflow(CommonInfo):
     service = models.ForeignKey(Service, verbose_name=_(
         "Service"), on_delete=models.CASCADE, related_name="workflows")
     name = models.CharField(_("Workflow name"), max_length=256)
+    version = models.CharField(_("Workflow version"), max_length=256)
     workflow_type = models.ForeignKey(WorkflowType, verbose_name=_(
         "Workflow type"), on_delete=models.CASCADE, related_name="workflow")
+    location = models.URLField(_("Workflow location"), max_length=256)
     content = models.TextField(_("Workflow content"))
-    run_order_template = models.TextField(_("Workflow run template"))
+    parameters_template_location = models.URLField(_(""), max_length=256)
+    parameters_template = models.TextField(_("Workflow parameters template"))
 
     class Meta:
         db_table = "workflow"

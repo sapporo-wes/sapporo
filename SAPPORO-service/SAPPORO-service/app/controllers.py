@@ -2,7 +2,7 @@
 from flask import Blueprint, current_app, jsonify, request
 
 from .config import ENABLE_GET_RUNS, d_config
-from .lib.runs import (cancel_run, execute, get_run_state_list, get_run_info,
+from .lib.runs import (cancel_run, execute, get_run_status_list, get_run_info,
                        validate_and_format_post_runs_request)
 from .lib.util import read_service_info
 from .lib.workflows import read_workflow_setting_file
@@ -59,7 +59,7 @@ if ENABLE_GET_RUNS:
     # curl -X GET localhost:8002/runs
     @bp_app.route("/runs", methods=["GET"])
     def get_runs():
-        data = get_run_state_list()
+        data = get_run_status_list()
         response = jsonify(data)
         response.status_code = 200
         return response

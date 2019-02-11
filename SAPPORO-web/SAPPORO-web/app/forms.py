@@ -1,14 +1,15 @@
 # coding: utf-8
 import requests
-from app.models import Service
 from django import forms
 from django.contrib.auth.forms import \
     UserCreationForm as NativeUserCreationForm
 from django.contrib.auth.models import User
 from django.forms import EmailField
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from requests.exceptions import RequestException
-import yaml
+
+from app.models import Service
 
 
 class UserCreationForm(NativeUserCreationForm):
@@ -28,16 +29,24 @@ class UserCreationForm(NativeUserCreationForm):
 
 
 class ServiceAdditionForm(forms.Form):
+    SCHEME_CHOICES = (
+        ("http", "http"),
+        ("https", "https"),
+    )
+
     service_name = forms.SlugField(label=_(
         "Service Name"), max_length=256, required=True, help_text=_("Required. Letters, digits and -/_ only."))
-    api_server_url = forms.CharField(label=_(
-        "API server url"), max_length=256, required=True, help_text=_("Required. e.g. localhost:8000"))
+    service_scheme = forms.ChoiceField(choices=[SCHEME_CHOICES], required=True, initial="http")
+    service_host = forms.CharField(label=_(
+        "Service server host"), max_length=256, required=True, help_text=_("Required. e.g. localhost:8000"))
+    service_token = forms.CharField(label=_(
+        "Service server token"), max_length=256, required=False, help_text=_("Not Required. None is OK."), initial="None")
 
     def clean(self):
         super().clean()
         try:
             d_response = requests.get(
-                "http://" + self.cleaned_data["api_server_url"] + "/service-info").json()
+                self.cleaned_data["service_token"] + "://" + self.cleaned_data["service_host"] + "/service-info").json()
         except RequestException:
             raise forms.ValidationError("Please enter the correct URL.")
         if Service.objects.filter(name=self.cleaned_data["service_name"]).exists():
@@ -49,7 +58,7 @@ class ServiceAdditionForm(forms.Form):
 class WorkflowPrepareForm(forms.Form):
     execution_engine = forms.ChoiceField(required=True)
 
-    def __init__(self, input_params, excutable_engines, *args, **kwargs):
+    def __init__(self, workflow_name, input_params, excutable_engines, *args, **kwargs):
         """
         input_params -> list
             {
@@ -80,3 +89,5 @@ class WorkflowPrepareForm(forms.Form):
                             ].help_text = input_param["doc"]
         self.fields["execution_engine"].choices = [
             [engine.token, engine.name] for engine in excutable_engines]
+        self.fields["run_name"] = forms.CharField(max_length=256, required=True, initial="{} {}".format(
+            workflow_name, timezone.now().strftime("%Y-%m-%d %H:%M:%S")))

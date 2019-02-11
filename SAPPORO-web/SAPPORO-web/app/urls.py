@@ -1,11 +1,12 @@
 # coding: utf-8
+from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import path
+
 from app.views import (AdminHomeView, AdminServiceView, HomeView,
                        RunDetailView, RunListView, ServiceDetailView,
                        ServiceListView, SignupView, UserHomeView,
                        WorkflowDetailView, WorkflowListView,
                        WorkflowPrepareView)
-from django.contrib.auth.views import LoginView, LogoutView
-from django.urls import path
 
 app_name = "app"
 

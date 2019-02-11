@@ -16,7 +16,7 @@ RUN_BASE_DIR = SERVICE_BASE_DIR.joinpath("run")
 RUN_ORDER_FILE_NAME = "run_order.yml"
 WORKFLOW_FILE_NAME = "workflow"
 WORKFLOW_PARAMETERS_FILE_NAME = "workflow_parameters"
-STATE_FILE_NAME = "state.txt"
+STATUS_FILE_NAME = "status.txt"
 PID_INFO_FILE_NAME = "run.pid"
 UPLOAD_URL_FILE_NAME = "upload_url.txt"
 STDOUT_FILE_NAME = "stdout.log"
@@ -90,13 +90,13 @@ def execute(run_order):
     prepare_run_dir(uuid, run_order)
     fork_run(uuid)
 
-    return {"run_id": uuid, "state": "PENDING"}
+    return {"run_id": uuid, "status": "PENDING"}
 
 
 def prepare_run_dir(uuid, run_order):
     run_dir = RUN_BASE_DIR.joinpath(uuid[:2]).joinpath(uuid)
     run_dir.mkdir(parents=True)
-    with run_dir.joinpath(STATE_FILE_NAME).open(mode="w") as f:
+    with run_dir.joinpath(STATUS_FILE_NAME).open(mode="w") as f:
         f.write("QUEUED")
     with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="w") as f:
         f.write(yaml.dump(run_order, default_flow_style=False))
@@ -121,17 +121,17 @@ def fork_run(uuid):
         f.write(str(proc.pid))
 
 
-def get_run_state_list():
-    run_state_list = []
-    for state_file in RUN_BASE_DIR.glob("**/{}".format(STATE_FILE_NAME)):
-        run_state = dict()
-        run_state["run_id"] = state_file.parent.name
-        update_end_time(run_state["run_id"])
-        with state_file.open(mode="r") as f:
-            run_state["state"] = f.read().strip()
-        run_state_list.append(run_state)
+def get_run_status_list():
+    run_status_list = []
+    for status_file in RUN_BASE_DIR.glob("**/{}".format(STATUS_FILE_NAME)):
+        run_status = dict()
+        run_status["run_id"] = status_file.parent.name
+        update_end_time(run_status["run_id"])
+        with status_file.open(mode="r") as f:
+            run_status["status"] = f.read().strip()
+        run_status_list.append(run_status)
 
-    return run_state_list
+    return run_status_list
 
 
 def get_run_info(run_id):
@@ -139,8 +139,8 @@ def get_run_info(run_id):
     run_info = dict()
     run_info["run_id"] = run_id
     run_dir = list(RUN_BASE_DIR.glob("**/{}".format(run_id)))[0]
-    with run_dir.joinpath(STATE_FILE_NAME).open(mode="r") as f:
-        run_info["state"] = f.read().strip()
+    with run_dir.joinpath(STATUS_FILE_NAME).open(mode="r") as f:
+        run_info["status"] = f.read().strip()
     with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="r") as f:
         run_order = yaml.load(f)
         run_info.update(run_order)
@@ -156,12 +156,12 @@ def get_run_info(run_id):
 
 def update_end_time(run_id):
     run_dir = list(RUN_BASE_DIR.glob("**/{}".format(run_id)))[0]
-    state_file = run_dir.joinpath(STATE_FILE_NAME)
-    with state_file.open(mode="r") as f:
-        run_state = f.read().strip()
-    if run_state not in ["QUEUED", "RUNNING"]:
+    status_file = run_dir.joinpath(STATUS_FILE_NAME)
+    with status_file.open(mode="r") as f:
+        run_status = f.read().strip()
+    if run_status not in ["QUEUED", "RUNNING"]:
         end_time = datetime.fromtimestamp(
-            state_file.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+            status_file.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
     else:
         return False
     with run_dir.joinpath(RUN_ORDER_FILE_NAME).open(mode="r") as f:
@@ -175,10 +175,10 @@ def update_end_time(run_id):
 
 def cancel_run(run_id):
     run_dir = list(RUN_BASE_DIR.glob("**/{}".format(run_id)))[0]
-    state_file = run_dir.joinpath(STATE_FILE_NAME)
-    with state_file.open(mode="r") as f:
-        run_state = f.read().strip()
-        if run_state not in ["QUEUED", "RUNNING"]:
+    status_file = run_dir.joinpath(STATUS_FILE_NAME)
+    with status_file.open(mode="r") as f:
+        run_status = f.read().strip()
+        if run_status not in ["QUEUED", "RUNNING"]:
             abort(400, "The run can not be canceled.")
     with run_dir.joinpath(PID_INFO_FILE_NAME).open(mode="r") as f:
         pid = int(f.read().strip())
@@ -193,7 +193,7 @@ def cancel_run(run_id):
         if ps_pid == pid:
             if "sh" in l_command and str(run_id) in l_command:
                 os.kill(pid, signal.SIGUSR1)
-                with run_dir.joinpath(STATE_FILE_NAME).open(mode="w") as f:
+                with run_dir.joinpath(STATUS_FILE_NAME).open(mode="w") as f:
                     f.write("CANCELED")
-                return {"run_id": run_id, "state": "CANCELED"}
+                return {"run_id": run_id, "status": "CANCELED"}
     abort(400, "There is no run to cancel.")

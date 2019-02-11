@@ -16,12 +16,9 @@ def read_workflow_setting_file():
             workflow["workflow_location"])
         workflow["workflow_parameters_template"] = fetch_file(
             workflow["workflow_parameters_template_location"])
-        del workflow["workflow_location"]
-        del workflow["workflow_parameters_template_location"]
         data["workflows"].append(workflow)
 
     return data
-
 
 def fetch_file(url):
     response = requests.get(url)

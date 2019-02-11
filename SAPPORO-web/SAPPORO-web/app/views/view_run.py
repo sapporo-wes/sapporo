@@ -1,10 +1,10 @@
 # coding: utf-8
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
-from django.views.generic import View
-from app.models import Run
-from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import View
+
+from app.models import Run
 
 
 class RunListView(LoginRequiredMixin, View):

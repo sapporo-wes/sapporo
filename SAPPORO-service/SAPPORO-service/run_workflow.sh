@@ -14,7 +14,7 @@ function run_wf() {
 
 function run_cwltool() {
   workflow_location=$(cat ${run_order_file} | yq -r '.workflow_location')
-  cwltool --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${state_file}
+  cwltool --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${status_file}
 }
 
 function run_nextflow() {
@@ -31,13 +31,13 @@ function cancel() {
 
 # =============
 
-trap 'echo "SYSTEM_ERROR" > ${state_file}' 1 2 3 15
+trap 'echo "SYSTEM_ERROR" > ${status_file}' 1 2 3 15
 trap 'cancel' 10
 
 RUN_ORDER_FILE_NAME="run_order.yml"
 WORKFLOW_FILE_NAME="workflow"
 WORKFLOW_PARAMETERS_FILE_NAME="workflow_parameters"
-STATE_FILE_NAME="state.txt"
+STATUS_FILE_NAME="status.txt"
 UPLOAD_URL_FILE_NAME="upload_url.txt"
 STDOUT_FILE_NAME="stdout.log"
 STDERR_FILE_NAME="stderr.log"
@@ -49,13 +49,13 @@ output_dir=${run_dir}
 run_order_file=${run_dir}/${RUN_ORDER_FILE_NAME}
 workflow_file=${run_dir}/${WORKFLOW_FILE_NAME}
 workflow_parameters_file=${run_dir}/${WORKFLOW_PARAMETERS_FILE_NAME}
-state_file=${run_dir}/${STATE_FILE_NAME}
+status_file=${run_dir}/${STATUS_FILE_NAME}
 stdout_file=${run_dir}/${STDOUT_FILE_NAME}
 stderr_file=${run_dir}/${STDERR_FILE_NAME}
 execution_engine=$(cat ${run_order_file} | yq -r '.execution_engine_name')
 
-echo "RUNNING" > ${state_file}
+echo "RUNNING" > ${status_file}
 
 run_wf
 
-echo "COMPLETE" > ${state_file}
+echo "COMPLETE" > ${status_file}
