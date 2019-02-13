@@ -55,7 +55,7 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
         excutable_engines = workflow.find_excutable_engines()
         input_params = parse_cwl_input_params(workflow.content)
         workflow_prepare_form = WorkflowPrepareForm(
-            input_params, excutable_engines)
+            workflow.name, input_params, excutable_engines)
 
         return self.general_render(request, workflow, workflow_prepare_form)
 
@@ -88,7 +88,7 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
         return render(request, "app/workflow_prepare.html", context)
 
     def _post_run(self, user, workflow, workflow_engine, form_inputs):
-        api_server_url = workflow.service.server_scheme + \
+        service_server_url = workflow.service.server_scheme + \
             "://" + workflow.service.server_host + "/runs"
         workflow_parameters = copy(form_inputs)
         del workflow_parameters["execution_engine"]
@@ -102,13 +102,14 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
         files = {
             "workflow_parameters": ("workflow_parameters.yml", StringIO(workflow_parameters), "application/yaml;charset=UTF-8")
         }
-        response = requests.post(api_server_url, files=files, data=data)
+        response = requests.post(service_server_url, files=files, data=data)
         assert response.status_code == 200, "Workflow post error"
         d_response = response.json()
         run = RunFactory(
             user=user,
+            name=form_inputs["run_name"],
             run_id=d_response["run_id"],
-            status=d_response["statue"],
+            status=d_response["status"],
             workflow=workflow,
             execution_engine=workflow_engine,
             workflow_parameters=workflow_parameters,

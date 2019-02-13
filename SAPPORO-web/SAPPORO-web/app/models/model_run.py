@@ -14,6 +14,7 @@ from .model_workflow import Workflow
 class Run(CommonInfo):
     user = models.ForeignKey(User, verbose_name=_(
         "Run Owner"), on_delete=models.CASCADE, related_name="runs")
+    name = models.CharField(_("Run Name"), max_length=256)
     run_id = models.UUIDField(_("Run ID"))
     workflow = models.ForeignKey(Workflow, verbose_name=_(
         "Workflow"), on_delete=models.CASCADE, related_name="runs")
@@ -38,8 +39,8 @@ class Run(CommonInfo):
         return "Run: {}".format(self.run_id)
 
     def _update_from_service(self):
-        service_server_url = self.workflow.service.service_scheme + "://" + \
-            self.workflow.service.service_host + "/runs/" + str(self.run_id)
+        service_server_url = self.workflow.service.server_scheme + "://" + \
+            self.workflow.service.server_host + "/runs/" + str(self.run_id)
         response = requests.get(service_server_url)
         assert response.status_code == 200, "Get run error"
         d_response = response.json()

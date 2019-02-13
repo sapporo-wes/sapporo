@@ -80,7 +80,7 @@ def validate_engine(engine, language_type, language_version):
     for workflow_engine in service_info["workflow_engines"]:
         if workflow_engine["engine_name"] == engine:
             for type_version in workflow_engine["workflow_types"]:
-                if type_version["type"] == language_type and type_version["version"] == language_version:
+                if type_version["language_type"] == language_type and type_version["language_version"] == language_version:
                     return workflow_engine["engine_version"]
     abort(400, "Workflow engine parameter is incorrect.")
 

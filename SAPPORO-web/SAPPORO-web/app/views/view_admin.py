@@ -37,9 +37,10 @@ class AdminServiceView(LoginRequiredMixin, View):
                 service = Service()
                 service.insert_from_form(
                     service_addition_form.cleaned_data["service_name"],
-                    service_addition_form.cleaned_data["service_scheme"],
-                    service_addition_form.cleaned_data["service_host"],
-                    service_addition_form.cleaned_data["service_token"],
+                    service_addition_form.cleaned_data["server_scheme"],
+                    service_addition_form.cleaned_data["server_host"],
+                    service_addition_form.cleaned_data["server_token"],
+                    service_addition_form.cleaned_data["d_response"],
                 )
                 service.fetch_workflows()
         elif request.POST.get("button_delete_service"):

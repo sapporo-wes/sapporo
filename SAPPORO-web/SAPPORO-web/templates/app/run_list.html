@@ -20,22 +20,20 @@
         <thead class="thead-light">
           <tr>
             <th scope="col"><div class="text-center">Workflow Name</div></th>
-            <th scope="col"><div class="text-center">Workflow Engine</div></th>
-            <th scope="col"><div class="text-center">Status</div></th>
-            <th scope="col"><div class="text-center">Run ID</div></th>
+            <th scope="col"><div class="text-center">Execution Engine</div></th>
+            <th scope="col"><div class="text-center">Workflow Status</div></th>
+            <th scope="col"><div class="text-center">Run Name</div></th>
           </tr>
         </thead>
         <tbody>
           {% for run in runs %}
             <tr>
               <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_token=run.workflow.token %}">{{ run.workflow.name }}</a></td>
-              <td class="align-middle">{{ run.engine.name }}</td>
+              <td class="align-middle">{{ run.execution_engine.name }}</td>
               <td class="align-middle">{{ run.status }}</td>
-              <td class="align-middle"><a href="{% url 'app:run_detail' run_id=run.run_id %}">{{ run.run_id }}</a></td>
+              <td class="align-middle"><a href="{% url 'app:run_detail' run_id=run.run_id %}">{{ run.name }}</a></td>
             </tr>
           {% endfor %}
-          <tr>
-          </tr>
         </tbody>
       </table>
     </div>

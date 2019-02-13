@@ -26,8 +26,12 @@
         </thead>
         <tbody>
           <tr>
-            <td class="align-middle">API Service URL</td>
-            <td class="align-middle">{{ service.api_server_url }}</td>
+            <td class="align-middle">Server Scheme</td>
+            <td class="align-middle">{{ service.server_scheme }}</td>
+          </tr>
+          <tr>
+            <td class="align-middle">Server Host</td>
+            <td class="align-middle">{{ service.server_host }}</td>
           </tr>
           <tr>
             <td class="align-middle">Worfklow Engines</td>
@@ -85,6 +89,10 @@
             <td class="align-middle">Contact Info URL</td>
             <td class="align-middle"><a href="{{ service.contact_info_url }}">{{ service.contact_info_url }}</a></td>
           </tr>
+          <tr>
+            <td class="align-middle">Additional date</td>
+            <td class="align-middle">{{ service.created_at }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -104,13 +112,15 @@
         <thead class="thead-light">
           <tr>
             <th scope="col"><div class="text-center">Name</div></th>
-            <th scope="col"><div class="text-center">Type</div></th>
+            <th scope="col"><div class="text-center">Version</div></th>
+            <th scope="col"><div class="text-center">Language Type</div></th>
           </tr>
         </thead>
         <tbody>
         {% for workflow in service.workflows.all %}
           <tr>
             <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a></td>
+            <td class="align-middle">{{ workflow.version }}</td>
             <td class="align-middle">{{ workflow.workflow_type.type }}:&nbsp;{{ workflow.workflow_type.version }}</td>
           </tr>
         {% endfor %}

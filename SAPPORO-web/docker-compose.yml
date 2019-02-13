@@ -12,10 +12,11 @@ services:
       - ./config:/opt/SAPPORO-web/config
       - ./log:/opt/SAPPORO-web/log
     environment:
-      - DEBUG=False
+      - DEBUG=True
       - LANGUAGE_CODE=en
       - TIME_ZONE=Asia/Tokyo
-      - HOST_NAME=localhost
+      - HOST_NAME=0.0.0.0
+      - DEVELOP=False
     command: ["sh", "/opt/SAPPORO-web/entrypoint.sh"]
   web:
     image: nginx:stable-alpine
