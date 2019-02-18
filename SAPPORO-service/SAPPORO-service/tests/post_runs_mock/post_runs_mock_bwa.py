@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 WORKFLOW_PARAMETERS_FILE = Path(__file__).resolve().parent.joinpath("bwa.yml")
-URL = "http://localhost:80/runs"
+URL = "http://localhost:1122/runs"
 
 
 def post_runs():
@@ -16,7 +16,10 @@ def post_runs():
         files = {
             "workflow_parameters": ("workflow_parameters.yml", f, "application/yaml;charset=UTF-8")
         }
-        r = requests.post(URL, files=files, data=data)
+        headers = {
+            "Authorization": "kVYCGtt16WbEvjMTGpMNhWCYdKoFOSy7Dyu3nqkekrs"
+        }
+        r = requests.post(URL, files=files, data=data, headers=headers)
     print(r.status_code)
     print(r.content)
 

@@ -13,10 +13,10 @@ function run_wf() {
 }
 
 function run_cwltool() {
-  echo "RUNNING" > ${state_file}
+  echo "RUNNING" > ${status_file}
   workflow_location=$(cat ${run_order_file} | yq -r '.workflow_location')
-  cwltool --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${state_file}
-  echo "COMPLETE" > ${state_file}
+  cwltool --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${status_file}
+  echo "COMPLETE" > ${status_file}
 }
 
 function run_nextflow() {
@@ -38,7 +38,6 @@ function cancel() {
 }
 
 function cancel_cwltool() {
-  echo "CANCELED" > ${state_file}
   exit 0
 }
 

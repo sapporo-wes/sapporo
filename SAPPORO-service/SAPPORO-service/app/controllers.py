@@ -2,7 +2,7 @@
 from flask import Blueprint, current_app, jsonify, request, abort
 
 from .config import ENABLE_GET_RUNS, TOKEN_AUTH, d_config
-from .lib.runs import (cancel_run, execute, get_run_info, get_run_state_list,
+from .lib.runs import (cancel_run, execute, get_run_info, get_run_status_list,
                        validate_and_format_post_runs_request)
 from .lib.util import read_service_info, SERVICE_BASE_DIR
 from .lib.workflows import read_workflow_setting_file
