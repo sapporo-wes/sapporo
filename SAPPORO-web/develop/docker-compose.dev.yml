@@ -14,8 +14,7 @@ services:
       - DEBUG=True
       - LANGUAGE_CODE=en
       - TIME_ZONE=Asia/Tokyo
-      - HOST_NAME=0.0.0.0
       - DEVELOP=True
     ports:
       - 1121:8000
-    command: ["tail", "-f", "/dev/null"]
+    command: ["sh", "/opt/SAPPORO-web/entry_point.sh"]

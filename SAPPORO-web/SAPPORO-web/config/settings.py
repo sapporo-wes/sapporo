@@ -3,6 +3,8 @@ import os
 import random
 import string
 from distutils.util import strtobool
+from .local_settings import SECRET_KEY as LOCAL_SECRET_KEY
+from pathlib import Path
 
 
 def str2bool(str):
@@ -16,27 +18,24 @@ def str2bool(str):
             "Please check your docker-compose.yml:environment, The bool value should be 'true value are y, yes, t, true, on and 1; false values are n, no, f, false, off and 0'")
 
 
-def generate_secret_key(n):
-    c = string.ascii_lowercase + string.ascii_uppercase + string.digits
-    return "".join([random.choice(c) for i in range(n)])
+BASE_DIR = Path(__file__).absolute().parent.parent
 
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-ALLOWED_HOSTS = [os.environ.get("HOST_NAME")]
+ALLOWED_HOSTS = ["0.0.0.0"]
 DEBUG = str2bool(os.environ.get("DEBUG"))
 DEVELOP = str2bool(os.environ.get("DEVELOP"))
 LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE")
 TIME_ZONE = os.environ.get("TIME_ZONE")
-SECRET_KEY = generate_secret_key(32)
+SECRET_KEY = LOCAL_SECRET_KEY
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
+BASE_DIR.joinpath("static").mkdir(parents=True, exist_ok=True)
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    str(BASE_DIR.joinpath("static")),
 ]
+
 LOGIN_URL = "/signin"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
@@ -71,7 +70,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [str(BASE_DIR.joinpath("templates")), ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -86,12 +85,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+if DEVELOP:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": str(BASE_DIR.joinpath("db.sqlite3")),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": os.environ.get("POSTGRES_DB"),
+            "USER": os.environ.get("POSTGRES_USER"),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+            "HOST": "database",
+            "PORT": int(os.environ.get("POSTGRES_PORT")),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -14,4 +14,6 @@ RUN pip install -U pip && \
     pip install -r /tmp/requirements.dev.txt && \
     rm -rf /tmp/requirements.dev.txt
 
+COPY entry_point.dev.sh /opt/SAPPORO-web/entry_point.sh
+
 CMD ["tail", "-f", "/dev/null"]

@@ -6,18 +6,23 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: sapporo-web-app
+    depends_on:
+      - database
     restart: always
     volumes:
       - ./SAPPORO-web:/opt/SAPPORO-web/SAPPORO-web
       - ./config:/opt/SAPPORO-web/config
       - ./log:/opt/SAPPORO-web/log
     environment:
-      - DEBUG=True
+      - DEBUG=False
       - LANGUAGE_CODE=en
       - TIME_ZONE=Asia/Tokyo
-      - HOST_NAME=0.0.0.0
       - DEVELOP=False
-    command: ["sh", "/opt/SAPPORO-web/entrypoint.sh"]
+      - POSTGRES_USER=sapporo-web-user
+      - POSTGRES_PASSWORD=sapporo-web-passwd
+      - POSTGRES_DB=sapporo-web
+      - POSTGRES_PORT=5432
+    command: ["sh", "/opt/SAPPORO-web/entry_point.sh"]
   web:
     image: nginx:stable-alpine
     container_name: sapporo-web-web
@@ -30,3 +35,17 @@ services:
       - ./log:/opt/SAPPORO-web/log
     ports:
       - 1121:80
+  database:
+    image: postgres:alpine
+    container_name: sapporo-web-database
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=sapporo-web-user
+      - POSTGRES_PASSWORD=sapporo-web-passwd
+      - POSTGRES_DB=sapporo-web
+      - POSTGRES_PORT=5432
+
+volumes:
+  pgdata:

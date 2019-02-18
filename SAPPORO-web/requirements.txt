@@ -9,6 +9,7 @@ factory-boy==2.11.1
 Faker==1.0.2
 idna==2.8
 oauthlib==3.0.1
+psycopg2==2.7.7
 python-dateutil==2.8.0
 python3-openid==3.1.0
 pytz==2018.9

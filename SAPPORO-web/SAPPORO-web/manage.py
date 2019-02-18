@@ -16,6 +16,7 @@ if __name__ == "__main__":
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    django.setup()
     if DEVELOP:
         runserver.default_addr = ALLOWED_HOSTS[0]
     execute_from_command_line(sys.argv)
