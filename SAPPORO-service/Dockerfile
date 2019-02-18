@@ -19,4 +19,6 @@ RUN pip install -U pip && \
     pip install -r /tmp/requirements.txt && \
     rm -rf /tmp/requirements.txt
 
+COPY entry_point.sh /opt/SAPPORO-service
+
 CMD ["tail", "-f", "/dev/null"]

@@ -18,7 +18,8 @@ services:
     environment:
       - DEBUG=False
       - ENABLE_GET_RUNS=False
-    command: ["uwsgi", "/opt/SAPPORO-service/config/uwsgi.ini"]
+      - TOKEN_AUTH=True
+    command: ["sh", "/opt/SAPPORO-service/entry_point.sh"]
   web:
     image: nginx:stable-alpine
     container_name: sapporo-service-web

@@ -16,9 +16,12 @@ services:
       - ../run:/opt/SAPPORO-service/run
       - ./service-info.dev.yml:/opt/SAPPORO-service/config/service-info.yml
       - ./workflow-info.dev.yml:/opt/SAPPORO-service/config/workflow-info.yml
+      - ../config/generate_token.py:/opt/SAPPORO-service/config/generate_token.py
+      - ../config/token_list.txt:/opt/SAPPORO-service/config/token_list.txt
     environment:
       - DEBUG=True
       - ENABLE_GET_RUNS=True
+      - TOKEN_AUTH=True
     ports:
       - 1122:80
-    command: ["tail", "-f", "/dev/null"]
+    command: ["sh", "/opt/SAPPORO-service/entry_point.sh"]

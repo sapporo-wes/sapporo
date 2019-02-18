@@ -13,8 +13,10 @@ function run_wf() {
 }
 
 function run_cwltool() {
+  echo "RUNNING" > ${state_file}
   workflow_location=$(cat ${run_order_file} | yq -r '.workflow_location')
-  cwltool --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${status_file}
+  cwltool --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${state_file}
+  echo "COMPLETE" > ${state_file}
 }
 
 function run_nextflow() {
@@ -26,7 +28,26 @@ function run_toil() {
 }
 
 function cancel() {
+  if [[ ${execution_engine} == "cwltool" ]]; then
+    cancel_cwltool
+  elif [[ ${execution_engine} == "nextflow" ]]; then
+    cancel_nextflow
+  elif [[ ${execution_engine} == "toil" ]]; then
+    cancel_toil
+  fi
+}
+
+function cancel_cwltool() {
+  echo "CANCELED" > ${state_file}
   exit 0
+}
+
+function cancel_nextflow() {
+  :
+}
+
+function cancel_toil() {
+  :
 }
 
 # =============
@@ -54,8 +75,4 @@ stdout_file=${run_dir}/${STDOUT_FILE_NAME}
 stderr_file=${run_dir}/${STDERR_FILE_NAME}
 execution_engine=$(cat ${run_order_file} | yq -r '.execution_engine_name')
 
-echo "RUNNING" > ${status_file}
-
 run_wf
-
-echo "COMPLETE" > ${status_file}

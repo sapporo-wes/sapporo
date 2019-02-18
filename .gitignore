@@ -1,3 +1,5 @@
+SAPPORO-service/SAPPORO-service/app/local_config.py
+SAPPORO-service/config/token_list.txt
 SAPPORO-service/run/
 SAPPORO-service/log/
 SAPPORO-service/SAPPORO-service/tests/post_runs_mock/trim.yml

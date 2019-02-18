@@ -193,7 +193,7 @@ def cancel_run(run_id):
         if ps_pid == pid:
             if "sh" in l_command and str(run_id) in l_command:
                 os.kill(pid, signal.SIGUSR1)
-                with run_dir.joinpath(STATUS_FILE_NAME).open(mode="w") as f:
-                    f.write("CANCELED")
-                return {"run_id": run_id, "status": "CANCELED"}
+                with status_file.open(mode="r") as f:
+                    run_state = f.read().strip()
+                return {"run_id": run_id, "state": run_state}
     abort(400, "There is no run to cancel.")
