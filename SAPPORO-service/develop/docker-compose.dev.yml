@@ -1,0 +1,27 @@
+version: "3"
+services:
+  app:
+    image: sapporo-service-app-dev
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    container_name: sapporo-service-app-dev
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /tmp:/tmp
+      - ../SAPPORO-service:/opt/SAPPORO-service/SAPPORO-service
+      - ../develop:/opt/SAPPORO-service/develop
+      - ../run:/opt/SAPPORO-service/run
+      - ./service-info.dev.yml:/opt/SAPPORO-service/config/service-info.yml
+      - ./workflow-info.dev.yml:/opt/SAPPORO-service/config/workflow-info.yml
+      - ../config/generate_token.py:/opt/SAPPORO-service/config/generate_token.py
+      - ../config/token_list.txt:/opt/SAPPORO-service/config/token_list.txt
+    environment:
+      - DEBUG=True
+      - ENABLE_GET_RUNS=True
+      - TOKEN_AUTH=True
+    ports:
+      - 1122:80
+    command: ["sh", "/opt/SAPPORO-service/entry_point.sh"]

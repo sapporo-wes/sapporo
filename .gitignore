@@ -1,6 +1,14 @@
+SAPPORO-service/SAPPORO-service/app/local_config.py
+SAPPORO-service/config/token_list.txt
 SAPPORO-service/run/
+SAPPORO-service/log/
 SAPPORO-service/SAPPORO-service/tests/post_runs_mock/trim.yml
 SAPPORO-service/SAPPORO-service/tests/post_runs_mock/bwa.yml
+
+SAPPORO-service/SAPPORO-service/config/local_settings.py
+SAPPORO-web/config/uwsgi.sock
+SAPPORO-web/log/
+
 .DS_Store
 .vscode/
 

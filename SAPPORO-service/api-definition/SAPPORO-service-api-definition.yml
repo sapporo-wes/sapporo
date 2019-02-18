@@ -73,10 +73,10 @@ paths:
           name: workflow_name
           type: string
         - in: formData
-          name: workflow_engine
+          name: execution_engine_name
           type: string
         - in: formData
-          name: run_order
+          name: workflow_parameters
           type: file
           format:
             - application/json
@@ -91,7 +91,7 @@ paths:
         The returned result has information about the outputs produced by this workflow
         (if available), a log object which allows the stderr and stdout to be retrieved,
         a log array so stderr/stdout for individual tasks can be retrieved,
-        and the overall state of the workflow run (e.g. RUNNING, see the State section).
+        and the overall status of the workflow run (e.g. RUNNING, see the Status section).
       responses:
         "200":
           description: ""
@@ -200,7 +200,7 @@ definitions:
       status:
         type: string
         example: COMPLETE
-        description: The state of the run e.g. (PENDING, RUNNING, FINISH, CANCELED, COMPLETE, SYSTEM_ERROR, EXECUTOR_ERROR)
+        description: The status of the run e.g. (PENDING, RUNNING, FINISH, CANCELED, COMPLETE, SYSTEM_ERROR, EXECUTOR_ERROR)
     description: >-
       A list of workflow runs that the service has executed or is executing.
       The list is filtered to only include runs that the caller has permission to see.
@@ -211,19 +211,41 @@ definitions:
         type: uuid
         description: workflow run ID
         example: 158c32a8-6baf-4b34-8fdb-8ec5b9c90db7
-      workflow_engine:
-        type: string
-        example: cwltool
-      worklfow_name:
+      workflow_name:
         type: string
         example: bwa_mapping_pe
-      run_order:
+      workflow_version:
         type: string
-        example: "nthreads: 2 # default value of type"
-      status:
+        example: 0c33f861553629b1e6fb4161686ab47670c9ed97
+        description: Such as a GitHub commit id.
+      workflow_location:
+        type: string
+        example: "https://github.com/suecharo/SAPPORO/raw/develop/SAPPORO-service/test_workflow/bwa_mapping_pe.cwl"
+      workflow_content:
+        type: string
+        description: Workflow file's content.
+      workflow_parameters_template_location:
+        type: string
+        example: "https://github.com/suecharo/SAPPORO/raw/develop/SAPPORO-service/test_workflow/bwa_mapping_pe_run_template.yml"
+      workflow_parameters:
+        type: string
+        description: Workflow parameters file's content.
+      language_type:
+        type: string
+        example: CWL
+      language_version:
+        type: string
+        example: v1.0
+      execution_engine_name:
+        type: string
+        example: cwltool
+      execution_engine_version:
+        type: string
+        example: 1.0.2018121184214
+      statue:
         type: string
         example: COMPLETE
-        description: The state of the run e.g. (PENDING, RUNNING, FINISH, CANCELED, COMPLETE, SYSTEM_ERROR, EXECUTOR_ERROR)
+        description: The statue of the run e.g. (PENDING, RUNNING, FINISH, CANCELED, COMPLETE, SYSTEM_ERROR, EXECUTOR_ERROR)
       stdout:
         type: string
         description: Workflow engine's stdout
@@ -232,13 +254,19 @@ definitions:
         description: Workflow engine's stderr
       upload_url:
         type: s3://bucket-name/upload_dir/
+      start_time:
+        type: string
+        example: "2019-01-01 00:00:00"
+      end_time:
+        type: string
+        example: "2019-01-01 00:09:00"
   WorkflowType:
     type: object
     properties:
-      type:
+      language_type:
         type: string
         example: CWL
-      version:
+      language_version:
         type: string
         example: v1.0
     description: Available workflow types supported by a given instance of the service.
@@ -250,21 +278,31 @@ definitions:
         items:
           type: object
           properties:
-            name:
+            workflow_name:
               type: string
               example: bwa_mapping_pe
-            type:
+            workflow_version:
               type: string
-              example: CWL
-            version:
+              example: 0c33f861553629b1e6fb4161686ab47670c9ed97
+              description: Such as a GitHub commit id.
+            workflow_location:
               type: string
-              example: v1.0
-            content:
+              example: "https://github.com/suecharo/SAPPORO/raw/develop/SAPPORO-service/test_workflow/bwa_mapping_pe.cwl"
+            workflow_content:
               type: string
               description: Workflow file's content.
-            run_order_template:
+            workflow_parameters_template_location:
               type: string
-              description: Workflow run template.
+              example: "https://github.com/suecharo/SAPPORO/raw/develop/SAPPORO-service/test_workflow/bwa_mapping_pe_run_template.yml"
+            workflow_parameters_template:
+              type: string
+              description: Workflow template file's content.
+            language_type:
+              type: string
+              example: CWL
+            language_version:
+              type: string
+              example: v1.0
   ErrorResponse:
     description: >-
       An object that can optionally include information about the error.

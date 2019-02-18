@@ -1,5 +1,8 @@
 # coding: utf-8
 import yaml
+from collections import OrderedDict
+
+yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, lambda loader, node: OrderedDict(loader.construct_pairs(node)))
 
 
 def parse_cwl_input_params(cwl_file):

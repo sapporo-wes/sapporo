@@ -1,0 +1,19 @@
+FROM python:alpine
+
+WORKDIR /opt/SAPPORO-web
+
+RUN apk --update add --no-cache \
+    gcc \
+    libc-dev \
+    linux-headers \
+    pcre-dev
+
+COPY requirements.dev.txt /tmp
+
+RUN pip install -U pip && \
+    pip install -r /tmp/requirements.dev.txt && \
+    rm -rf /tmp/requirements.dev.txt
+
+COPY entry_point.dev.sh /opt/SAPPORO-web/entry_point.sh
+
+CMD ["tail", "-f", "/dev/null"]

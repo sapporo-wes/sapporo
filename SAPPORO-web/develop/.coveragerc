@@ -1,0 +1,10 @@
+[run]
+branch = True
+omit =
+    */migrations/*
+    */tests/*
+    */config/*
+    */manage.py
+
+[html]
+directory = /opt/SAPPORO-web/develop/coverage_html

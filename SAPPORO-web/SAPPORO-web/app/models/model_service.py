@@ -6,9 +6,10 @@ from django.db import models
 from django.http import Http404
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from factory import LazyAttribute, fuzzy
 from factory.django import DjangoModelFactory
 from requests.exceptions import RequestException
+
+from app.lib.requests_wrapper import get_requests
 
 
 def _get_token():
@@ -27,8 +28,17 @@ class CommonInfo(models.Model):
 
 
 class Service(CommonInfo):
+    SCHEME_CHOICES = (
+        ("http", "http"),
+        ("https", "https"),
+    )
+
     name = models.CharField(_("Service name"), max_length=256, unique=True)
-    api_server_url = models.CharField(_("API server url"), max_length=256)
+    server_scheme = models.CharField(
+        _("Server scheme"), max_length=16, choices=SCHEME_CHOICES, default="http")
+    server_host = models.CharField(_("Server host"), max_length=256)
+    server_token = models.CharField(
+        _("Server token"), max_length=256, null=True, blank=True)
     auth_instructions_url = models.CharField(
         _("Auth instructions url"), max_length=256)
     contact_info_url = models.CharField(_("Contact info url"), max_length=256)
@@ -41,24 +51,27 @@ class Service(CommonInfo):
     def __str__(self):
         return "Service: {}".format(self.name)
 
-    def insert_from_form(self, api_server_url, server_name, d_response):
-        self.name = server_name
-        self.api_server_url = api_server_url
+    def insert_from_form(self, service_name, server_scheme, server_host, server_token, d_response):
+        self.name = service_name
+        self.server_scheme = server_scheme
+        self.server_host = server_host
+        self.server_token = server_token
         self.auth_instructions_url = d_response["auth_instructions_url"]
         self.contact_info_url = d_response["contact_info_url"]
         self.save()
         for workflow_engine in d_response["workflow_engines"]:
             obj_workflow_engine = WorkflowEngineFactory(
                 service=self,
-                name=workflow_engine["name"],
-                version=workflow_engine["version"],
+                name=workflow_engine["engine_name"],
+                version=workflow_engine["engine_version"],
             )
             for workflow_type in workflow_engine["workflow_types"]:
                 workflow_type = WorkflowTypeFactory(
-                    type=workflow_type["type"],
-                    version=workflow_type["version"],
+                    type=workflow_type["language_type"],
+                    version=workflow_type["language_version"],
                 )
                 obj_workflow_engine.workflow_types.add(workflow_type)
+            obj_workflow_engine.save()
         for wes_version in d_response["supported_wes_versions"]:
             SupportedWesVersionFactory(
                 service=self,
@@ -66,43 +79,48 @@ class Service(CommonInfo):
             )
 
     def fetch_workflows(self):
-        # TODO update case
-        from .model_workflow import WorkflowFactory
-        try:
-            d_response = requests.get(
-                "http://" + self.api_server_url + "/workflows").json()
-        except RequestException:
+        from app.models.model_workflow import Workflow, WorkflowFactory
+        d_response = get_requests(
+            self.server_scheme, self.server_host, "/workflows", self.server_token)
+        if d_response:
             raise Http404
         for workflow in d_response["workflows"]:
+            obj_workflow = Workflow.objects.filter(
+                name=workflow["workflow_name"]).first()
             workflow_type = WorkflowType.objects.filter(
-                type=workflow["type"], version=workflow["version"])
+                type=workflow["language_type"], version=workflow["language_version"])
             if len(workflow_type) == 0:
                 workflow_type = WorkflowTypeFactory(
-                    type=workflow["type"],
-                    version=workflow["version"],
+                    type=workflow["language_type"],
+                    version=workflow["language_version"],
                 )
             else:
                 workflow_type = workflow_type.first()
-            workflow = WorkflowFactory(
-                service=self,
-                name=workflow["name"],
-                workflow_type=workflow_type,
-                content=workflow["content"],
-                run_order_template=workflow["run_order_template"]
-            )
+            if obj_workflow is not None:    # update
+                obj_workflow.version = workflow["workflow_version"]
+                obj_workflow.workflow_type = workflow_type
+                obj_workflow.location = workflow["workflow_location"]
+                obj_workflow.content = workflow["workflow_content"]
+                obj_workflow.parameters_template_location = workflow[
+                    "workflow_parameters_template_location"]
+                obj_workflow.parameters_template = workflow["workflow_parameters_template"]
+                obj_workflow.save()
+            else:   # create
+                WorkflowFactory(
+                    service=self,
+                    name=workflow["workflow_name"],
+                    version=workflow["workflow_version"],
+                    workflow_type=workflow_type,
+                    location=workflow["workflow_location"],
+                    content=workflow["workflow_content"],
+                    parameters_template_location=workflow["workflow_parameters_template_location"],
+                    parameters_template=workflow["workflow_parameters_template"],
+                )
 
 
 class ServiceFactory(DjangoModelFactory):
     class Meta:
         model = Service
-
-    name = fuzzy.FuzzyText()
-    api_server_url = LazyAttribute(
-        lambda o: "{}_api_server_url@sapporo-example.com".format(o.name))
-    auth_instructions_url = LazyAttribute(
-        lambda o: "{}_auth_instructions_url@sapporo-example.com".format(o.name))
-    contact_info_url = LazyAttribute(
-        lambda o: "{}_contact_info_url@sapporo-example.com".format(o.name))
 
 
 class WorkflowType(CommonInfo):

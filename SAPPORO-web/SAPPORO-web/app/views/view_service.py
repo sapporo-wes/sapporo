@@ -1,8 +1,8 @@
 # coding: utf-8
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import View
-from django.http import Http404
 
 from app.models import Service
 
