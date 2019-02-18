@@ -1,5 +1,4 @@
 # coding: utf-8
-import requests
 from django import forms
 from django.contrib.auth.forms import \
     UserCreationForm as NativeUserCreationForm
@@ -7,8 +6,8 @@ from django.contrib.auth.models import User
 from django.forms import EmailField
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from requests.exceptions import RequestException
 
+from app.lib.requests_wrapper import get_requests
 from app.models import Service
 
 
@@ -41,14 +40,13 @@ class ServiceAdditionForm(forms.Form):
     server_host = forms.CharField(label=_(
         "Service server host"), max_length=256, required=True, help_text=_("Required. e.g. localhost:8000"))
     server_token = forms.CharField(label=_(
-        "Service server token"), max_length=256, required=False, help_text=_("Not Required. None is OK."), initial="None")
+        "Service server token"), max_length=256, required=False, help_text=_("Not Required. None is OK."))
 
     def clean(self):
         super().clean()
-        try:
-            d_response = requests.get(
-                self.cleaned_data["server_scheme"] + "://" + self.cleaned_data["server_host"] + "/service-info").json()
-        except RequestException:
+        d_response = get_requests(
+            self.cleaned_data["server_scheme"], self.cleaned_data["server_host"], "/service-info", self.cleaned_data["server_token"])
+        if d_response is None:
             raise forms.ValidationError("Please enter the correct URL.")
         if Service.objects.filter(name=self.cleaned_data["service_name"]).exists():
             raise forms.ValidationError(
@@ -92,3 +90,8 @@ class WorkflowPrepareForm(forms.Form):
             if input_param["doc"] is not None:
                 self.fields[input_param["label"]
                             ].help_text = input_param["doc"]
+
+
+class WorkflowParametersUploadForm(forms.Form):
+    workflow_parameters = forms.FileField(
+        label=_("Workflow Parameters"), required=False)

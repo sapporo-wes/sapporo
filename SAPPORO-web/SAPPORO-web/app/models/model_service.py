@@ -9,6 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 from factory.django import DjangoModelFactory
 from requests.exceptions import RequestException
 
+from app.lib.requests_wrapper import get_requests
+
 
 def _get_token():
     # Cannot use lambda in Django model default
@@ -35,7 +37,8 @@ class Service(CommonInfo):
     server_scheme = models.CharField(
         _("Server scheme"), max_length=16, choices=SCHEME_CHOICES, default="http")
     server_host = models.CharField(_("Server host"), max_length=256)
-    server_token = models.CharField(_("Server token"), max_length=256)
+    server_token = models.CharField(
+        _("Server token"), max_length=256, null=True, blank=True)
     auth_instructions_url = models.CharField(
         _("Auth instructions url"), max_length=256)
     contact_info_url = models.CharField(_("Contact info url"), max_length=256)
@@ -76,11 +79,10 @@ class Service(CommonInfo):
             )
 
     def fetch_workflows(self):
-        from .model_workflow import Workflow, WorkflowFactory
-        try:
-            d_response = requests.get(
-                self.server_scheme + "://" + self.server_host + "/workflows").json()
-        except RequestException:
+        from app.models.model_workflow import Workflow, WorkflowFactory
+        d_response = get_requests(
+            self.server_scheme, self.server_host, "/workflows", self.server_token)
+        if d_response:
             raise Http404
         for workflow in d_response["workflows"]:
             obj_workflow = Workflow.objects.filter(

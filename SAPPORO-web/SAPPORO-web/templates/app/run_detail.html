@@ -39,6 +39,7 @@
       </table>
       <hr />
       <h5>Workflow Paramteres</h5>
+<a class="btn btn-outline-primary" href="{% url 'app:run_download' run_id=run.run_id %}" download>Download</a>
 <pre class="prettyprint linenums">
 {{ run.workflow_parameters }}
 </pre>

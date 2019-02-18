@@ -1,5 +1,4 @@
 # coding: utf-8
-import json
 from copy import copy
 from io import StringIO
 
@@ -10,8 +9,9 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import View
+from requests.exceptions import RequestException
 
-from app.forms import WorkflowPrepareForm
+from app.forms import WorkflowParametersUploadForm, WorkflowPrepareForm
 from app.lib.cwl_parser import parse_cwl_input_params
 from app.models import RunFactory, Workflow
 
@@ -56,8 +56,9 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
         input_params = parse_cwl_input_params(workflow.content)
         workflow_prepare_form = WorkflowPrepareForm(
             workflow.name, input_params, excutable_engines)
+        workflow_parameters_upload_form = WorkflowParametersUploadForm()
 
-        return self.general_render(request, workflow, workflow_prepare_form)
+        return self.general_render(request, workflow, workflow_prepare_form, workflow_parameters_upload_form)
 
     def post(self, request, workflow_token):
         workflow = Workflow.objects.filter(token=workflow_token).select_related(
@@ -73,23 +74,35 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
                 run = self._post_run(
                     request.user, workflow, workflow_engine, workflow_prepare_form.cleaned_data)
                 return HttpResponseRedirect(reverse_lazy("app:run_detail", kwargs={"run_id": run.run_id}))
+            workflow_parameters_upload_form = WorkflowParametersUploadForm()
+        elif request.POST.get("workflow_parameters_upload_form"):
+            workflow_prepare_form = WorkflowPrepareForm(
+                workflow.name, input_params, excutable_engines)
+            workflow_parameters_upload_form = WorkflowParametersUploadForm(
+                request.POST, request.FILES)
+            if workflow_parameters_upload_form.is_valid():
+                workflow_parameters = workflow_parameters_upload_form.cleaned_data["workflow_parameters"].file.read(
+                ).decode("utf-8")
+                d_workflow_parameters = yaml.load(workflow_parameters)
+                for key, value in d_workflow_parameters.items():
+                    workflow_prepare_form.fields[key].initial = value
         else:
             workflow_prepare_form = WorkflowPrepareForm(
                 workflow.name, input_params, excutable_engines)
+            workflow_parameters_upload_form = WorkflowParametersUploadForm()
 
-        return self.general_render(request, workflow, workflow_prepare_form)
+        return self.general_render(request, workflow, workflow_prepare_form, workflow_parameters_upload_form)
 
-    def general_render(self, request, workflow, workflow_prepare_form):
+    def general_render(self, request, workflow, workflow_prepare_form, workflow_parameters_upload_form):
         context = {
             "workflow": workflow,
             "workflow_prepare_form": workflow_prepare_form,
+            "workflow_parameters_upload_form": workflow_parameters_upload_form,
         }
 
         return render(request, "app/workflow_prepare.html", context)
 
     def _post_run(self, user, workflow, workflow_engine, form_inputs):
-        service_server_url = workflow.service.server_scheme + \
-            "://" + workflow.service.server_host + "/runs"
         workflow_parameters = copy(form_inputs)
         del workflow_parameters["execution_engine"]
         del workflow_parameters["run_name"]
@@ -102,9 +115,19 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
         files = {
             "workflow_parameters": ("workflow_parameters.yml", StringIO(workflow_parameters), "application/yaml;charset=UTF-8")
         }
-        response = requests.post(service_server_url, files=files, data=data)
-        assert response.status_code == 200, "Workflow post error"
-        d_response = response.json()
+        try:
+            url = workflow.service.server_scheme + "://" + \
+                workflow.service.server_host + "/runs"
+            if workflow.service.server_token == "":
+                response = requests.post(url, files=files, data=data)
+            else:
+                headers = {"Authorization": workflow.service.server_token}
+                response = requests.post(
+                    url, files=files, data=data, headers=headers)
+            response.raise_for_status()
+            d_response = response.json()
+        except RequestException:
+            raise Http404
         run = RunFactory(
             user=user,
             name=form_inputs["run_name"],

@@ -1,11 +1,13 @@
 # coding: utf-8
 from datetime import datetime
 
-import requests
 from django.contrib.auth.models import User
 from django.db import models
+from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 from factory.django import DjangoModelFactory
+
+from app.lib.requests_wrapper import get_requests
 
 from .model_service import CommonInfo, WorkflowEngine
 from .model_workflow import Workflow
@@ -39,11 +41,10 @@ class Run(CommonInfo):
         return "Run: {}".format(self.run_id)
 
     def _update_from_service(self):
-        service_server_url = self.workflow.service.server_scheme + "://" + \
-            self.workflow.service.server_host + "/runs/" + str(self.run_id)
-        response = requests.get(service_server_url)
-        assert response.status_code == 200, "Get run error"
-        d_response = response.json()
+        d_response = get_requests(self.workflow.service.server_scheme, self.workflow.service.server_host,
+                                  "/runs/" + str(self.run_id), self.workflow.service.server_token)
+        if d_response is None:
+            raise Http404
         self.status = d_response["status"]
         self.stdout = d_response["stdout"]
         self.stderr = d_response["stderr"]

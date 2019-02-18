@@ -1,10 +1,9 @@
 # coding: utf-8
-from pathlib import Path
-
 import requests
 from flask import abort
+from requests.exceptions import RequestException
 
-from .util import WORKFLOW_INFO_FILE_PATH, read_workflow_info
+from .util import read_workflow_info
 
 
 def read_workflow_setting_file():
@@ -20,8 +19,12 @@ def read_workflow_setting_file():
 
     return data
 
+
 def fetch_file(url):
-    response = requests.get(url)
-    if response.status_code != requests.codes.ok:
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+    except RequestException:
         abort(400, "Can not get file: {}".format(url))
+
     return response.content.decode()
