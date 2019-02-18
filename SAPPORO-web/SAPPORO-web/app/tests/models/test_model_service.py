@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django.test import TestCase
 
-from app.models import (Service, StateCount, SupportedWesVersion,
+from app.models import (Service, StatusCount, SupportedWesVersion,
                         WorkflowEngine, WorkflowType)
 from app.tests.mock_server.dummy_data import DUMMY_SERVICE_INFO
 
@@ -70,11 +70,11 @@ class ServiceModelTests(TestCase):
                               item_2["type"] for item in DUMMY_SERVICE_INFO["workflow_engines"] for item_2 in item["workflow_types"]])
                 self.assertIn(workflow_type["version"], [
                               item_2["version"] for item in DUMMY_SERVICE_INFO["workflow_engines"] for item_2 in item["workflow_types"]])
-        for state_count in d_service["state_counts"]:
-            self.assertIn(state_count["state"], [
-                          item["state"] for item in DUMMY_SERVICE_INFO["state_counts"]])
-            self.assertIn(state_count["count"], [
-                          item["count"] for item in DUMMY_SERVICE_INFO["state_counts"]])
+        for status_count in d_service["status_counts"]:
+            self.assertIn(status_count["status"], [
+                          item["status"] for item in DUMMY_SERVICE_INFO["status_counts"]])
+            self.assertIn(status_count["count"], [
+                          item["count"] for item in DUMMY_SERVICE_INFO["status_counts"]])
 
     def test_get_workflows_dict_response(self):
         service = Service()
@@ -168,7 +168,7 @@ class SupportedWesVersionModelTests(TestCase):
             self.assertIn("Supported Wes Version:", str(supported_wes_version))
 
 
-class StateCountTests(TestCase):
+class StatusCountTests(TestCase):
     def set_up_db(self):
         service = Service()
         service.name = "TestService"
@@ -177,23 +177,23 @@ class StateCountTests(TestCase):
         service.insert_from_dict_response(d_res)
         service.save()
 
-    def test_state_count_entries(self):
+    def test_status_count_entries(self):
         self.set_up_db()
-        state_counts = StateCount.objects.filter(
+        status_counts = StatusCount.objects.filter(
             service__name="TestService")
-        self.assertEqual(len(state_counts), len(
-            DUMMY_SERVICE_INFO["state_counts"]))
-        for state_count in state_counts:
-            self.assertIn(state_count.state,
-                          [item["state"] for item in DUMMY_SERVICE_INFO["state_counts"]])
-            self.assertIn(state_count.count,
-                          [item["count"] for item in DUMMY_SERVICE_INFO["state_counts"]])
-            self.assertIsInstance(state_count.created_at, datetime)
-            self.assertIsInstance(state_count.updated_at, datetime)
+        self.assertEqual(len(status_counts), len(
+            DUMMY_SERVICE_INFO["status_counts"]))
+        for status_count in status_counts:
+            self.assertIn(status_count.status,
+                          [item["status"] for item in DUMMY_SERVICE_INFO["status_counts"]])
+            self.assertIn(status_count.count,
+                          [item["count"] for item in DUMMY_SERVICE_INFO["status_counts"]])
+            self.assertIsInstance(status_count.created_at, datetime)
+            self.assertIsInstance(status_count.updated_at, datetime)
 
     def test_return_str(self):
         self.set_up_db()
-        state_counts = StateCount.objects.filter(
+        status_counts = StatusCount.objects.filter(
             service__name="TestService")
-        for state_count in state_counts:
-            self.assertIn("State Count:", str(state_count))
+        for status_count in status_counts:
+            self.assertIn("Status Count:", str(status_count))

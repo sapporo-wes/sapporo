@@ -1,0 +1,34 @@
+version: "3"
+services:
+  app:
+    image: sapporo-service-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sapporo-service-app
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /tmp:/tmp
+      - ./SAPPORO-service:/opt/SAPPORO-service/SAPPORO-service
+      - ./config:/opt/SAPPORO-service/config
+      - ./log:/opt/SAPPORO-service/log
+      - ./run:/opt/SAPPORO-service/run
+    environment:
+      - DEBUG=False
+      - ENABLE_GET_RUNS=False
+      - TOKEN_AUTH=True
+    command: ["sh", "/opt/SAPPORO-service/entry_point.sh"]
+  web:
+    image: nginx:stable-alpine
+    container_name: sapporo-service-web
+    depends_on:
+      - app
+    restart: always
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./config:/opt/SAPPORO-service/config
+      - ./log:/opt/SAPPORO-service/log
+    ports:
+      - 1122:80

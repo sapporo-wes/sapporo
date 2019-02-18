@@ -21,14 +21,16 @@
         <thead class="thead-light">
           <tr>
             <th scope="col"><div class="text-center">Name</div></th>
-            <th scope="col"><div class="text-center">Service</div></th>
-            <th scope="col"><div class="text-center">Type</div></th>
+            <th scope="col"><div class="text-center">Version</div></th>
+            <th scope="col"><div class="text-center">Execution Service</div></th>
+            <th scope="col"><div class="text-center">Language Type</div></th>
           </tr>
         </thead>
         <tbody>
         {% for workflow in workflows %}
           <tr>
             <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a></td>
+            <td class="align-middle">{{ workflow.version }}</td>
             <td class="align-middle"><a href="{% url 'app:service_detail' service_name=workflow.service.name %}">{{ workflow.service.name }}</a></td>
             <td class="align-middle">{{ workflow.workflow_type.type }}:&nbsp;{{ workflow.workflow_type.version }}</td>
           </tr>
@@ -44,4 +46,3 @@
     </div>
   </div>
 {% endblock %}
-
