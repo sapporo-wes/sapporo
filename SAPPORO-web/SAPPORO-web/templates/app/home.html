@@ -4,17 +4,18 @@
 {% load i18n %}
 {% block title %}SAPPORO{% endblock %}
 {% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
 {% endblock %}
 {% block content %}
 <div class="container">
-  <div class="row">
+  <div class="row sp-nav">
     <div class="col-md-12">
       {% include "./navbar.html" %}
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-8">
+  <div class="row sp-content">
+    <div class="col-md-8 sp-description">
       <h3>
         SAPPORO
       </h3>
@@ -23,11 +24,11 @@ SAPPORO is a Web platform for running various Workflows. It is divided into two 
       </p>
     </div>
     <div class="col-md-4 d-none d-md-block">
-      <form action="{% url 'app:home' %}" method="post">
-          {% csrf_token %}
-          {% bootstrap_form authentication_form %}
+      <form class="form-signin" action="{% url 'app:home' %}" method="post">
+        {% csrf_token %}
+        {% bootstrap_form authentication_form %}
         {% buttons %}
-          <input type="submit" class="btn btn-outline-primary btn-block" name="authentication" value="Signin" />
+          <input type="submit" class="btn btn-outline-primary btn-block" name="authentication" value="Sign in" />
         {% endbuttons %}
       </form>
     </div>

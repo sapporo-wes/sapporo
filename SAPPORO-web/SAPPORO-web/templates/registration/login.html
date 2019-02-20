@@ -1,86 +1,32 @@
-<!doctype html>
+{% extends 'base.html' %}
 {% load bootstrap4 %}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery=True %}
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../../static/css/flatly.css">
-    <title>SAPPORO Signin</title>
-  </head>
-  <body class="text-center">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-4">
-        </div>
-        <div class="col-md-4">
-          <img alt="Bootstrap Image Preview" src="https://www.layoutit.com/img/sports-q-c-140-140-3.jpg" class="rounded" />
-          <h2>
-            SAPPORO
-          </h2>
-          <form role="form" class="form-inline">
-            <div class="form-group">
-              <label for="exampleInputEmail1">
-                Email address
-              </label>
-              <input type="email" class="form-control" id="exampleInputEmail1" />
-            </div>
-            <div class="form-group">
-              
-              <label for="exampleInputPassword1">
-                Password
-              </label>
-              <input type="password" class="form-control" id="exampleInputPassword1" />
-            </div>
-            <div class="form-group">
-              
-              <label for="exampleInputFile">
-                File input
-              </label>
-              <input type="file" class="form-control-file" id="exampleInputFile" />
-              <p class="help-block">
-                Example block-level help text here.
-              </p>
-            </div>
-            <div class="checkbox">
-              
-              <label>
-                <input type="checkbox" /> Check me out
-              </label>
-            </div> 
-            <button type="submit" class="btn btn-primary">
-              Submit
-            </button>
-          </form>
-        </div>
-        <div class="col-md-4">
-        </div>
-      </div>
-    </div>
-  </body>
-</html>
-{% comment %} {% extends 'base.html' %}
-{% load bootstrap4 %}
-{% block title %}
-  SAPPORO-web Signin
-{% endblock %}
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO{% endblock %}
 {% block extra_css %}
-  <link rel="stylesheet" href="../../static/css/flatly.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
 {% endblock %}
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Signin</h2>
-      <hr />
+<div class="container">
+  <div class="row sp-nav">
+    <div class="col-md-12">
+      {% include "../app/navbar.html" %}
+    </div>
+  </div>
+  <div class="row justify-content-md-center sp-content ">
+    <div class="col-md-4 sp-login-form">
       <form class="form-signin" method="post" action="{% url 'app:signin' %}">
-        {% bootstrap_form form %}
+        <img src="{% static 'img/icon/icon_96.png' %}" alt="" width="96" height="96">
+        <p>Sign in to SAPPORO</p>
         {% csrf_token %}
+        {% bootstrap_form form %}
         {% buttons %}
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <input type="submit" class="btn btn-outline-primary btn-block" name="authentication" value="Sign in" />
         {% endbuttons %}
       </form>
     </div>
   </div>
-{% endblock %} {% endcomment %}
+</div>
+{% endblock %}
+{% block extra_js%}{% endblock %}

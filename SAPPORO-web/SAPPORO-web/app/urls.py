@@ -1,12 +1,12 @@
 # coding: utf-8
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 
 from app.views import (AdminHomeView, AdminServiceView, HomeView,
-                       RunDetailView, RunDownloadView, RunListView,
-                       ServiceDetailView, ServiceListView, SignupView,
-                       UserHomeView, WorkflowDetailView, WorkflowListView,
-                       WorkflowPrepareView)
+                       LoginNoPlaceholderView, RunDetailView, RunDownloadView,
+                       RunListView, ServiceDetailView, ServiceListView,
+                       SignupView, UserHomeView, WorkflowDetailView,
+                       WorkflowListView, WorkflowPrepareView)
 
 app_name = "app"
 
@@ -21,7 +21,7 @@ urlpatterns = [
     path("services/", ServiceListView.as_view(), name="service_list"),
     path("services/<str:service_name>/",
          ServiceDetailView.as_view(), name="service_detail"),
-    path("signin/", LoginView.as_view(), name="signin"),
+    path("signin/", LoginNoPlaceholderView.as_view(), name="signin"),
     path("signout/", LogoutView.as_view(), name="signout"),
     path("signup/", SignupView.as_view(), name="signup"),
     path("workflows/", WorkflowListView.as_view(), name="workflow_list"),

@@ -1,0 +1,38 @@
+body {
+  background-image: linear-gradient(45deg, #8baaaa 0%, #ae8b9c 100%);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+.sp-content {
+  margin-top: 150px;
+}
+
+.sp-login-form {
+  background-color: #fafbfc;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  padding-left: 25px;
+  padding-right: 25px;
+  border-radius: 5px 5px 5px 5px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #2c2c2c;
+}
+
+.sp-login-form > form > img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sp-login-form > form > p {
+  padding-top: 30px;
+  font-size: 1.4rem;
+  font-weight: 300;
+  text-align: center;
+}

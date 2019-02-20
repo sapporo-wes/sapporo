@@ -1,5 +1,6 @@
 # coding: utf-8
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import \
     UserCreationForm as NativeUserCreationForm
 from django.contrib.auth.models import User
@@ -11,20 +12,19 @@ from app.lib.requests_wrapper import get_requests
 from app.models import Service
 
 
+class AuthenticationFormNoPlaceholder(AuthenticationForm):
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["username"].widget.attrs["placeholder"] = ""
+        self.fields["password"].widget.attrs["placeholder"] = ""
+
+
 class UserCreationForm(NativeUserCreationForm):
-    class Meta:
-        model = User
-        fields = ("username", "email", "password1", "password2")
-
-    email = EmailField(label=_("Email address"),
-                       required=True, help_text=_("Required."))
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data["email"]
-        if commit:
-            user.save()
-        return user
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["username"].widget.attrs["placeholder"] = ""
+        self.fields["password1"].widget.attrs["placeholder"] = ""
+        self.fields["password2"].widget.attrs["placeholder"] = ""
 
 
 class ServiceAdditionForm(forms.Form):

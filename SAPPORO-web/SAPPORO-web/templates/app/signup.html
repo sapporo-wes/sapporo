@@ -1,21 +1,32 @@
 {% extends 'base.html' %}
 {% load bootstrap4 %}
-{% block title %}
-  SAPPORO-web Signup
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
 {% endblock %}
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Signup</h2>
-      <hr />
+<div class="container">
+  <div class="row sp-nav">
+    <div class="col-md-12">
+      {% include "../app/navbar.html" %}
+    </div>
+  </div>
+  <div class="row justify-content-md-center sp-content ">
+    <div class="col-md-4 sp-login-form">
       <form class="form-signin" method="post" action="{% url 'app:signup' %}">
+        <img src="{% static 'img/icon/icon_96.png' %}" alt="" width="96" height="96">
+        <p>Sign in to SAPPORO</p>
         {% csrf_token %}
         {% bootstrap_form form %}
         {% buttons %}
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <input type="submit" class="btn btn-outline-primary btn-block" name="authentication" value="Sign up" />
         {% endbuttons %}
       </form>
     </div>
   </div>
+</div>
 {% endblock %}
+{% block extra_js%}{% endblock %}
