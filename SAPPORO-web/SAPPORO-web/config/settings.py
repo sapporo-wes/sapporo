@@ -20,7 +20,7 @@ def str2bool(str):
 
 BASE_DIR = Path(__file__).absolute().parent.parent
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["0.0.0.0"]
 DEBUG = str2bool(os.environ.get("DEBUG"))
 DEVELOP = str2bool(os.environ.get("DEVELOP"))
 LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE")
