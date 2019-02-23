@@ -2,23 +2,19 @@
 {% load bootstrap4 %}
 {% load static %}
 {% load i18n %}
-{% block title %}SAPPORO{% endblock %}
+{% block title %}SAPPORO Sign up{% endblock %}
 {% block extra_css %}
   <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
 {% endblock %}
 {% block content %}
+{% include "../app/navbar.html" %}
 <div class="container">
-  <div class="row sp-nav">
-    <div class="col-md-12">
-      {% include "../app/navbar.html" %}
-    </div>
-  </div>
-  <div class="row justify-content-md-center sp-content ">
-    <div class="col-md-4 sp-login-form">
-      <form class="form-signin" method="post" action="{% url 'app:signup' %}">
-        <img src="{% static 'img/icon/icon_96.png' %}" alt="" width="96" height="96">
-        <p>Sign in to SAPPORO</p>
+  <div class="row justify-content-sm-center">
+    <div class="col-sm-4" id="form">
+      <form class="signup-form" method="post" action="{% url 'app:signup' %}">
+        <img src="{% static 'img/sapporo_icon/res/mipmap-xxhdpi/sapporo_icon.png' %}" alt="" width="96" height="96">
+        <p>Sign up to SAPPORO</p>
         {% csrf_token %}
         {% bootstrap_form form %}
         {% buttons %}

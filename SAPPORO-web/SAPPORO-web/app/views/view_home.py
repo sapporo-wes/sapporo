@@ -10,6 +10,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View
 
 from app.forms import AuthenticationFormNoPlaceholder
+from app.models import Run, Service, Workflow
 
 
 class HomeView(View):
@@ -17,7 +18,17 @@ class HomeView(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            return render(request, "app/home_authenticated.html")
+            services = Service.objects.all()
+            workflows = Workflow.objects.all()
+            runs = Run.objects.filter(user__pk=request.user.pk)
+            for run in runs:
+                run._update_from_service()
+            context = {
+                "services": services,
+                "workflows": workflows,
+                "runs": runs,
+            }
+            return render(request, "app/home_authenticated.html", context)
         else:
             authentication_form = AuthenticationFormNoPlaceholder()
             context = {

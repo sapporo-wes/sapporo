@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
-{% block title %}
-  SAPPORO-web Run
+{% load bootstrap4 %}
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Run Detail{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/home_authenticated.css' %}">
 {% endblock %}
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
+{% include "./navbar.html" %}
+  <div class="container">
+    <div class="row">
+    <div class="col-12">
       <h2>SAPPORO-web Run Detail</h2>
       <p class="lead">
         Screen for managing Run executed by User
@@ -14,8 +20,8 @@
     </div>
   </div>
 
-  <div class="row justify-content-center">
-    <div class="col-9">
+  <div class="row">
+    <div class="col-12">
       <table class="table table-bordered">
         <thead class="thead-light">
         <thead class="thead-light">
@@ -56,13 +62,13 @@
     </div>
   </div>
 
-  <div class="row justify-content-center">
-    <div class="col-10">
+  <div class="row">
+    <div class="col-12">
       <a class="btn btn-outline-secondary" href="{% url 'app:run_list' %}" role="button">Back</a>
     </div>
   </div>
-{% endblock %}
 
+{% endblock %}
 {% block extra_js %}
   <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=sunburst"></script>
 {% endblock %}

@@ -1,72 +1,69 @@
 {% extends 'base.html' %}
-{% block title %}
-  SAPPORO-web Service List
+{% load bootstrap4 %}
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Service List{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/service_list.css' %}">
 {% endblock %}
-
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Service List</h2>
-      <p class="lead">
-        List of currently registered services
-      </p>
-      <hr />
+{% include "./navbar.html" %}
+  <div class="container">
+    <div class="row" id="title">
+      <div class="col-12">
+        <h1>Service List</h1>
+      </div>
     </div>
-  </div>
-
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h5>Service List</h5>
-    </div>
-  </div>
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-9">
-      <table class="table table-bordered">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col"><div class="text-center">Service Name</div></th>
-            <th scope="col"><div class="text-center">Server Scheme</div></th>
-            <th scope="col"><div class="text-center">Server Host</div></th>
-            <th scope="col"><div class="text-center">Workflow Engines</div></th>
-            <th scope="col"><div class="text-center">Workflows</div></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for service in services %}
+    <div class="row justify-content-center" id="content">
+      <div class="col-10">
+        <table class="table table-bordered">
+          <thead class="thead-dark">
             <tr>
-              <td class="align-middle"><a href="{% url 'app:service_detail' service_name=service.name %}">{{ service.name }}</a></td>
-              <td class="align-middle">{{ service.server_scheme }}</td>
-              <td class="align-middle">{{ service.server_host }}</td>
-              <td class="align-middle">
-                {% for workflow_engine in service.workflow_engines.all %}
-                  {% if forloop.counter == service.workflow_engines.all|length %}
-                    {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}
-                  {% else %}
-                    {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}<br />
-                  {% endif %}
-                {% endfor %}
-              </td>
-              <td class="align-middle">
-                {% for workflow in service.workflows.all %}
-                  {% if forloop.counter == service.workflows.all|length %}
-                    <a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a>
-                  {% else %}
-                    <a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a><br />
-                  {% endif %}
-                {% endfor %}
-              </td>
+              <th scope="col">Service Name</th>
+              <th scope="col">Workflow Engines</th>
+              <th scope="col">Excutable Languages</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <a class="btn btn-outline-secondary" href="{% url 'app:home' %}" role="button">Back</a>
+          </thead>
+          <tbody>
+            {% for service in services %}
+              <tr>
+                <td><a href="{% url 'app:service_detail' service_name=service.name %}">{{ service.name }}</a></td>
+                <td>
+                  {% for workflow_engine in service.workflow_engines.all %}
+                    {% if forloop.counter == service.workflow_engines.all|length %}
+                      {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}
+                    {% else %}
+                      {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}<br />
+                    {% endif %}
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for workflow_engine in service.workflow_engines.all %}
+                    {% if forloop.counter == service.workflow_engines.all|length %}
+                      {% for workflow_type in workflow_engine.workflow_types.all %}
+                        {% if forloop.counter == workflow_engine.workflow_types.all|length %}
+                          {{ workflow_type.type }}:&nbsp;{{ workflow_type.version }}
+                        {% else %}
+                          {{ workflow_type.type }}:&nbsp;{{ workflow_type.version }}<br />
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      {% for workflow_type in workflow_engine.workflow_types.all %}
+                        {% if forloop.counter == workflow_engine.workflow_types.all|length %}
+                          {{ workflow_type.type }}:&nbsp;{{ workflow_type.version }}<br />
+                        {% else %}
+                          {{ workflow_type.type }}:&nbsp;{{ workflow_type.version }}<br />
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}

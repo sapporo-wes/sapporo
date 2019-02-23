@@ -1,15 +1,25 @@
-nav.bg-primary {
-  background-color: #25292e !important;
+#sp-navbar {
+  color: #001a23;
+  background-color: #001a23 !important;
 }
 
-#navbarSupportedContent
-  > ul.navbar-nav.ml-md-auto
-  > li
-  > a.btn-outline-secondary {
-  color: #e9e9e9;
-  border-color: #e9e9e9;
+#sp-navbar a {
+  color: #ffffff !important;
 }
 
-body {
-  padding-top: 70px;
+#sp-navbar > .navbar-brand {
+  color: #ffffff;
+}
+
+#sp-navbar .btn-outline-secondary {
+  color: #d1ecf4;
+  border-color: #d1ecf4;
+}
+
+#navbarSupportedContent .nav-link {
+  margin-right: 10px;
+}
+
+#navbarSupportedContent .nav-item .btn {
+  margin-right: 10px;
 }

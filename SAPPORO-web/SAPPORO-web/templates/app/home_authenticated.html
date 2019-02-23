@@ -4,21 +4,51 @@
 {% load i18n %}
 {% block title %}SAPPORO{% endblock %}
 {% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'css/home_authenticated.css' %}">
 {% endblock %}
 {% block content %}
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        {% include "./navbar.html" %}
-        <div class="jumbotron">
-          <h1 class="display-3">SAPPORO-web Home Authenticated</h1>
-          <p class="lead">
-            Screen after Sign in
-          </p>
+{% include "./navbar.html" %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xl-2 col-lg-3 col-md-4 d-none d-md-block" id="sidebar">
+      <div class="row">
+        <div class="col content" id="services">
+          <h1>
+            Services
+          </h1>
+          {% for service in services %}
+            <p><a href="{% url 'app:service_detail' service_name=service.name %}">{{ service.name }}</a></p>
+          {% endfor %}
         </div>
       </div>
+      <div class="row">
+        <div class="col content" id="workflows">
+          <h1>
+            Workflows
+          </h1>
+          {% for workflow in workflows %}
+            <p><a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a></p>
+          {% endfor %}
+       </div>
+      </div>
+    </div>
+    <div class="col" id="runs">
+      <h1>
+        Recent Runs
+      </h1>
+      <table class="table">
+        <tbody>
+          {% for run in runs %}
+            <tr>
+              <td><a href="{% url 'app:run_detail' run_id=run.run_id %}">{{ run.name }}</a></td>
+              <td>{{ run.status }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
 {% endblock %}
 {% block extra_js%}{% endblock %}

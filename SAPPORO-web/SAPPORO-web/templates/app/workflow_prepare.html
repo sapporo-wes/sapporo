@@ -1,46 +1,41 @@
 {% extends 'base.html' %}
 {% load bootstrap4 %}
-
-{% block title %}
-  SAPPORO-web Workflow Prepare
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Workflow Prepare{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/workflow_prepare.css' %}">
 {% endblock %}
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Workflow Prepare</h2>
-      <hr />
+{% include "./navbar.html" %}
+  <div class="container">
+    <div class="row" id="title">
+      <div class="col-12">
+        <h1>Prepare {{ workflow.name }}: {{ workflow.version }}</h1>
+      </div>
     </div>
-  </div>
 
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          {% bootstrap_form workflow_parameters_upload_form %}
-          {% buttons %}
-            <input type="submit" class="btn btn-outline-primary" name="workflow_parameters_upload_form" value="Submit" />
-          {% endbuttons %}
-      </form>
-      <hr />
-    </div>
-  </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post">
+            {% csrf_token %}
+            {% bootstrap_form workflow_prepare_form %}
+            {% buttons %}
+              <input type="submit" class="btn btn-outline-primary" name="workflow_prepare_form" value="Run" />
+            {% endbuttons %}
+        </form>
+      </div>
 
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post">
-          {% csrf_token %}
-          {% bootstrap_form workflow_prepare_form %}
-          {% buttons %}
-            <input type="submit" class="btn btn-outline-primary" name="workflow_prepare_form" value="Run" />
-          {% endbuttons %}
-      </form>
-    </div>
-  </div>
-
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <a class="btn btn-outline-secondary" href="{% url 'app:workflow_list' %}" role="button">Back</a>
+      <div class="col-lg-3">
+        <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% bootstrap_form workflow_parameters_upload_form %}
+            {% buttons %}
+              <input type="submit" class="btn btn-outline-primary" name="workflow_parameters_upload_form" value="Submit" />
+            {% endbuttons %}
+        </form>
+      </div>
     </div>
   </div>
 {% endblock %}

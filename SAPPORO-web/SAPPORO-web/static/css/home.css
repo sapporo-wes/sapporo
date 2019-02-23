@@ -1,50 +1,54 @@
 body {
-  background-image: url("/static/img/home_sapporo_blur.jpg");
-  background-position: center;
+  background-image: url("/static/img/home_sapporo_blur-min.jpg");
+  background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
-  background-color: #a9a9a9;
+  background-color: rgba(209, 236, 244, 0.7);
   background-blend-mode: overlay;
 }
 
-.sp-content {
+.container {
   margin-top: 150px;
 }
 
-.sp-description {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-}
-
-.sp-description > h3 {
+#description > h1 {
   font-size: 6rem;
-  font-weight: 400;
-  color: #2c2c2c;
 }
 
-.sp-description > p {
-  font-size: 1.2rem;
-  font-weight: 300;
-  padding-top: 30px;
-  color: #2c2c2c;
+#description > p {
+  font-size: 1rem;
 }
 
-.form-signin {
-  background-color: #fafbfc;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  padding-left: 25px;
-  padding-right: 25px;
-  border-radius: 5px 5px 5px 5px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+#signin-form > form {
+  background-color: #ffffff;
+  padding: 30px 20px;
+  border-radius: 10px;
+  border: #d1ecf4 2px solid;
+}
+
+#signin-form label {
   font-size: 1rem;
   font-weight: 400;
-  color: #2c2c2c;
+  margin-bottom: 4px;
 }
 
-.alert-danger {
-  background-color: #95a5a6;
+#signin-form > form > div:nth-child(4) {
+  margin-top: 32px;
+}
+
+#signin-form .btn-outline-primary {
+  color: #003546;
+  border-color: #003546;
+}
+
+#signin-form .btn-outline-primary:hover {
+  color: #fff !important;
+  background-color: #003546;
+  border-color: #003546;
+}
+
+#signin-form .alert-danger {
+  background-color: #da5138;
   font-size: 0.8rem;
 }

@@ -1,48 +1,44 @@
 {% extends 'base.html' %}
-{% block title %}
-  SAPPORO-web Service Detail
+{% load bootstrap4 %}
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Workflow List{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/workflow_list.css' %}">
 {% endblock %}
-
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Worlflow List</h2>
-      <p class="lead">
-        Screen for managing Worlflow
-      </p>
-      <hr />
+{% include "./navbar.html" %}
+  <div class="container">
+    <div class="row" id="title">
+      <div class="col-12">
+        <h1>Workflow List</h1>
+      </div>
     </div>
-  </div>
 
-  <div class="row justify-content-center">
-    <div class="col-9">
-      <table class="table table-bordered">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col"><div class="text-center">Name</div></th>
-            <th scope="col"><div class="text-center">Version</div></th>
-            <th scope="col"><div class="text-center">Execution Service</div></th>
-            <th scope="col"><div class="text-center">Language Type</div></th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for workflow in workflows %}
-          <tr>
-            <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a></td>
-            <td class="align-middle">{{ workflow.version }}</td>
-            <td class="align-middle"><a href="{% url 'app:service_detail' service_name=workflow.service.name %}">{{ workflow.service.name }}</a></td>
-            <td class="align-middle">{{ workflow.workflow_type.type }}:&nbsp;{{ workflow.workflow_type.version }}</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <a class="btn btn-outline-secondary" href="{% url 'app:home' %}" role="button">Back</a>
+    <div class="row justify-content-center" id="content">
+      <div class="col-10">
+        <table class="table table-bordered">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Version</th>
+              <th scope="col">Language</th>
+              <th scope="col">Execution Service</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for workflow in workflows %}
+              <tr>
+                <td><a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a></td>
+                <td>{{ workflow.version }}</td>
+                <td>{{ workflow.workflow_type.type }}:&nbsp;{{ workflow.workflow_type.version }}</td>
+                <td><a href="{% url 'app:service_detail' service_name=workflow.service.name %}">{{ workflow.service.name }}</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}
