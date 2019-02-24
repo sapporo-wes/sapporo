@@ -11,7 +11,7 @@
 {% include "./navbar.html" %}
 <div class="container" id="content">
   <div class="row">
-    <div class="col-sm-8" id="description">
+    <div class="col-lg-8 col-md-7 col-10" id="description">
       <h1>
         SAPPORO
       </h1>
@@ -19,7 +19,7 @@
 SAPPORO is a Web platform for running various Workflows. It is divided into two components SAPPORO-service and SAPPORO-web. By deploying SAPPORO-service to the computer server, the API Server based on the WES definition of GA4GH is started. Workflow can be executed through API by registering various Workflows in SAPPORO-service. By registering multiple SAPPORO-services in SAPPORO-web, you can run Workflow through the web browser. The type of Workflow that can be executed does not depend on a specific Workflow, and various Workflow languages such as CWL, WDL, Nextflow, etc. can be used. In addition, we design to make SAPPORO-service deploy and workflow easy to add. SAPPORO Project is Open Source.
       </p>
     </div>
-    <div class="col-sm-4" id="signin-form">
+    <div class="col-lg-4 col-md-5 scol-10" id="signin-form">
       <form class="signin-form" action="{% url 'app:home' %}" method="post">
         {% csrf_token %}
         {% bootstrap_form authentication_form %}

@@ -1,47 +1,44 @@
 {% extends 'base.html' %}
-{% block title %}
-  SAPPORO-web Run
+{% load bootstrap4 %}
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Run List{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/run_list.css' %}">
 {% endblock %}
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Run List</h2>
-      <p class="lead">
-        Screen for managing Run executed by User
-      </p>
-      <hr />
+{% include "./navbar.html" %}
+  <div class="container">
+    <div class="row" id="title">
+      <div class="col-12">
+        <h1>Run List</h1>
+      </div>
     </div>
-  </div>
 
-  <div class="row justify-content-center">
-    <div class="col-9">
-      <table class="table table-bordered">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col"><div class="text-center">Workflow Name</div></th>
-            <th scope="col"><div class="text-center">Execution Engine</div></th>
-            <th scope="col"><div class="text-center">Workflow Status</div></th>
-            <th scope="col"><div class="text-center">Run Name</div></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for run in runs %}
+    <div class="row justify-content-center" id="content">
+      <div class="col-10">
+        <table class="table table-bordered">
+          <thead class="thead-dark">
             <tr>
-              <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_token=run.workflow.token %}">{{ run.workflow.name }}</a></td>
-              <td class="align-middle">{{ run.execution_engine.name }}</td>
-              <td class="align-middle">{{ run.status }}</td>
-              <td class="align-middle"><a href="{% url 'app:run_detail' run_id=run.run_id %}">{{ run.name }}</a></td>
+              <th scope="col">Name</th>
+              <th scope="col">Workflow</th>
+              <th scope="col">Execution Service</th>
+              <th scope="col">Status</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <a class="btn btn-outline-secondary" href="{% url 'app:home' %}" role="button">Back</a>
+          </thead>
+          <tbody>
+            {% for run in runs %}
+              <tr>
+                <td><a href="{% url 'app:run_detail' run_id=run.run_id %}">{{ run.name }}</a></td>
+                <td><a href="{% url 'app:workflow_detail' workflow_token=run.workflow.token %}">{{ run.workflow.name }}</a></td>
+                <td><a href="{% url 'app:service_detail' service_name=run.workflow.service.name %}">{{ run.workflow.service.name }}</a></td>
+                <td>{{ run.status }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}

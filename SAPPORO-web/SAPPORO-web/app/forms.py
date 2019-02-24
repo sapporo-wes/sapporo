@@ -90,8 +90,10 @@ class WorkflowPrepareForm(forms.Form):
             if input_param["doc"] is not None:
                 self.fields[input_param["label"]
                             ].help_text = input_param["doc"]
+        for field in self.fields.keys():
+            self.fields[field].widget.attrs["placeholder"] = ""
 
 
 class WorkflowParametersUploadForm(forms.Form):
     workflow_parameters = forms.FileField(
-        label=_("Workflow Parameters"), required=False)
+        label=_("Workflow Parameters"), required=True)

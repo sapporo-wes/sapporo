@@ -10,8 +10,8 @@
 {% block content %}
 {% include "../app/navbar.html" %}
 <div class="container">
-  <div class="row justify-content-sm-center">
-    <div class="col-sm-4" id="form">
+  <div class="row justify-content-center">
+    <div class="col-lg-4 col-md-6 col-sm-8 col-10" id="form">
       <form class="signup-form" method="post" action="{% url 'app:signup' %}">
         <img src="{% static 'img/sapporo_icon/res/mipmap-xxhdpi/sapporo_icon.png' %}" alt="" width="96" height="96">
         <p>Sign up to SAPPORO</p>

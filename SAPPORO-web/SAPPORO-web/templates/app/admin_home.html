@@ -1,24 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}
-  SAPPORO-web Admin
+{% load bootstrap4 %}
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Admin{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/admin_home.css' %}">
 {% endblock %}
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Admin</h2>
-      <p class="lead">
-        Administration page. Only superuser can view here.
-      </p>
-      <hr />
+{% include "./navbar.html" %}
+  <div class="container">
+    <div class="row" id="title">
+      <div class="col-12">
+        <h1>SAPPORO Admin</h1>
+      </div>
     </div>
-  </div>
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <dl class="row">
-        <dt class="col-3"><a href="{% url 'app:admin_service' %}">Managing services</a></dt>
-        <dd class="col-9">Add and delete services</dd>
-      </dl>
+
+    <div class="row justify-content-center" id="list">
+      <div class="col-10">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td><a href="{% url 'app:admin_service' %}">Managing services</a></td>
+              <td>Add and delete services</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}
+{% block extra_js%}{% endblock %}
