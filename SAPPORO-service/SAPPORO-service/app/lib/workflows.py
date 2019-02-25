@@ -25,6 +25,6 @@ def fetch_file(url):
         response = requests.get(url)
         response.raise_for_status()
     except RequestException:
-        abort(400, "Can not get file: {}".format(url))
+        abort(500, "Can not get file: {}".format(url))
 
     return response.content.decode()

@@ -15,7 +15,6 @@ root_logger = logging.getLogger()
 def fix_errorhandler(app):
     @app.errorhandler(400)
     @app.errorhandler(401)
-    @app.errorhandler(403)
     @app.errorhandler(404)
     @app.errorhandler(500)
     def error_handler(error):
