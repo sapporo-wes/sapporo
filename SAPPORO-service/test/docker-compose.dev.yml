@@ -12,16 +12,17 @@ services:
       - /usr/bin/docker:/usr/bin/docker
       - /tmp:/tmp
       - ../SAPPORO-service:/opt/SAPPORO-service/SAPPORO-service
-      - ../develop:/opt/SAPPORO-service/develop
+      - ../test:/opt/SAPPORO-service/test
       - ../run:/opt/SAPPORO-service/run
+      - ../log:/opt/SAPPORO-service/log
       - ./service-info.dev.yml:/opt/SAPPORO-service/config/service-info.yml
       - ./workflow-info.dev.yml:/opt/SAPPORO-service/config/workflow-info.yml
       - ../config/generate_token.py:/opt/SAPPORO-service/config/generate_token.py
-      - ../config/token_list.txt:/opt/SAPPORO-service/config/token_list.txt
     environment:
-      - DEBUG=True
+      - DEBUG=True # Flask debug mode
+      - LOG_LEVEL=PRODUCTION # DEVELOPMENT or PRODUCTION
       - ENABLE_GET_RUNS=True
-      - TOKEN_AUTH=True
+      - ENABLE_TOKEN_AUTH=False
     ports:
       - 1122:80
     command: ["sh", "/opt/SAPPORO-service/entry_point.sh"]
