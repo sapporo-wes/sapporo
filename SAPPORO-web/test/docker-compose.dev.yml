@@ -12,7 +12,7 @@ services:
       - ../test:/opt/SAPPORO-web/test
       - ../log:/opt/SAPPORO-web/log
     environment:
-      - DEBUG=True
+      - DEBUG=True # Django debug mode and Use SQLite
       - LOG_LEVEL=DEBUG # DEBUG or INFO
       - LANGUAGE_CODE=en
       - TIME_ZONE=Asia/Tokyo

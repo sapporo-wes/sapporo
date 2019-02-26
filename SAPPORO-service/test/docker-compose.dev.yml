@@ -20,7 +20,7 @@ services:
       - ../config/generate_token.py:/opt/SAPPORO-service/config/generate_token.py
     environment:
       - DEBUG=True # Flask debug mode
-      - LOG_LEVEL=PRODUCTION # DEVELOPMENT or PRODUCTION
+      - LOG_LEVEL=DEBUG # DEBUG or INFO
       - ENABLE_GET_RUNS=True
       - ENABLE_TOKEN_AUTH=False
     ports:

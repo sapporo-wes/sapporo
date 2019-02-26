@@ -16,7 +16,7 @@ services:
       - ./log:/opt/SAPPORO-service/log
       - ./run:/opt/SAPPORO-service/run
     environment:
-      - LOG_LEVEL=PRODUCTION # DEVELOPMENT or PRODUCTION
+      - LOG_LEVEL=INFO # DEBUG or INFO
       - ENABLE_GET_RUNS=False
       - ENABLE_TOKEN_AUTH=True
     command: ["sh", "/opt/SAPPORO-service/entry_point.sh"]

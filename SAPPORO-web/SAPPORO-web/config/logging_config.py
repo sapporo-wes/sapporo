@@ -11,12 +11,14 @@ TEMPLATE = {
         },
     },
     "formatters": {
-        "default": {"format": "[%(asctime)s] %(levelname)s %(message)s",
-                    "datefmt": "%Y-%m-%d %H:%M:%S",
-                    },
-        "long": {"format": "[%(asctime)s] %(levelname)s - %(filename)s#%(funcName)s:%(lineno)d: %(message)s",
-                 "datefmt": "%Y-%m-%d %H:%M:%S",
-                 },
+        "default": {
+            "format": "[%(asctime)s] %(levelname)s %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        "long": {
+            "format": "[%(asctime)s] %(levelname)s - %(filename)s#%(funcName)s:%(lineno)d: %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
     },
     "handlers": {
         "console": {
@@ -24,13 +26,13 @@ TEMPLATE = {
             "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
             "formatter": "default",
-            "stream": "ext://sys.stderr"
+            "stream": "ext://sys.stderr",
         },
         "file": {
             "level": "INFO",
             "class": "logging.FileHandler",
             "formatter": "default",
-            "filename": LOG_FILE_PATH
+            "filename": LOG_FILE_PATH,
         },
     },
     "loggers": {

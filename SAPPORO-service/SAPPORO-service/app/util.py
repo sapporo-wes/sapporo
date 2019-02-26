@@ -1,13 +1,14 @@
 # coding: utf-8
 import logging
+import os
 from logging.config import dictConfig
 from secrets import compare_digest
 
 from flask import abort, jsonify, request
 
-from .config import ENABLE_TOKEN_AUTH, LOG_LEVEL, d_config
+from .config import ENABLE_TOKEN_AUTH, d_config
 from .lib.util import SERVICE_BASE_DIR
-from .logging_config import local_dev, local_prod, wsgi_dev, wsgi_prod
+from .logging_config import local_debug, local_info, wsgi_debug, wsgi_info
 
 root_logger = logging.getLogger()
 
@@ -69,13 +70,12 @@ def token_auth(func):
 
 def set_logger():
     if d_config["DEBUG"]:
-        print(LOG_LEVEL)
-        if LOG_LEVEL == "DEVELOPMENT":
-            dictConfig(local_dev)
+        if os.environ.get("LOG_LEVEL") == "DEBUG":
+            dictConfig(local_debug)
         else:
-            dictConfig(local_prod)
+            dictConfig(local_info)
     else:
-        if LOG_LEVEL == "DEVELOPMENT":
-            dictConfig(wsgi_dev)
+        if os.environ.get("LOG_LEVEL") == "DEBUG":
+            dictConfig(wsgi_debug)
         else:
-            dictConfig(wsgi_prod)
+            dictConfig(wsgi_info)
