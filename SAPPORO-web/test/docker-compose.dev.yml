@@ -9,12 +9,14 @@ services:
     restart: always
     volumes:
       - ../SAPPORO-web:/opt/SAPPORO-web/SAPPORO-web
-      - ../develop:/opt/SAPPORO-web/develop
+      - ../test:/opt/SAPPORO-web/test
+      - ../log:/opt/SAPPORO-web/log
     environment:
       - DEBUG=True
+      - LOG_LEVEL=DEBUG # DEBUG or INFO
       - LANGUAGE_CODE=en
       - TIME_ZONE=Asia/Tokyo
-      - DEVELOP=True
+      - ENABLE_USER_SIGNUP=True
     ports:
       - 1121:8000
     command: ["sh", "/opt/SAPPORO-web/entry_point.sh"]

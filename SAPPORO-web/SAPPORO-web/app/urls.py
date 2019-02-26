@@ -1,4 +1,5 @@
 # coding: utf-8
+from django.conf import settings
 from django.contrib.auth.views import LogoutView
 from django.urls import path
 
@@ -23,7 +24,6 @@ urlpatterns = [
          ServiceDetailView.as_view(), name="service_detail"),
     path("signin/", LoginNoPlaceholderView.as_view(), name="signin"),
     path("signout/", LogoutView.as_view(), name="signout"),
-    path("signup/", SignupView.as_view(), name="signup"),
     path("workflows/", WorkflowListView.as_view(), name="workflow_list"),
     path("workflows/<slug:workflow_token>/",
          WorkflowDetailView.as_view(), name="workflow_detail"),
@@ -31,3 +31,8 @@ urlpatterns = [
          WorkflowPrepareView.as_view(), name="workflow_prepare"),
     path("<str:user_name>/", UserHomeView.as_view(), name="user_home"),
 ]
+
+if settings.ENABLE_USER_SIGNUP:
+    urlpatterns += [
+        path("signup/", SignupView.as_view(), name="signup"),
+    ]
