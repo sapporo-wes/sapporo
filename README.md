@@ -1,6 +1,8 @@
 # SAPPORO
 
-SAPPORO is a job execution system for always reproducing Batch Job. ([Japanese document](https://hackmd.io/s/Syq0q0o8N))
+SAPPORO is a job execution system for always reproducing Batch Job.
+
+[Japanese document](https://hackmd.io/s/Syq0q0o8N)
 
 ![SAPPORO - Home](https://i.imgur.com/ebHAY8o.jpg)
 

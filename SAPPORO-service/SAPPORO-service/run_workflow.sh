@@ -1,6 +1,5 @@
 #!/bin/sh
 # set -eux
-set -eu
 
 function run_wf() {
   if [[ ${execution_engine} == "cwltool" ]]; then
