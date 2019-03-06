@@ -1,64 +1,101 @@
 {% extends 'base.html' %}
-{% block title %}
-  SAPPORO-web Run
+{% load bootstrap4 %}
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Run Detail{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/run_detail.css' %}">
 {% endblock %}
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Run Detail</h2>
-      <p class="lead">
-        Screen for managing Run executed by User
-      </p>
-      <hr />
+{% include "./navbar.html" %}
+  <div class="container">
+    <div class="row" id="title">
+      <div class="col-12">
+        <h1>{{ run.name }}</h1>
+      </div>
     </div>
-  </div>
 
-  <div class="row justify-content-center">
-    <div class="col-9">
-      <table class="table table-bordered">
-        <thead class="thead-light">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col"><div class="text-center">Workflow Name</div></th>
-            <th scope="col"><div class="text-center">Execution Engine</div></th>
-            <th scope="col"><div class="text-center">Workflow Status</div></th>
-            <th scope="col"><div class="text-center">Run Name</div></th>
-            <th scope="col"><div class="text-center">Upload URL</div></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="align-middle"><a href="{% url 'app:workflow_detail' workflow_token=run.workflow.token %}">{{ run.workflow.name }}</a></td>
-            <td class="align-middle">{{ run.execution_engine.name }}</td>
-            <td class="align-middle">{{ run.status }}</td>
-            <td class="align-middle"><a href="{% url 'app:run_detail' run_id=run.run_id %}">{{ run.name }}</a></td>
-            <td class="align-middle"><a href="{{ run.upload_url }}">{{ run.upload_url }}</a></td>
-          </tr>
-        </tbody>
-      </table>
-      <hr />
-      <h5>Workflow Paramteres</h5>
-<a class="btn btn-outline-primary" href="{% url 'app:run_download' run_id=run.run_id %}" download>Download</a>
+    <div class="row justify-content-center" id="table">
+      <div class="col-10">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <td>Workflow</td>
+              <td><a href="{% url 'app:workflow_detail' workflow_token=run.workflow.token %}">{{ run.workflow.name }}</a></td>
+            </tr>
+            <tr>
+              <td>Version</td>
+              <td>{{ run.workflow.version }}</td>
+            </tr>
+            <tr>
+              <td>Language</td>
+              <td>{{ run.workflow.workflow_type.type }}:&nbsp;{{ run.workflow.workflow_type.version }}</td>
+            </tr>
+            <tr>
+              <td>Execution Service</td>
+                <td><a href="{% url 'app:service_detail' service_name=run.workflow.service.name %}">{{ run.workflow.service.name }}</a></td>
+            </tr>
+            <tr>
+              <td>Execution Engine</td>
+              <td>{{ run.execution_engine.name }}:&nbsp;{{ run.execution_engine.version }}</td>
+            </tr>
+            <tr>
+              <td>Status</td>
+              <td>{{ run.status }}</td>
+            </tr>
+            <tr>
+              <td>Outputs Upload URL</td>
+              <td><a href="{{ run.upload_url }}">{{ run.upload_url }}</a></td>
+            </tr>
+            <tr>
+              <td>Start Date</td>
+              <td>{{ run.start_time|date:"Y-m-j H:i:s" }}</td>
+            </tr>
+            <tr>
+              <td>End Date</td>
+              <td>{{ run.end_time|date:"Y-m-j H:i:s" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row justify-content-center" id="parameter-title">
+      <div class="col-lg-8 col-md-7 col-sm-6 col-10">
+        <h2>Workflow Paramteres</h2>
+      </div>
+      <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+        <a class="btn btn-outline-primary btn-block" href="{% url 'app:run_download' run_id=run.run_id %}" download>
+          Download
+        </a>
+      </div>
+    </div>
+
+    <div class="row justify-content-center" id="parameter">
+      <div class="col-10">
 <pre class="prettyprint linenums">
 {{ run.workflow_parameters }}
 </pre>
-      <hr />
-      <h5>Stdout</h5>
-<pre class="prettyprint linenums">
-{{ run.stdout }}
-</pre>
-      <hr />
-      <h5>Stderr</h5>
-<pre class="prettyprint linenums">
-{{ run.stderr }}
-</pre>
+      </div>
     </div>
-  </div>
 
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <a class="btn btn-outline-secondary" href="{% url 'app:run_list' %}" role="button">Back</a>
+    <div class="row justify-content-center" id="stdout">
+      <div class="col-10">
+        <h2>Stdout</h2>
+  <pre class="prettyprint linenums">
+  {{ run.stdout }}
+  </pre>
+      </div>
+    </div>
+
+    <div class="row justify-content-center" id="stderr">
+      <div class="col-10">
+        <h2>Stderr</h2>
+  <pre class="prettyprint linenums">
+  {{ run.stderr }}
+  </pre>
+      </div>
     </div>
   </div>
 {% endblock %}

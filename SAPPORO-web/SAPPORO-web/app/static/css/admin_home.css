@@ -1,0 +1,23 @@
+body {
+  background-color: #f5f7f9;
+  margin-bottom: 60px;
+}
+
+#title {
+  margin-top: 30px;
+  margin-left: 30px;
+  color: #003546 !important;
+}
+
+#title h1 {
+  font-size: 1.6rem !important;
+}
+
+#list {
+  margin-top: 20px;
+}
+
+#list table {
+  background-color: #ffffff;
+  border: #dee2e6 2px solid;
+}

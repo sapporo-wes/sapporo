@@ -20,7 +20,7 @@ def _get_token():
 class CommonInfo(models.Model):
     created_at = models.DateTimeField(_("Created date"), default=timezone.now)
     updated_at = models.DateTimeField(_("Updated date"), auto_now=True)
-    token = models.CharField(_("Token"), max_length=16,
+    token = models.CharField(_("Token"), max_length=256,
                              unique=True, default=_get_token, primary_key=True)
 
     class Meta:
@@ -82,7 +82,7 @@ class Service(CommonInfo):
         from app.models.model_workflow import Workflow, WorkflowFactory
         d_response = get_requests(
             self.server_scheme, self.server_host, "/workflows", self.server_token)
-        if d_response:
+        if d_response is None:
             raise Http404
         for workflow in d_response["workflows"]:
             obj_workflow = Workflow.objects.filter(

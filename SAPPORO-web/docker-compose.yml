@@ -14,10 +14,10 @@ services:
       - ./config:/opt/SAPPORO-web/config
       - ./log:/opt/SAPPORO-web/log
     environment:
-      - DEBUG=False
+      - LOG_LEVEL=INFO # DEBUG or INFO
       - LANGUAGE_CODE=en
       - TIME_ZONE=Asia/Tokyo
-      - DEVELOP=False
+      - ENABLE_USER_SIGNUP=True
       - POSTGRES_USER=sapporo-web-user
       - POSTGRES_PASSWORD=sapporo-web-passwd
       - POSTGRES_DB=sapporo-web
@@ -33,6 +33,7 @@ services:
       - ./config/nginx.conf:/etc/nginx/nginx.conf
       - ./config:/opt/SAPPORO-web/config
       - ./log:/opt/SAPPORO-web/log
+      - ./SAPPORO-web/static:/opt/SAPPORO-web/SAPPORO-web/static
     ports:
       - 1121:80
   database:

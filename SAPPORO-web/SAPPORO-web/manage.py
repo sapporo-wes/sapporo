@@ -7,8 +7,8 @@ if __name__ == "__main__":
     try:
         import django
         from django.core.management import execute_from_command_line
-        from config.settings import DEVELOP, ALLOWED_HOSTS
-        if DEVELOP:
+        from config.settings import DEBUG
+        if DEBUG:
             from django.core.management.commands.runserver import Command as runserver
     except ImportError as exc:
         raise ImportError(
@@ -17,6 +17,7 @@ if __name__ == "__main__":
             "forget to activate a virtual environment?"
         ) from exc
     django.setup()
-    if DEVELOP:
-        runserver.default_addr = ALLOWED_HOSTS[0]
+    if DEBUG:
+        runserver.default_addr = "0.0.0.0"
+
     execute_from_command_line(sys.argv)

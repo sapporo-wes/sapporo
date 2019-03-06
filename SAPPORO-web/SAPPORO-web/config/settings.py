@@ -1,40 +1,61 @@
 # coding: utf-8
 import os
-import random
-import string
 from distutils.util import strtobool
-from .local_settings import SECRET_KEY as LOCAL_SECRET_KEY
 from pathlib import Path
 
+from .local_settings import SECRET_KEY as LOCAL_SECRET_KEY
 
-def str2bool(str):
-    try:
-        if strtobool(str):
+
+def str2bool(arg):
+    if isinstance(arg, str):
+        try:
+            if strtobool(arg):
+                return True
+            else:
+                return False
+        except ValueError:
+            raise Exception(
+                "Please check your docker-compose.yml:environment, The bool value should be 'true value are y, yes, t, true, on and 1; false values are n, no, f, false, off and 0'")
+    else:
+        if arg:
             return True
         else:
             return False
-    except ValueError:
-        raise Exception(
-            "Please check your docker-compose.yml:environment, The bool value should be 'true value are y, yes, t, true, on and 1; false values are n, no, f, false, off and 0'")
 
 
 BASE_DIR = Path(__file__).absolute().parent.parent
+DEBUG = str2bool(os.environ.get("DEBUG", False))
+LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE", "en")
+TIME_ZONE = os.environ.get("TIME_ZONE", "UTC")
+ENABLE_USER_SIGNUP = str2bool(os.environ.get("ENABLE_USER_SIGNUP", True))
 
-ALLOWED_HOSTS = ["0.0.0.0"]
-DEBUG = str2bool(os.environ.get("DEBUG"))
-DEVELOP = str2bool(os.environ.get("DEVELOP"))
-LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE")
-TIME_ZONE = os.environ.get("TIME_ZONE")
+LOG_FILE_PATH = str(BASE_DIR.joinpath("../log/django.log").resolve())
+
+if DEBUG:
+    from .logging_config import local_info, local_debug
+    if os.environ.get("LOG_LEVEL") == "DEBUG":
+        LOGGING = local_debug
+    else:
+        LOGGING = local_info
+else:
+    from .logging_config import wsgi_info, wsgi_debug
+    if os.environ.get("LOG_LEVEL") == "DEBUG":
+        LOGGING = wsgi_debug
+    else:
+        LOGGING = wsgi_info
+
+ALLOWED_HOSTS = ["*"]
 SECRET_KEY = LOCAL_SECRET_KEY
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-BASE_DIR.joinpath("static").mkdir(parents=True, exist_ok=True)
 STATICFILES_DIRS = [
-    str(BASE_DIR.joinpath("static")),
+    str(BASE_DIR.joinpath("app/static")),
 ]
+
+STATIC_ROOT = str(BASE_DIR.joinpath("static"))
 
 LOGIN_URL = "/signin"
 LOGIN_REDIRECT_URL = "/"
@@ -85,7 +106,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-if DEVELOP:
+if DEBUG:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

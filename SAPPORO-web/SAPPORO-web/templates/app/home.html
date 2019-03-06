@@ -1,17 +1,34 @@
 {% extends 'base.html' %}
-{% block title %}
-  SAPPORO-web Home
+{% load bootstrap4 %}
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
 {% endblock %}
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <div class="jumbotron">
-        <h1 class="display-3">SAPPORO-web Home</h1>
-        <p class="lead">
-          Screen before login
-        </p>
-      </div>
+{% include "./navbar.html" %}
+<div class="container" id="content">
+  <div class="row">
+    <div class="col-lg-8 col-md-7 col-10" id="description">
+      <h1>
+        SAPPORO
+      </h1>
+      <p>
+SAPPORO is a job execution system for always reproducing Batch Jobs. In SAPPORO, the concept of CI/CD is introduced to management of batch jobs. In other words, SAPPORO is intended to test wheter "batch jobs are always executable" and "output by batch job is always reproduced". SAPPORO can be deployed to various environments (on-premises, cloud, cluster. etc.) and can work with various job schedulers. SAPPORO can be easily deployed and maneged.
+      </p>
+    </div>
+    <div class="col-lg-4 col-md-5 scol-10" id="signin-form">
+      <form class="signin-form" action="{% url 'app:home' %}" method="post">
+        {% csrf_token %}
+        {% bootstrap_form authentication_form %}
+        {% buttons %}
+          <input type="submit" class="btn btn-outline-primary btn-block" name="authentication" value="Sign in" />
+        {% endbuttons %}
+      </form>
     </div>
   </div>
+</div>
 {% endblock %}
+{% block extra_js%}{% endblock %}

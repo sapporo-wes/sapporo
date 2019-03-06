@@ -1,27 +1,67 @@
-# NIG ゲノム解析パイプライン実行制御フロントエンドシステム開発
+# SAPPORO
 
-- ユーザがデータを自分の計算機にダウンロードすることなく容易に遺伝研スパコン上でゲノム解析を行えるようなソフトウェアシステム
-- 本システムでは将来的に遺伝研スパコンとパブリッククラウドや他機関の個人ゲノム解析用計算機システムを組み合わせてデータ解析が行えるように開発する
-- 本システムはユーザがブラウザ経由でアクセスし操作を行う Web サーバと、スパコンやクラウド上にて可動し実際の解析を行う API サーバに分けられる
-- それぞれのシステムにおいて、 Docker コンテナでの開発を行い、開発段階ではローカル PC 上にそれぞれのコンテナを起動して動作確認を行う
+SAPPORO is a job execution system for always reproducing Batch Job.
 
-## 今期プロトタイプ環境
+[Japanese document](https://hackmd.io/s/Syq0q0o8N)
 
-遺伝研スパコンから切り出した計算ノード x 1 台（Linux サーバ）を想定。
+![SAPPORO - Home](https://i.imgur.com/ebHAY8o.jpg)
 
-- Web Server
-  - Nginx (サーバ証明書を入れて SSL 対応する想定)
-  - Django
-  - SQLite (production では PostgreSQL or MySQL)
-- API Server
-  - Nginx
-  - Flask (WES API + α)
-  - cwltool
-  - Redis or RDM (状態管理用)
+## What does this mean always reproducing Batch Job
 
-## それぞれの Directory の説明
+Batch computing is to run serial processing (called workflow, pipeline, etc.) on one or more computers without human operation. Batch computing is used in the following various areas.
 
-- NIG-web
-  - ユーザがブラウザ経由でアクセスし操作を行う Web サーバ
-- NIG-API
-  - スパコンやクラウド上にて可動し実際の解析を行う API サーバ
+- Machine learning
+- Genome analysis
+- Animation rendering
+- Software testing
+- Various simulations
+
+These batch jobs can be ensured portability and reproducibility by using container technologies (e.g. Docker, Kubernetes, etc.), workflow execution engines (e.g. Airflow, Luigi, etc.) and workflow description languages (e.g. CWL, WDL, etc.).
+
+![SAPPORO - Batch Job](https://i.imgur.com/4UJ799a.png)
+
+However, even if these technologies are used, since processing is executed on a physical computer, various practical problems occur.
+
+- Server is shut down
+- Network is shut down
+- CPU resources, memory, storage, etc. are occupied by other processes
+- Hosted container image is modified
+
+In order to deal with these problems, in SAPPORO, the concept of CI/CD is introduced to management of batch jobs. In other words, SAPPORO is intended to test wheter "batch jobs are always executable" and "output by batch job is always reproduced". SAPPORO aims to always reproduce batch jobs by introducing these concepts into the system.
+
+## Feature
+
+Features of SAPPORO are as follows.
+
+- Verification of reproducibility of workflow
+- Collect and manage batch job results
+- Support for various workflow execution engines and workflow description languages
+- Cooperation with various job schedulers
+- Deployment to various envirounments(on-premise, cloud, cluster. etc.)
+- Easy deployment and management
+
+## System Architecture
+
+SAPPORO divides into SAPPORO-web and SAPPORO-service.
+
+- SAPPORO-web
+  - Managing user informations and batch jobs
+  - Web Server
+  - Providing web frontend
+- SAPPORO-service
+  - Executing batch job
+  - API Server
+  - Providing REST API
+
+![SAPPORO - System Architecture](https://i.imgur.com/xhR8EEX.png)
+
+You can register multiple SAPPORO-service in one SAPPORO-web or register one SAPPORO-service in multiple SAPPORO-web.
+
+For details, please refer to each README.
+
+- [SAPPORO-web - README](https://github.com/suecharo/SAPPORO/blob/master/SAPPORO-web/README.md)
+- [SAPPORO-service - README](https://github.com/suecharo/SAPPORO/blob/master/SAPPORO-service/README.md)
+
+## License
+
+SAPPORO is released under the [MIT license](https://github.com/suecharo/SAPPORO/blob/master/LICENSE).
