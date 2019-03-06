@@ -2,8 +2,8 @@ certifi==2018.11.29
 chardet==3.0.4
 coverage==4.5.2
 defusedxml==0.5.0
-Django==2.1.5
-django-allauth==0.38.0
+Django==2.1.7
+django-allauth==0.39.1
 django-bootstrap4==0.0.7
 django-debug-toolbar==1.11
 factory-boy==2.11.1
