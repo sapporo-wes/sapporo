@@ -16,5 +16,6 @@ RUN pip install -U pip && \
     rm -rf /tmp/requirements.txt
 
 COPY entry_point.sh /opt/SAPPORO-web
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /tmp
 
 CMD ["tail", "-f", "/dev/null"]
