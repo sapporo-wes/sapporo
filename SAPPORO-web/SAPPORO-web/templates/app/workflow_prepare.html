@@ -1,46 +1,61 @@
 {% extends 'base.html' %}
 {% load bootstrap4 %}
-
-{% block title %}
-  SAPPORO-web Workflow Prepare
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Workflow Prepare{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/workflow_prepare.css' %}">
 {% endblock %}
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Workflow Prepare</h2>
-      <hr />
+{% include "./navbar.html" %}
+  <div class="container">
+    <div class="row" id="title">
+      <div class="col-12">
+        <h1>{{ workflow.name }}: {{ workflow.version }}</h1>
+      </div>
     </div>
-  </div>
 
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          {% bootstrap_form workflow_parameters_upload_form %}
-          {% buttons %}
-            <input type="submit" class="btn btn-outline-primary" name="workflow_parameters_upload_form" value="Submit" />
-          {% endbuttons %}
-      </form>
-      <hr />
-    </div>
-  </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-3 col-10 order-lg-last" id="import">
+        <h2>Import Parameter File</h2>
+        <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+              <div class="row bootstrap4-multi-input">
+                <div class="col-12">
+                  <div class="input-group">
+                    <input type="file" name="workflow_parameters" class="form-control" title="" id="id_workflow_parameters" style="display:none">
+                    <input type="text" id="input_file_name" class="form-control" placeholder="Select file..." readonly>
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-outline-primary" onclick="$('input[id=id_workflow_parameters]').click();">Browse</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% buttons %}
+              <input type="submit" class="btn btn-outline-primary btn-block" name="workflow_parameters_upload_form" value="Import" />
+            {% endbuttons %}
+        </form>
+      </div>
 
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post">
-          {% csrf_token %}
-          {% bootstrap_form workflow_prepare_form %}
-          {% buttons %}
-            <input type="submit" class="btn btn-outline-primary" name="workflow_prepare_form" value="Run" />
-          {% endbuttons %}
-      </form>
+      <div class="col-lg-7 col-10" id="parameter">
+        <form action="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" method="post">
+            {% csrf_token %}
+            {% bootstrap_form workflow_prepare_form %}
+            {% buttons %}
+              <input type="submit" class="btn btn-outline-primary btn-block" name="workflow_prepare_form" value="Run Workflow" />
+            {% endbuttons %}
+        </form>
+      </div>
     </div>
   </div>
-
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <a class="btn btn-outline-secondary" href="{% url 'app:workflow_list' %}" role="button">Back</a>
-    </div>
-  </div>
+{% endblock %}
+{% block extra_js%}
+<script>
+  $('input[id=id_workflow_parameters]').change(function() {
+    $('#input_file_name').val($(this).val().replace(/\\/g, '/').replace(/.*\//, ''));
+  });
+</script>
 {% endblock %}

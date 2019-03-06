@@ -1,6 +1,7 @@
 # coding: utf-8
 from .view_admin import AdminHomeView
 from .view_admin import AdminServiceView
+from .view_auth import LoginNoPlaceholderView
 from .view_auth import SignupView
 from .view_home import HomeView
 from .view_run import RunDetailView

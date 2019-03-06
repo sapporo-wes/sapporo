@@ -1,80 +1,79 @@
 {% extends 'base.html' %}
 {% load bootstrap4 %}
-{% block title %}
-  SAPPORO-web Admin Service
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Admin Service{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/admin_service.css' %}">
 {% endblock %}
-
 {% block content %}
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <h2>SAPPORO-web Admin Service</h2>
-      <p class="lead">
-        Add and delete services
-      </p>
-      <hr />
+{% include "./navbar.html" %}
+  <div class="container">
+    <div class="row" id="title">
+      <div class="col-12">
+        <h1>Admin Service</h1>
+      </div>
     </div>
-  </div>
 
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <form action="{% url 'app:admin_service' %}" method="post">
-          {% csrf_token %}
-          {% bootstrap_form service_addition_form %}
-        {% buttons %}
-          <input type="submit" class="btn btn-outline-primary" name="button_add_service" value="submit" />
-        {% endbuttons %}
-      </form>
-      <hr />
+    <div class="row justify-content-center" id="form">
+      <div class="col-10">
+        <form action="{% url 'app:admin_service' %}" method="post">
+          <div class="form-row">
+            {% csrf_token %}
+            <div class="form-group col-12">
+              <label for="id_service_name">Service Name</label>
+              <input type="text" name="service_name" maxlength="256" class="form-control" placeholder="" title="Required. Letters, digits and -/_ only." required id="id_service_name">
+              <small class="form-text text-muted">Required. Letters, digits and -/_ only.</small>
+            </div>
+            <div class="form-group col-12">
+              <label for="id_server_scheme">Server Scheme</label>
+              <select name="server_scheme" class="form-control" title="" id="id_server_scheme">
+                <option value="http" selected>http</option>
+                <option value="https">https</option>
+              </select>
+            </div>
+            <div class="form-group col-12">
+              <label for="id_server_host">Service Server Host</label>
+              <input type="text" name="server_host" maxlength="256" class="form-control" placeholder="" title="Required. e.g. localhost:8000" required id="id_server_host">
+              <small class="form-text text-muted">Required. e.g. localhost:8000</small>
+            </div>
+            <div class="form-group col-12">
+              <label for="id_server_token">Service Server Token</label>
+              <input type="text" name="server_token" maxlength="256" class="form-control" placeholder="" title="Not Required." id="id_server_token">
+              <small class="form-text text-muted">Not Required.</small>
+            </div>
+            <div class="form-group col-6 mx-auto">
+              <input type="submit" class="btn btn-outline-primary btn-block" name="button_add_service" value="Add Service" />
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <div class="row justify-content-center">
+  <div class="row justify-content-center" id="table">
     <div class="col-10">
-      <h4>Service List</h4>
+      <h2>Service List</h2>
     </div>
-  </div>
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-9">
+    <div class="col-10">
       <form action="{% url 'app:admin_service' %}" method="post">
         {% csrf_token %}
-        <table class="table table-bordered table-hover">
-          <thead class="thead-light">
+        <table class="table table-bordered">
+          <thead class="thead-dark">
             <tr>
-              <th scope="col"><div class="text-center">Service Name</div></th>
-              <th scope="col"><div class="text-center">Server Scheme</div></th>
-              <th scope="col"><div class="text-center">Server Host</div></th>
-              <th scope="col"><div class="text-center">Workflow Engines</div></th>
-              <th scope="col"><div class="text-center">Workflows</div></th>
-              <th scope="col"><div class="text-center">Delete</div></th>
+              <th>Service Name</th>
+              <th>Server URL</th>
+              <th>Add date</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
             {% for service in services %}
               <tr>
-                <td class="align-middle"><a href="{% url 'app:service_detail' service_name=service.name %}">{{ service.name }}</a></td>
-                <td class="align-middle">{{ service.server_scheme }}</td>
-                <td class="align-middle">{{ service.server_host }}</td>
-                <td class="align-middle">
-                  {% for workflow_engine in service.workflow_engines.all %}
-                    {% if forloop.counter == service.workflow_engines.all|length %}
-                      {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}
-                    {% else %}
-                      {{ workflow_engine.name }}:&nbsp;{{ workflow_engine.version }}<br />
-                    {% endif %}
-                  {% endfor %}
-                </td>
-                <td class="align-middle">
-                  {% for workflow in service.workflows.all %}
-                    {% if forloop.counter == service.workflows.all|length %}
-                      <a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a>
-                    {% else %}
-                      <a href="{% url 'app:workflow_detail' workflow_token=workflow.token %}">{{ workflow.name }}</a><br />
-                    {% endif %}
-                  {% endfor %}
-                </td>
-                <td class="align-middle">
+                <td><a href="{% url 'app:service_detail' service_name=service.name %}">{{ service.name }}</a></td>
+                <td>{{ service.server_scheme }}://{{ service.server_host }}</td>
+                <td>{{ service.created_at|date:"Y-m-j H:i:s" }}</td>
+                <td>
                   <div class="text-center">
                     <div class="form-check">
                       <input class="form-check-input position-static" type="checkbox" name="delete_check" value="{{ service.name }}">
@@ -87,7 +86,7 @@
         </table>
         {% if services|length != 0 %}
           <div class="row justify-content-end">
-            <div class="col-2">
+            <div class="col-sm-3 col-12">
               {% buttons %}
                 <input type="submit" class="btn btn-outline-danger btn-block" name="button_delete_service" value="Delete" />
               {% endbuttons %}
@@ -97,10 +96,5 @@
       </form>
     </div>
   </div>
-  <br />
-  <div class="row justify-content-center">
-    <div class="col-10">
-      <a class="btn btn-outline-secondary" href="{% url 'app:admin_home' %}" role="button">Back</a>
-    </div>
-  </div>
 {% endblock %}
+{% block extra_js%}{% endblock %}

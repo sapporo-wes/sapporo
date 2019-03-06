@@ -1,0 +1,45 @@
+body {
+  background-color: #f5f7f9;
+  margin-bottom: 60px;
+}
+
+#title {
+  margin-top: 30px;
+  margin-left: 30px;
+  color: #003546 !important;
+}
+
+#title h1 {
+  font-size: 1.6rem !important;
+}
+
+#table {
+  margin-top: 20px;
+}
+
+#table table {
+  background-color: #ffffff;
+  border: #dee2e6 2px solid;
+}
+
+#workflow-content {
+  margin-top: 20px;
+}
+
+#workflow-content h2 {
+  font-size: 1.2rem !important;
+  font-weight: 100 !important;
+  margin-bottom: 20px;
+}
+
+#prepare-button .btn-outline-primary {
+  color: #003546 !important;
+  border-color: #003546;
+  background-color: #ffffff;
+}
+
+#prepare-button .btn-outline-primary:hover {
+  color: #fff !important;
+  background-color: #003546;
+  border-color: #003546;
+}

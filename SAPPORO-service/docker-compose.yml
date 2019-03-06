@@ -1,7 +1,7 @@
 version: "3"
 services:
   app:
-    image: sapporo-service-app
+    image: suecharo/sapporo-service:v0.3.0
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,9 +16,9 @@ services:
       - ./log:/opt/SAPPORO-service/log
       - ./run:/opt/SAPPORO-service/run
     environment:
-      - DEBUG=False
+      - LOG_LEVEL=INFO # DEBUG or INFO
       - ENABLE_GET_RUNS=False
-      - TOKEN_AUTH=True
+      - ENABLE_TOKEN_AUTH=False
     command: ["sh", "/opt/SAPPORO-service/entry_point.sh"]
   web:
     image: nginx:stable-alpine

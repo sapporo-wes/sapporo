@@ -1,0 +1,58 @@
+h1 {
+  font-size: 1.2rem;
+  color: #003546 !important;
+}
+
+#sidebar {
+  border-right: #003546 1px solid;
+  height: 100vh;
+}
+
+#runs {
+  background-color: #f5f7f9 !important;
+  height: 100vh;
+  padding: 0px;
+  padding-right: 100px;
+}
+
+#runs > h1 {
+  margin-top: 30px;
+  margin-left: 30px;
+  font-size: 1.6rem;
+}
+
+#runs > table {
+  background-color: #ffffff;
+  border: #dee2e6 2px solid;
+  margin-top: 20px;
+  margin-left: 50px;
+}
+
+#services {
+  margin-bottom: 20px;
+}
+
+#services > h1 {
+  margin-top: 30px;
+  margin-left: 20px;
+  font-weight: 100 !important;
+}
+
+#services > p {
+  margin-left: 30px;
+}
+
+#workflows {
+  margin-right: 20px;
+  margin-left: 20px;
+  border-top: #003546 1px solid;
+}
+
+#workflows > h1 {
+  margin-top: 20px;
+  font-weight: 100 !important;
+}
+
+#workflows > p {
+  margin-left: 10px;
+}

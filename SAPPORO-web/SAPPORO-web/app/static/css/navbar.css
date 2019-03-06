@@ -1,0 +1,25 @@
+#sp-navbar {
+  color: #001a23;
+  background-color: #001a23 !important;
+}
+
+#sp-navbar a {
+  color: #ffffff !important;
+}
+
+#sp-navbar > .navbar-brand {
+  color: #ffffff;
+}
+
+#sp-navbar .btn-outline-secondary {
+  color: #d1ecf4;
+  border-color: #d1ecf4;
+}
+
+#navbarSupportedContent .nav-link {
+  margin-right: 10px;
+}
+
+#navbarSupportedContent .nav-item .btn {
+  margin-right: 10px;
+}
