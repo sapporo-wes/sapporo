@@ -1,0 +1,63 @@
+body {
+  background-color: #f5f7f9;
+  margin-bottom: 60px;
+}
+
+#title {
+  margin-top: 30px;
+  margin-left: 30px;
+  color: #003546;
+}
+
+#title h1 {
+  font-size: 1.6rem;
+}
+
+.btn-outline-primary {
+  color: #003546;
+  border-color: #003546;
+  background-color: #ffffff;
+}
+
+.btn-outline-primary:hover {
+  color: #fff;
+  background-color: #003546;
+  border-color: #003546;
+}
+
+#import > h2 {
+  font-size: 1.2rem !important;
+  color: #003546;
+}
+
+#import {
+  margin-top: 30px;
+}
+
+#parameter small {
+  color: #003546;
+}
+
+#parameter {
+  margin-top: 30px;
+}
+
+#parameter small {
+  color: #003546 !important;
+}
+
+#parameter label {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+#parameter input {
+  padding-right: 10px !important;
+  margin-left: 10px;
+}
+
+#parameter select {
+  padding-right: 10px !important;
+  margin-left: 10px;
+}

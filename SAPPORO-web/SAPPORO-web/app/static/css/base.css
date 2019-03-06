@@ -1,0 +1,15 @@
+body {
+  font-family: "Roboto", sans-serif;
+  color: #001a23 !important;
+}
+
+a {
+  font-family: "Roboto", sans-serif;
+  color: #0083af !important;
+}
+
+@media print {
+  .container {
+    width: auto;
+  }
+}

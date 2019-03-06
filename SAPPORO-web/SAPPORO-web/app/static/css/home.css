@@ -1,0 +1,54 @@
+body {
+  background-image: url("/static/img/home_sapporo_blur-min.jpg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: rgba(209, 236, 244, 0.7);
+  background-blend-mode: overlay;
+}
+
+.container {
+  margin-top: 150px;
+}
+
+#description > h1 {
+  font-size: 5.5rem;
+}
+
+#description > p {
+  font-size: 1rem;
+}
+
+#signin-form > form {
+  background-color: #ffffff;
+  padding: 30px 20px;
+  border-radius: 10px;
+  border: #d1ecf4 2px solid;
+}
+
+#signin-form label {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+#signin-form > form > div:nth-child(4) {
+  margin-top: 32px;
+}
+
+#signin-form .btn-outline-primary {
+  color: #003546;
+  border-color: #003546;
+}
+
+#signin-form .btn-outline-primary:hover {
+  color: #fff !important;
+  background-color: #003546;
+  border-color: #003546;
+}
+
+#signin-form .alert-danger {
+  background-color: #da5138;
+  font-size: 0.8rem;
+}

@@ -201,7 +201,7 @@ Flask <-> uwsgi <-(uWSGI protocol)-> Nginx <-(HTTP)-> Docker <-> User
 
 ---
 
-As an initial setting, Nginx provides `localhost:1122` as a REST API endpoint. If you want to change the port, change the following part of `./ Docker-compose.yml`.
+As an initial setting, Nginx provides `localhost:1122` as a REST API endpoint. If you want to change the port, change the following part of `./docker-compose.yml`.
 
 ```yaml
 ports:
@@ -226,7 +226,6 @@ flask.log  nginx-access.log  nginx-error.log  nginx.pid  uwsgi.log  uwsgi.pid
 Logs are normally outputed to `./log`. If you want to change the output location, edit `./docker-compose.yml`.
 
 ```shell
-ubuntu@dh236:~/SAPPORO/SAPPORO-service$ diff -u docker-compose.yml docker-compose.log.yml
 --- docker-compose.yml  2019-03-05 22:51:04.612902487 +0900
 +++ docker-compose.log.yml  2019-03-05 23:38:03.502634330 +0900
 @@ -13,7 +13,7 @@
@@ -242,7 +241,7 @@ ubuntu@dh236:~/SAPPORO/SAPPORO-service$ diff -u docker-compose.yml docker-compos
 
 ---
 
-To change the log level, edit `./Docker-compose.yml`. When set as `LOG_LEVEL=DEBUG`, Traceback of Python is displayed in `./log/flask.log`.
+To change the log level, edit `./docker-compose.yml`. When set as `LOG_LEVEL=DEBUG`, traceback of Python is displayed in `./log/flask.log`.
 
 ```shell
     environment:

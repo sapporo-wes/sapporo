@@ -20,6 +20,10 @@ class AuthenticationFormNoPlaceholder(AuthenticationForm):
 
 
 class UserCreationForm(NativeUserCreationForm):
+    class Meta:
+        model = User
+        fields = ("username", "password1", "password2")
+
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["username"].widget.attrs["placeholder"] = ""

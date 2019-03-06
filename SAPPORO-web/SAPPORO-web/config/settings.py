@@ -51,10 +51,11 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-BASE_DIR.joinpath("static").mkdir(parents=True, exist_ok=True)
 STATICFILES_DIRS = [
-    str(BASE_DIR.joinpath("static")),
+    str(BASE_DIR.joinpath("app/static")),
 ]
+
+STATIC_ROOT = str(BASE_DIR.joinpath("static"))
 
 LOGIN_URL = "/signin"
 LOGIN_REDIRECT_URL = "/"
