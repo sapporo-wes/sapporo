@@ -141,7 +141,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 if DEBUG:
-    INTERNAL_IPS = ["172.24.0.1", "172.25.0.1"]
+    INTERNAL_IPS = ["172.21.0.1"]
     MIDDLEWARE += [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]

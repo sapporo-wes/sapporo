@@ -27,9 +27,6 @@
             <a class="nav-link" href="{% url 'app:admin_home' %}">Admin</a>
           </li>
         {% endif %}
-        {% comment %} <li class="nav-item">
-          <a class="nav-link" href="{% url 'app:user_home' user_name=user.username %}">User</a>
-        </li> {% endcomment %}
         <li class="nav-item">
           <a class="btn btn-outline-secondary" href="{% url 'app:signout' %}">Sign out</a>
         </li>
@@ -41,9 +38,11 @@
         <li class="nav-item">
           <a class="btn btn-outline-secondary" href="{% url 'app:signin' %}">Sign in</a>
         </li>
-        <li class="nav-item">
-          <a class="btn btn-outline-secondary" href="{% url 'app:signup' %}">Sing up</a>
-        </li>
+        {% if enable_user_signup %}
+          <li class="nav-item">
+            <a class="btn btn-outline-secondary" href="{% url 'app:signup' %}">Sing up</a>
+          </li>
+        {% endif %}
       </ul>
     {% endif %}
   </div>
