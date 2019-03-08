@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import View
+from app.lib.requests_wrapper import post_requests_no_data
 
 from app.models import Run
 
@@ -32,8 +33,36 @@ class RunDetailView(LoginRequiredMixin, View):
         if request.user.pk != run.user.pk:
             raise PermissionDenied
         run._update_from_service()
+        if run.status in ["QUEUED", "RUNNING"]:
+            bool_cancel_button = True
+        else:
+            bool_cancel_button = False
         context = {
             "run": run,
+            "bool_cancel_button": bool_cancel_button,
+        }
+
+        return render(request, "app/run_detail.html", context)
+
+    def post(self, request, run_id):
+        run = get_object_or_404(Run, run_id=run_id)
+        if request.user.pk != run.user.pk:
+            raise PermissionDenied
+        run._update_from_service()
+        print(request.POST)
+        if request.POST.get("run_cancel_button"):
+            print(run.status)
+            if run.status in ["QUEUED", "RUNNING"]:
+                post_requests_no_data(run.workflow.service.server_scheme, run.workflow.service.server_host,
+                                      "/runs/" + str(run.run_id) + "/cancel", run.workflow.service.server_token)
+                run._update_from_service()
+        if run.status in ["QUEUED", "RUNNING"]:
+            bool_cancel_button = True
+        else:
+            bool_cancel_button = False
+        context = {
+            "run": run,
+            "bool_cancel_button": bool_cancel_button,
         }
 
         return render(request, "app/run_detail.html", context)
