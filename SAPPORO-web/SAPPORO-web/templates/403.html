@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load static %}
+{% load i18n %}
+{% block title %}SAPPORO Forbidden{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/error.css' %}">
+{% endblock %}
+{% block content %}
+{% include "./app/navbar.html" %}
+  <div class="container">
+    <div class="row" id="title">
+      <div class="col-12">
+        <h1>403 Forbidden</h1>
+      </div>
+    </div>
+  </div>
+{% endblock %}

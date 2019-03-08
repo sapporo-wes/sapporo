@@ -14,7 +14,7 @@ def post_runs():
             "execution_engine_name": "cwltool",
         }
         files = {
-            "workflow_parameters": ("workflow_parameters.yml", f, "application/yaml;charset=UTF-8")
+            "workflow_parameters": ("workflow_parameters.txt", f, "text/plane;charset=UTF-8")
         }
         headers = {
             "Authorization": "kVYCGtt16WbEvjMTGpMNhWCYdKoFOSy7Dyu3nqkekrs"

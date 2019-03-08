@@ -79,8 +79,7 @@ paths:
           name: workflow_parameters
           type: file
           format:
-            - application/json
-            - application/yaml
+            - text/plane
       tags:
         - WorkflowExecutionService
   /runs/{run_id}:
