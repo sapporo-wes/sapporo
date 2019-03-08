@@ -9,34 +9,11 @@ SAPPORO-web/config/uwsgi.sock
 SAPPORO-web/log/
 SAPPORO-web/SAPPORO-web/static/
 
-.DS_Store
-.vscode/
-
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
 .coverage
 .coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
-
-# Django stuff:
 db.sqlite3
-
-# Flask stuff:
-instance/
-.webassets-cache
 migrations/

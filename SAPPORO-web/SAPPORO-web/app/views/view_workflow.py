@@ -113,7 +113,7 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
             "execution_engine_name": workflow_engine.name,
         }
         files = {
-            "workflow_parameters": ("workflow_parameters.yml", StringIO(workflow_parameters), "application/yaml;charset=UTF-8")
+            "workflow_parameters": ("workflow_parameters.txt", StringIO(workflow_parameters), "text/plane;charset=UTF-8")
         }
         try:
             url = workflow.service.server_scheme + "://" + \

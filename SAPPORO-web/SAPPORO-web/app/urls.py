@@ -29,7 +29,6 @@ urlpatterns = [
          WorkflowDetailView.as_view(), name="workflow_detail"),
     path("workflows/<slug:workflow_token>/prepare",
          WorkflowPrepareView.as_view(), name="workflow_prepare"),
-    path("<str:user_name>/", UserHomeView.as_view(), name="user_home"),
 ]
 
 if settings.ENABLE_USER_SIGNUP:

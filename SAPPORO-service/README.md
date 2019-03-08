@@ -47,7 +47,7 @@ Using docker-compose.
 $ git clone https://github.com/suecharo/SAPPORO.git
 $ cd SAPPORO/SAPPORO-service
 $ docker-compose up -d
-$ curl -X GET localhost:1121/service-info
+$ curl -X GET localhost:1122/service-info
 {
   "auth_instructions_url": "https://dummy_auth_instructions_url/",
   "contact_info_url": "https://dummy_contact_info_url/",
@@ -102,7 +102,7 @@ It is described in Swagger format in `./api-definition/SAPPORO-service-api-defin
 `GET /service-info` is a REST API method for users to get the details of the service.
 
 ```shell
-$ curl -X GET localhost:1121/service-info
+$ curl -X GET localhost:1122/service-info
 {
   "auth_instructions_url": "https://dummy_auth_instructions_url/",
   "contact_info_url": "https://dummy_contact_info_url/",

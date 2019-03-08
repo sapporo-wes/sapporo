@@ -1,4 +1,6 @@
 # coding: utf-8
+from logging import getLogger
+
 from django.conf import settings
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponseRedirect
@@ -11,12 +13,17 @@ from django.views.generic import View
 
 from app.forms import AuthenticationFormNoPlaceholder
 from app.models import Run, Service, Workflow
+from config.settings import ENABLE_USER_SIGNUP
+
+logger = getLogger("django")
 
 
 class HomeView(View):
     raise_exception = True
 
     def get(self, request):
+        logger.debug(request.META["REMOTE_ADDR"])
+
         if request.user.is_authenticated:
             services = Service.objects.all()
             workflows = Workflow.objects.all()
@@ -33,6 +40,7 @@ class HomeView(View):
             authentication_form = AuthenticationFormNoPlaceholder()
             context = {
                 "authentication_form": authentication_form,
+                "enable_user_signup": ENABLE_USER_SIGNUP,
             }
             return render(request, "app/home.html", context)
 
