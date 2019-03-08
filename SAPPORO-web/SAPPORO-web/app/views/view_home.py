@@ -27,7 +27,7 @@ class HomeView(View):
         if request.user.is_authenticated:
             services = Service.objects.all()
             workflows = Workflow.objects.all()
-            runs = Run.objects.filter(user__pk=request.user.pk)
+            runs = Run.objects.filter(user__pk=request.user.pk).order_by("-created_at")[:10]
             for run in runs:
                 run._update_from_service()
             context = {
