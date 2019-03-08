@@ -14,6 +14,7 @@ from requests.exceptions import RequestException
 from app.forms import WorkflowParametersUploadForm, WorkflowPrepareForm
 from app.lib.cwl_parser import parse_cwl_input_params
 from app.models import RunFactory, Workflow
+from app.lib.cwl_parser import change_cwl_url_to_cwl_viewer_url
 
 
 class WorkflowListView(LoginRequiredMixin, View):
@@ -42,6 +43,8 @@ class WorkflowDetailView(LoginRequiredMixin, View):
             "workflow": workflow,
             "excutable_engines": excutable_engines,
         }
+        if workflow.workflow_type.type == "CWL":
+            context["cwl_workflow_graph"] = change_cwl_url_to_cwl_viewer_url(workflow.location)
 
         return render(request, "app/workflow_detail.html", context)
 
