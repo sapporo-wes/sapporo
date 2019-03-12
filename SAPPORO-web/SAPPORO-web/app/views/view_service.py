@@ -12,7 +12,7 @@ class ServiceListView(LoginRequiredMixin, View):
 
     def get(self, request):
         services = Service.objects.prefetch_related(
-            "workflow_engines", "workflows").all()
+            "workflow_engines", "workflows").all().order_by("-created_at")
         context = {
             "services": services,
         }

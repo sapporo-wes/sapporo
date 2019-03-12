@@ -15,9 +15,9 @@ class RunListView(LoginRequiredMixin, View):
     raise_exception = True
 
     def get(self, request):
-        runs = Run.objects.filter(user__pk=request.user.pk)
+        runs = Run.get_user_runs(request.user.pk)
         for run in runs:
-            run._update_from_service()
+            run.update_from_service()
         context = {
             "runs": runs,
         }
@@ -32,14 +32,10 @@ class RunDetailView(LoginRequiredMixin, View):
         run = get_object_or_404(Run, run_id=run_id)
         if request.user.pk != run.user.pk:
             raise PermissionDenied
-        run._update_from_service()
-        if run.status in ["QUEUED", "RUNNING"]:
-            bool_cancel_button = True
-        else:
-            bool_cancel_button = False
+        run.update_from_service()
         context = {
             "run": run,
-            "bool_cancel_button": bool_cancel_button,
+            "bool_cancel_button": True if run.status in ["QUEUED", "RUNNING"] else False,
         }
 
         return render(request, "app/run_detail.html", context)
@@ -48,21 +44,14 @@ class RunDetailView(LoginRequiredMixin, View):
         run = get_object_or_404(Run, run_id=run_id)
         if request.user.pk != run.user.pk:
             raise PermissionDenied
-        run._update_from_service()
-        print(request.POST)
+        run.update_from_service()
         if request.POST.get("run_cancel_button"):
-            print(run.status)
-            if run.status in ["QUEUED", "RUNNING"]:
-                post_requests_no_data(run.workflow.service.server_scheme, run.workflow.service.server_host,
-                                      "/runs/" + str(run.run_id) + "/cancel", run.workflow.service.server_token)
-                run._update_from_service()
-        if run.status in ["QUEUED", "RUNNING"]:
-            bool_cancel_button = True
-        else:
-            bool_cancel_button = False
+            post_requests_no_data(run.workflow.service.server_scheme, run.workflow.service.server_host,
+                                  "/runs/" + str(run.run_id) + "/cancel", run.workflow.service.server_token)
+            run.update_from_service()
         context = {
             "run": run,
-            "bool_cancel_button": bool_cancel_button,
+            "bool_cancel_button": True if run.status in ["QUEUED", "RUNNING"] else False,
         }
 
         return render(request, "app/run_detail.html", context)
@@ -75,7 +64,7 @@ class RunDownloadView(LoginRequiredMixin, View):
         run = get_object_or_404(Run, run_id=run_id)
         if request.user.pk != run.user.pk:
             raise PermissionDenied
-        run._update_from_service()
+        run.update_from_service()
         content = io.StringIO()
         content.write(run.workflow_parameters)
         response = HttpResponse(content.getvalue(), content_type="text/plain")

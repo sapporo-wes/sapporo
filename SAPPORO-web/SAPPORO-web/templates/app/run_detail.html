@@ -66,7 +66,7 @@
         <div class="col-6">
           <form action="{% url 'app:run_detail' run_id=run.run_id %}" method="post">
             {% csrf_token %}
-            <input type="submit" class="btn btn-outline-primary btn-block" name="run_cancel_button" value="Cancel Run" />
+            <input type="submit" class="btn btn-outline-danger btn-block" name="run_cancel_button" value="Cancel Run" />
           </form>
         </div>
       </div>

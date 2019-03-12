@@ -1,15 +1,8 @@
 # coding: utf-8
-from .view_admin import AdminHomeView
-from .view_admin import AdminServiceView
-from .view_auth import LoginNoPlaceholderView
-from .view_auth import SignupView
+from .view_admin import AdminHomeView, AdminServiceView
+from .view_auth import LoginNoPlaceholderView, SignupView
 from .view_home import HomeView
-from .view_run import RunDetailView
-from .view_run import RunDownloadView
-from .view_run import RunListView
-from .view_service import ServiceDetailView
-from .view_service import ServiceListView
-from .view_user import UserHomeView
-from .view_workflow import WorkflowDetailView
-from .view_workflow import WorkflowListView
-from .view_workflow import WorkflowPrepareView
+from .view_run import RunDetailView, RunDownloadView, RunListView
+from .view_service import ServiceDetailView, ServiceListView
+from .view_workflow import (WorkflowDetailView, WorkflowListView,
+                            WorkflowPrepareView)

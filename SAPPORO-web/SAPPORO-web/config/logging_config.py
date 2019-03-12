@@ -1,6 +1,7 @@
 # coding: utf-8
-from .settings import LOG_FILE_PATH
 from copy import deepcopy
+
+from .settings import LOG_FILE_PATH
 
 TEMPLATE = {
     "version": 1,

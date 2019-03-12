@@ -4,7 +4,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import \
     UserCreationForm as NativeUserCreationForm
 from django.contrib.auth.models import User
-from django.forms import EmailField
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -37,8 +36,8 @@ class ServiceAdditionForm(forms.Form):
         ("https", "https"),
     )
 
-    service_name = forms.SlugField(label=_(
-        "Service Name"), max_length=256, required=True, help_text=_("Required. Letters, digits and -/_ only."))
+    service_name = forms.CharField(label=_(
+        "Service Name"), max_length=256, required=True, help_text=_("Required."))
     server_scheme = forms.ChoiceField(
         choices=SCHEME_CHOICES, required=True, initial="http")
     server_host = forms.CharField(label=_(

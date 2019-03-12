@@ -3,7 +3,7 @@ import os
 from distutils.util import strtobool
 from pathlib import Path
 
-from .local_settings import SECRET_KEY as LOCAL_SECRET_KEY
+from config.local_settings import SECRET_KEY as LOCAL_SECRET_KEY
 
 
 def str2bool(arg):
@@ -141,7 +141,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 if DEBUG:
-    INTERNAL_IPS = ["172.21.0.1"]
+    INTERNAL_IPS = ["172.22.0.1"]
     MIDDLEWARE += [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]
