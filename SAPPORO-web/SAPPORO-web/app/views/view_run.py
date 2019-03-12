@@ -1,19 +1,17 @@
 # coding: utf-8
 import io
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import View
-from app.lib.requests_wrapper import post_requests_no_data
 
+from app.lib.mixin import MyLoginRequiredMixin as LoginRequiredMixin
+from app.lib.requests_wrapper import post_requests_no_data
 from app.models import Run
 
 
 class RunListView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request):
         runs = Run.get_user_runs(request.user.pk)
         for run in runs:
@@ -26,8 +24,6 @@ class RunListView(LoginRequiredMixin, View):
 
 
 class RunDetailView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request, run_id):
         run = get_object_or_404(Run, run_id=run_id)
         if request.user.pk != run.user.pk:
@@ -58,8 +54,6 @@ class RunDetailView(LoginRequiredMixin, View):
 
 
 class RunDownloadView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request, run_id):
         run = get_object_or_404(Run, run_id=run_id)
         if request.user.pk != run.user.pk:

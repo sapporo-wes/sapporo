@@ -4,7 +4,6 @@ from io import StringIO
 
 import requests
 import yaml
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -12,14 +11,13 @@ from django.views.generic import View
 from requests.exceptions import RequestException
 
 from app.forms import WorkflowParametersUploadForm, WorkflowPrepareForm
-from app.lib.cwl_parser import parse_cwl_input_params
+from app.lib.cwl_parser import (change_cwl_url_to_cwl_viewer_url,
+                                parse_cwl_input_params)
+from app.lib.mixin import MyLoginRequiredMixin as LoginRequiredMixin
 from app.models import Run, Workflow
-from app.lib.cwl_parser import change_cwl_url_to_cwl_viewer_url
 
 
 class WorkflowListView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request):
         workflows = Workflow.objects.select_related(
             "service", "workflow_type").all().order_by("-created_at")
@@ -31,8 +29,6 @@ class WorkflowListView(LoginRequiredMixin, View):
 
 
 class WorkflowDetailView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request, workflow_token):
         workflow = Workflow.objects.filter(
             token=workflow_token).select_related("service", "workflow_type").first()
@@ -51,8 +47,6 @@ class WorkflowDetailView(LoginRequiredMixin, View):
 
 
 class WorkflowPrepareView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request, workflow_token):
         workflow = Workflow.objects.filter(token=workflow_token).select_related(
             "service", "workflow_type").first()

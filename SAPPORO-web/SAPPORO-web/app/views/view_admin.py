@@ -1,16 +1,14 @@
 # coding: utf-8
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.views.generic import View
 
 from app.forms import ServiceAdditionForm
+from app.lib.mixin import MyLoginRequiredMixin as LoginRequiredMixin
 from app.models import Service
 
 
 class AdminHomeView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request):
         if not request.user.is_superuser:
             raise PermissionDenied
@@ -19,8 +17,6 @@ class AdminHomeView(LoginRequiredMixin, View):
 
 
 class AdminServiceView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request):
         if not request.user.is_superuser:
             raise PermissionDenied

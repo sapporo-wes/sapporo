@@ -19,8 +19,6 @@ logger = getLogger("django")
 
 
 class HomeView(View):
-    raise_exception = True
-
     def get(self, request):
         if settings.DEBUG:
             # for django.django-debug-toolbar

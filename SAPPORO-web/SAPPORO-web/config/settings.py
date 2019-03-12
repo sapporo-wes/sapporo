@@ -61,6 +61,11 @@ LOGIN_URL = "/signin"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
+SESSION_COOKIE_AGE = 60  # 1hour
+SESSION_IDLE_TIMEOUT = 60  # 1hour
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
