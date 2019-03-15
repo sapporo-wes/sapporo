@@ -8,6 +8,7 @@ from config.settings import ENABLE_USER_SIGNUP
 
 
 class SignupView(CreateView):
+    raise_exception = True
     form_class = UserCreationForm
     success_url = reverse_lazy("app:signin")
     template_name = "app/signup.html"
@@ -20,6 +21,7 @@ class SignupView(CreateView):
 
 
 class LoginNoPlaceholderView(LoginView):
+    raise_exception = True
     form_class = AuthenticationFormNoPlaceholder
 
     def get_context_data(self, *args, **kwargs):

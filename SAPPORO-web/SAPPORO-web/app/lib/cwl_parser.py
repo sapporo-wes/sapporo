@@ -1,8 +1,11 @@
 # coding: utf-8
-import yaml
 from collections import OrderedDict
+from urllib import parse
 
-yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, lambda loader, node: OrderedDict(loader.construct_pairs(node)))
+import yaml
+
+yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+                     lambda loader, node: OrderedDict(loader.construct_pairs(node)))
 
 
 def parse_cwl_input_params(cwl_file):
@@ -18,7 +21,7 @@ def parse_cwl_input_params(cwl_file):
             doc: str or None
         }
     """
-    d_cwl_file = yaml.load(cwl_file)
+    d_cwl_file = yaml.load(cwl_file)    # TODO finx yaml or jason
     assert "inputs" in d_cwl_file, "CWL file does not have inputs field."
     input_params = []
     for label, d_values in d_cwl_file["inputs"].items():
@@ -45,3 +48,31 @@ def parse_cwl_input_params(cwl_file):
         input_params.append(input_param)
 
     return input_params
+
+
+def change_cwl_url_to_cwl_viewer_url(input_url):
+    """
+    a = "https://raw.githubusercontent.com/suecharo/SAPPORO/master/SAPPORO-service/test/test_workflow/trimming_and_qc.cwl"
+    b = "https://github.com/suecharo/SAPPORO/blob/master/SAPPORO-service/test/test_workflow/trimming_and_qc.cwl"
+    c = "https://view.commonwl.org/workflows/github.com/suecharo/SAPPORO/blob/master/SAPPORO-service/test/test_workflow/trimming_and_qc.cwl"
+    assert change_cwl_url_to_cwl_viewer_url(a) == c
+    assert change_cwl_url_to_cwl_viewer_url(b) == c
+    """
+
+    input_url_parsed = parse.urlparse(input_url)
+    if input_url_parsed.netloc == "raw.githubusercontent.com":
+        new_path = "/workflows/github.com" + input_url_parsed.path
+        l_new_path = new_path.split("/")
+        l_new_path.insert(5, "blob")
+        new_path = "/".join(l_new_path)
+        viewer_url_parsed = input_url_parsed._replace(
+            scheme="https", netloc="view.commonwl.org", path=new_path)
+        viewer_url = parse.urlunparse(viewer_url_parsed)
+    elif input_url_parsed.netloc == "github.com":
+        viewer_url_parsed = input_url_parsed._replace(
+            scheme="https", netloc="view.commonwl.org", path="/workflows/github.com" + input_url_parsed.path)
+        viewer_url = parse.urlunparse(viewer_url_parsed)
+    else:
+        return False
+
+    return viewer_url

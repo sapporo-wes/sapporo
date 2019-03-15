@@ -19,17 +19,17 @@ logger = getLogger("django")
 
 
 class HomeView(View):
-    raise_exception = True
-
     def get(self, request):
-        logger.debug(request.META["REMOTE_ADDR"])
+        if settings.DEBUG:
+            # for django.django-debug-toolbar
+            logger.debug(request.META["REMOTE_ADDR"])
 
         if request.user.is_authenticated:
             services = Service.objects.all()
             workflows = Workflow.objects.all()
-            runs = Run.objects.filter(user__pk=request.user.pk)
+            runs = Run.get_user_recent_runs(request.user.pk)
             for run in runs:
-                run._update_from_service()
+                run.update_from_service()
             context = {
                 "services": services,
                 "workflows": workflows,

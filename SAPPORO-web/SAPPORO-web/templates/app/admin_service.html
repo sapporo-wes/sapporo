@@ -64,6 +64,8 @@
               <th>Service Name</th>
               <th>Server URL</th>
               <th>Add date</th>
+              <th>Update date</th>
+              <th>Update</th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -73,6 +75,14 @@
                 <td><a href="{% url 'app:service_detail' service_name=service.name %}">{{ service.name }}</a></td>
                 <td>{{ service.server_scheme }}://{{ service.server_host }}</td>
                 <td>{{ service.created_at|date:"Y-m-j H:i:s" }}</td>
+                <td>{{ service.updated_at|date:"Y-m-j H:i:s" }}</td>
+                <td>
+                  <div class="text-center">
+                    <div class="form-check">
+                      <input class="form-check-input position-static" type="checkbox" name="update_check" value="{{ service.name }}">
+                    </div>
+                  </div>
+                </td>
                 <td>
                   <div class="text-center">
                     <div class="form-check">
@@ -86,7 +96,12 @@
         </table>
         {% if services|length != 0 %}
           <div class="row justify-content-end">
-            <div class="col-sm-3 col-12">
+            <div class="col-md-2 col-12">
+              {% buttons %}
+                <input type="submit" class="btn btn-outline-primary btn-block" name="button_update_service" value="Update" />
+              {% endbuttons %}
+            </div>
+            <div class="col-md-2 col-12">
               {% buttons %}
                 <input type="submit" class="btn btn-outline-danger btn-block" name="button_delete_service" value="Delete" />
               {% endbuttons %}

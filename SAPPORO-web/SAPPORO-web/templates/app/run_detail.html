@@ -61,6 +61,17 @@
       </div>
     </div>
 
+    {% if bool_cancel_button %}
+      <div class="row justify-content-center" id="cancel-button">
+        <div class="col-6">
+          <form action="{% url 'app:run_detail' run_id=run.run_id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-outline-danger btn-block" name="run_cancel_button" value="Cancel Run" />
+          </form>
+        </div>
+      </div>
+    {% endif %}
+
     <div class="row justify-content-center" id="parameter-title">
       <div class="col-lg-8 col-md-7 col-sm-6 col-10">
         <h2>Workflow Paramteres</h2>

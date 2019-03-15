@@ -1,13 +1,9 @@
 # coding: utf-8
 from secrets import token_hex
 
-import requests
 from django.db import models
-from django.http import Http404
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from factory.django import DjangoModelFactory
-from requests.exceptions import RequestException
 
 from app.lib.requests_wrapper import get_requests
 
@@ -28,14 +24,8 @@ class CommonInfo(models.Model):
 
 
 class Service(CommonInfo):
-    SCHEME_CHOICES = (
-        ("http", "http"),
-        ("https", "https"),
-    )
-
     name = models.CharField(_("Service name"), max_length=256, unique=True)
-    server_scheme = models.CharField(
-        _("Server scheme"), max_length=16, choices=SCHEME_CHOICES, default="http")
+    server_scheme = models.CharField(_("Server scheme"), max_length=16)
     server_host = models.CharField(_("Server host"), max_length=256)
     server_token = models.CharField(
         _("Server token"), max_length=256, null=True, blank=True)
@@ -51,76 +41,165 @@ class Service(CommonInfo):
     def __str__(self):
         return "Service: {}".format(self.name)
 
-    def insert_from_form(self, service_name, server_scheme, server_host, server_token, d_response):
-        self.name = service_name
-        self.server_scheme = server_scheme
-        self.server_host = server_host
-        self.server_token = server_token
-        self.auth_instructions_url = d_response["auth_instructions_url"]
-        self.contact_info_url = d_response["contact_info_url"]
+    def create_from_form(self, cleaned_data):
+        self.name = cleaned_data["service_name"]
+        self.server_scheme = cleaned_data["server_scheme"]
+        self.server_host = cleaned_data["server_host"]
+        self.server_token = cleaned_data["server_token"]
+        self.auth_instructions_url = cleaned_data["d_response"]["auth_instructions_url"]
+        self.contact_info_url = cleaned_data["d_response"]["contact_info_url"]
         self.save()
-        for workflow_engine in d_response["workflow_engines"]:
-            obj_workflow_engine = WorkflowEngineFactory(
+        for res_workflow_engine in cleaned_data["d_response"]["workflow_engines"]:
+            ins_workflow_engine = WorkflowEngine.objects.create(
                 service=self,
-                name=workflow_engine["engine_name"],
-                version=workflow_engine["engine_version"],
+                name=res_workflow_engine["engine_name"],
+                version=res_workflow_engine["engine_version"],
             )
-            for workflow_type in workflow_engine["workflow_types"]:
-                workflow_type = WorkflowTypeFactory(
-                    type=workflow_type["language_type"],
-                    version=workflow_type["language_version"],
+            for res_workflow_type in res_workflow_engine["workflow_types"]:
+                ins_workflow_type, _ = WorkflowType.objects.get_or_create(
+                    type=res_workflow_type["language_type"],
+                    version=res_workflow_type["language_version"],
                 )
-                obj_workflow_engine.workflow_types.add(workflow_type)
-            obj_workflow_engine.save()
-        for wes_version in d_response["supported_wes_versions"]:
-            SupportedWesVersionFactory(
+                ins_workflow_type.save()
+                ins_workflow_engine.workflow_types.add(ins_workflow_type)
+            ins_workflow_engine.save()
+        for wes_version in cleaned_data["d_response"]["supported_wes_versions"]:
+            SupportedWesVersion.objects.create(
                 service=self,
                 wes_version=wes_version,
             )
 
-    def fetch_workflows(self):
-        from app.models.model_workflow import Workflow, WorkflowFactory
+        return True
+
+    def update_from_server(self):
+        d_response = get_requests(
+            self.server_scheme, self.server_host, "/service-info", self.server_token)
+        if d_response is None:
+            return False
+        self.auth_instructions_url = d_response["auth_instructions_url"]
+        self.contact_info_url = d_response["contact_info_url"]
+        res_workflow_engine_names = [workflow_engine["engine_name"]
+                                     for workflow_engine in d_response["workflow_engines"]]
+        for ins_workflow_engine in self.workflow_engines.all():
+            if ins_workflow_engine.name in res_workflow_engine_names:
+                res_workflow_engine = [workflow_engine for workflow_engine in d_response["workflow_engines"]
+                                       if workflow_engine["engine_name"] == ins_workflow_engine.name][0]
+                if ins_workflow_engine.version != res_workflow_engine["engine_version"]:
+                    ins_workflow_engine.version = res_workflow_engine["engine_version"]
+                    ins_workflow_engine.workflow_types.clear()
+                    ins_workflow_engine.save()
+                    for res_workflow_type in res_workflow_engine["workflow_types"]:
+                        ins_workflow_type, _ = WorkflowType.objects.get_or_create(
+                            type=res_workflow_type["language_type"],
+                            version=res_workflow_type["language_version"],
+                        )
+                        ins_workflow_type.save()
+                        ins_workflow_engine.workflow_types.add(
+                            ins_workflow_type)
+                    ins_workflow_engine.save()
+            else:
+                ins_workflow_engine.delete()
+        for res_workflow_engine in d_response["workflow_engines"]:
+            ins_workflow_engine, created = WorkflowEngine.objects.get_or_create(
+                service=self,
+                name=res_workflow_engine["engine_name"],
+                version=res_workflow_engine["engine_version"],
+            )
+            if created is False:
+                ins_workflow_engine.workflow_types.clear()
+            ins_workflow_engine.save()
+            for res_workflow_type in res_workflow_engine["workflow_types"]:
+                ins_workflow_type, _ = WorkflowType.objects.get_or_create(
+                    type=res_workflow_type["language_type"],
+                    version=res_workflow_type["language_version"],
+                )
+                ins_workflow_type.save()
+                ins_workflow_engine.workflow_types.add(ins_workflow_type)
+            ins_workflow_engine.save()
+        for ins_supported_wes_version in self.supported_wes_versions.all():
+            if ins_supported_wes_version.wes_version not in d_response["supported_wes_versions"]:
+                ins_supported_wes_version.delete()
+        for wes_version in d_response["supported_wes_versions"]:
+            supported_wes_version, _ = SupportedWesVersion.objects.get_or_create(
+                service=self,
+                wes_version=wes_version,
+            )
+            supported_wes_version.save()
+        self.save()
+
+        return True
+
+    def create_workflows_from_server(self):
+        from app.models.model_workflow import Workflow
         d_response = get_requests(
             self.server_scheme, self.server_host, "/workflows", self.server_token)
         if d_response is None:
-            raise Http404
-        for workflow in d_response["workflows"]:
-            obj_workflow = Workflow.objects.filter(
-                name=workflow["workflow_name"]).first()
-            workflow_type = WorkflowType.objects.filter(
-                type=workflow["language_type"], version=workflow["language_version"])
-            if len(workflow_type) == 0:
-                workflow_type = WorkflowTypeFactory(
-                    type=workflow["language_type"],
-                    version=workflow["language_version"],
-                )
+            return False
+        for res_workflow in d_response["workflows"]:
+            ins_workflow_type, _ = WorkflowType.objects.get_or_create(
+                type=res_workflow["language_type"],
+                version=res_workflow["language_version"],
+            )
+            ins_workflow_type.save()
+            ins_workflow = Workflow.objects.create(
+                service=self,
+                name=res_workflow["workflow_name"],
+                version=res_workflow["workflow_version"],
+                workflow_type=ins_workflow_type,
+                location=res_workflow["workflow_location"],
+                content=res_workflow["workflow_content"],
+                parameters_template_location=res_workflow["workflow_parameters_template_location"],
+                parameters_template=res_workflow["workflow_parameters_template"],
+            )
+
+        return True
+
+    def update_workflows_from_server(self):
+        from app.models.model_workflow import Workflow
+        d_response = get_requests(
+            self.server_scheme, self.server_host, "/workflows", self.server_token)
+        if d_response is None:
+            return False
+        res_workflow_names = [workflow["workflow_name"]
+                              for workflow in d_response["workflows"]]
+        for ins_workflow in self.workflows.all():
+            if ins_workflow.name in res_workflow_names:
+                res_workflow = [workflow for workflow in d_response["workflows"]
+                                if workflow["workflow_name"] == ins_workflow.name][0]
+                if ins_workflow.version != res_workflow["workflow_version"]:
+                    ins_workflow_type, _ = WorkflowType.objects.get_or_create(
+                        type=res_workflow["language_type"],
+                        version=res_workflow["language_version"],
+                    )
+                    ins_workflow_type.save()
+                    ins_workflow.version = res_workflow["workflow_version"]
+                    ins_workflow.workflow_type = ins_workflow_type
+                    ins_workflow.location = res_workflow["workflow_location"]
+                    ins_workflow.content = res_workflow["workflow_content"]
+                    ins_workflow.parameters_template_location = res_workflow[
+                        "workflow_parameters_template_location"]
+                    ins_workflow.parameters_template = res_workflow["workflow_parameters_template"]
+                    ins_workflow.save()
             else:
-                workflow_type = workflow_type.first()
-            if obj_workflow is not None:    # update
-                obj_workflow.version = workflow["workflow_version"]
-                obj_workflow.workflow_type = workflow_type
-                obj_workflow.location = workflow["workflow_location"]
-                obj_workflow.content = workflow["workflow_content"]
-                obj_workflow.parameters_template_location = workflow[
-                    "workflow_parameters_template_location"]
-                obj_workflow.parameters_template = workflow["workflow_parameters_template"]
-                obj_workflow.save()
-            else:   # create
-                WorkflowFactory(
-                    service=self,
-                    name=workflow["workflow_name"],
-                    version=workflow["workflow_version"],
-                    workflow_type=workflow_type,
-                    location=workflow["workflow_location"],
-                    content=workflow["workflow_content"],
-                    parameters_template_location=workflow["workflow_parameters_template_location"],
-                    parameters_template=workflow["workflow_parameters_template"],
-                )
+                ins_workflow.delete()
+        for res_workflow in d_response["workflows"]:
+            ins_workflow_type, _ = WorkflowType.objects.get_or_create(
+                type=res_workflow["language_type"],
+                version=res_workflow["language_version"],
+            )
+            ins_workflow_type.save()
+            ins_workflow, _ = Workflow.objects.get_or_create(
+                service=self,
+                name=res_workflow["workflow_name"],
+                version=res_workflow["workflow_version"],
+                workflow_type=ins_workflow_type,
+                location=res_workflow["workflow_location"],
+                content=res_workflow["workflow_content"],
+                parameters_template_location=res_workflow["workflow_parameters_template_location"],
+                parameters_template=res_workflow["workflow_parameters_template"],
+            )
 
-
-class ServiceFactory(DjangoModelFactory):
-    class Meta:
-        model = Service
+        return True
 
 
 class WorkflowType(CommonInfo):
@@ -136,18 +215,13 @@ class WorkflowType(CommonInfo):
         return "Workflow Type: {} {}".format(self.type, self.version)
 
 
-class WorkflowTypeFactory(DjangoModelFactory):
-    class Meta:
-        model = WorkflowType
-
-
 class WorkflowEngine(CommonInfo):
     service = models.ForeignKey(Service, verbose_name=_(
-        "Belong service"), on_delete=models.CASCADE, related_name="workflow_engines")
+        "Belong service"), on_delete=models.SET_NULL, related_name="workflow_engines", null=True, blank=True)
     name = models.CharField(_("Workflow engine name"), max_length=64)
     version = models.CharField(_("Workflow engine version"), max_length=64)
     workflow_types = models.ManyToManyField(
-        WorkflowType, verbose_name=_("Excutable workflow types"), related_name="workflow_engines")
+        WorkflowType, verbose_name=_("Excutable workflow types"), related_name="workflow_engines", blank=True)
 
     class Meta:
         db_table = "workflow_engine"
@@ -156,11 +230,6 @@ class WorkflowEngine(CommonInfo):
 
     def __str__(self):
         return "Workflow Engine: {}".format(self.name)
-
-
-class WorkflowEngineFactory(DjangoModelFactory):
-    class Meta:
-        model = WorkflowEngine
 
 
 class SupportedWesVersion(CommonInfo):
@@ -175,8 +244,3 @@ class SupportedWesVersion(CommonInfo):
 
     def __str__(self):
         return "Supported Wes Version: {}".format(self.wes_version)
-
-
-class SupportedWesVersionFactory(DjangoModelFactory):
-    class Meta:
-        model = SupportedWesVersion

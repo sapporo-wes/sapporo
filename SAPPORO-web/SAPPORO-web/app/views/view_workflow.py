@@ -4,7 +4,6 @@ from io import StringIO
 
 import requests
 import yaml
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -12,16 +11,16 @@ from django.views.generic import View
 from requests.exceptions import RequestException
 
 from app.forms import WorkflowParametersUploadForm, WorkflowPrepareForm
-from app.lib.cwl_parser import parse_cwl_input_params
-from app.models import RunFactory, Workflow
+from app.lib.cwl_parser import (change_cwl_url_to_cwl_viewer_url,
+                                parse_cwl_input_params)
+from app.lib.mixin import MyLoginRequiredMixin as LoginRequiredMixin
+from app.models import Run, Workflow
 
 
 class WorkflowListView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request):
         workflows = Workflow.objects.select_related(
-            "service", "workflow_type").all()
+            "service", "workflow_type").all().order_by("-created_at")
         context = {
             "workflows": workflows,
         }
@@ -30,8 +29,6 @@ class WorkflowListView(LoginRequiredMixin, View):
 
 
 class WorkflowDetailView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request, workflow_token):
         workflow = Workflow.objects.filter(
             token=workflow_token).select_related("service", "workflow_type").first()
@@ -42,13 +39,14 @@ class WorkflowDetailView(LoginRequiredMixin, View):
             "workflow": workflow,
             "excutable_engines": excutable_engines,
         }
+        if workflow.workflow_type.type == "CWL":
+            context["cwl_workflow_graph"] = change_cwl_url_to_cwl_viewer_url(
+                workflow.location)
 
         return render(request, "app/workflow_detail.html", context)
 
 
 class WorkflowPrepareView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request, workflow_token):
         workflow = Workflow.objects.filter(token=workflow_token).select_related(
             "service", "workflow_type").first()
@@ -71,7 +69,7 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
             if workflow_prepare_form.is_valid():
                 workflow_engine = [engine for engine in excutable_engines if engine.token ==
                                    workflow_prepare_form.cleaned_data["execution_engine"]][0]
-                run = self._post_run(
+                run = self.post_run(
                     request.user, workflow, workflow_engine, workflow_prepare_form.cleaned_data)
                 return HttpResponseRedirect(reverse_lazy("app:run_detail", kwargs={"run_id": run.run_id}))
             workflow_parameters_upload_form = WorkflowParametersUploadForm()
@@ -83,7 +81,8 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
             if workflow_parameters_upload_form.is_valid():
                 workflow_parameters = workflow_parameters_upload_form.cleaned_data["workflow_parameters"].file.read(
                 ).decode("utf-8")
-                d_workflow_parameters = yaml.load(workflow_parameters)
+                d_workflow_parameters = yaml.load(
+                    workflow_parameters)  # TODO fix yaml and json
                 for key, value in d_workflow_parameters.items():
                     workflow_prepare_form.fields[key].initial = value
         else:
@@ -102,7 +101,7 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
 
         return render(request, "app/workflow_prepare.html", context)
 
-    def _post_run(self, user, workflow, workflow_engine, form_inputs):
+    def post_run(self, user, workflow, workflow_engine, form_inputs):
         workflow_parameters = copy(form_inputs)
         del workflow_parameters["execution_engine"]
         del workflow_parameters["run_name"]
@@ -128,14 +127,15 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
             d_response = response.json()
         except RequestException:
             raise Http404
-        run = RunFactory(
+        run = Run.objects.create(
             user=user,
             name=form_inputs["run_name"],
             run_id=d_response["run_id"],
-            status=d_response["status"],
+            service=workflow.service,
             workflow=workflow,
             execution_engine=workflow_engine,
             workflow_parameters=workflow_parameters,
+            status=d_response["status"],
         )
 
         return run

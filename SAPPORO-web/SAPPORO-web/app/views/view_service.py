@@ -1,18 +1,16 @@
 # coding: utf-8
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import View
 
+from app.lib.mixin import MyLoginRequiredMixin as LoginRequiredMixin
 from app.models import Service
 
 
 class ServiceListView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request):
         services = Service.objects.prefetch_related(
-            "workflow_engines", "workflows").all()
+            "workflow_engines", "workflows").all().order_by("-created_at")
         context = {
             "services": services,
         }
@@ -21,8 +19,6 @@ class ServiceListView(LoginRequiredMixin, View):
 
 
 class ServiceDetailView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request, service_name):
         service = Service.objects.filter(name=service_name).prefetch_related(
             "workflows", "workflow_engines__workflow_types", "supported_wes_versions").first()

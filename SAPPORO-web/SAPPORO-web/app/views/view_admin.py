@@ -1,16 +1,14 @@
 # coding: utf-8
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.views.generic import View
 
 from app.forms import ServiceAdditionForm
+from app.lib.mixin import MyLoginRequiredMixin as LoginRequiredMixin
 from app.models import Service
 
 
 class AdminHomeView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request):
         if not request.user.is_superuser:
             raise PermissionDenied
@@ -19,8 +17,6 @@ class AdminHomeView(LoginRequiredMixin, View):
 
 
 class AdminServiceView(LoginRequiredMixin, View):
-    raise_exception = True
-
     def get(self, request):
         if not request.user.is_superuser:
             raise PermissionDenied
@@ -35,18 +31,18 @@ class AdminServiceView(LoginRequiredMixin, View):
             service_addition_form = ServiceAdditionForm(request.POST)
             if service_addition_form.is_valid():
                 service = Service()
-                service.insert_from_form(
-                    service_addition_form.cleaned_data["service_name"],
-                    service_addition_form.cleaned_data["server_scheme"],
-                    service_addition_form.cleaned_data["server_host"],
-                    service_addition_form.cleaned_data["server_token"],
-                    service_addition_form.cleaned_data["d_response"],
-                )
-                service.fetch_workflows()
+                service.create_from_form(service_addition_form.cleaned_data)
+                service.create_workflows_from_server()
         elif request.POST.get("button_delete_service"):
             for service_name in request.POST.getlist("delete_check"):
                 service = Service.objects.get(name=service_name)
                 service.delete()
+            service_addition_form = ServiceAdditionForm()
+        elif request.POST.get("button_update_service"):
+            for service_name in request.POST.getlist("update_check"):
+                service = Service.objects.get(name=service_name)
+                service.update_from_server()
+                service.update_workflows_from_server()
             service_addition_form = ServiceAdditionForm()
         else:
             service_addition_form = ServiceAdditionForm()
