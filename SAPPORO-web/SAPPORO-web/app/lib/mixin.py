@@ -17,6 +17,6 @@ class MyLoginRequiredMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return self.handle_not_authenticated()
-        if self.raise_exception():
+        if self.raise_exception:
             return self.handle_exception()
         return super().dispatch(request, *args, **kwargs)
