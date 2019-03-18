@@ -51,3 +51,7 @@ h2 {
   background-color: #003546;
   border-color: #003546;
 }
+
+.btn-outline-danger {
+  background-color: #ffffff;
+}

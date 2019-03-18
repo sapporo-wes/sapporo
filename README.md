@@ -53,7 +53,7 @@ SAPPORO divides into SAPPORO-web and SAPPORO-service.
   - API Server
   - Providing REST API
 
-![SAPPORO - System Architecture](https://i.imgur.com/xhR8EEX.png)
+![SAPPORO - System Architecture](https://i.imgur.com/A4seI74.png)
 
 You can register multiple SAPPORO-service in one SAPPORO-web or register one SAPPORO-service in multiple SAPPORO-web.
 

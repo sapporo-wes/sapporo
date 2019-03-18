@@ -40,6 +40,12 @@
               <td>Parameters Template Location</td>
               <td><a href="{{ workflow.parameters_template_location }}">{{ workflow.parameters_template_location }}</a></td>
             </tr>
+            {% if cwl_workflow_graph %}
+              <tr>
+                <td>CWL Workflow Viewer</td>
+                <td><a href="{{ cwl_workflow_graph }}">{{ cwl_workflow_graph }}</a></td>
+              </tr>
+            {% endif %}
           </tbody>
         </table>
       </div>

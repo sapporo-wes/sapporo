@@ -6,8 +6,8 @@ from django.urls import path
 from app.views import (AdminHomeView, AdminServiceView, HomeView,
                        LoginNoPlaceholderView, RunDetailView, RunDownloadView,
                        RunListView, ServiceDetailView, ServiceListView,
-                       SignupView, UserHomeView, WorkflowDetailView,
-                       WorkflowListView, WorkflowPrepareView)
+                       SignupView, WorkflowDetailView, WorkflowListView,
+                       WorkflowPrepareView)
 
 app_name = "app"
 

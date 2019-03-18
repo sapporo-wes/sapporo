@@ -3,7 +3,7 @@ import os
 from distutils.util import strtobool
 from pathlib import Path
 
-from .local_settings import SECRET_KEY as LOCAL_SECRET_KEY
+from config.local_settings import SECRET_KEY as LOCAL_SECRET_KEY
 
 
 def str2bool(arg):
@@ -60,6 +60,11 @@ STATIC_ROOT = str(BASE_DIR.joinpath("static"))
 LOGIN_URL = "/signin"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+SESSION_COOKIE_AGE = 3600  # 1hour
+SESSION_IDLE_TIMEOUT = 3600  # 1hour
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -141,7 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 if DEBUG:
-    INTERNAL_IPS = ["172.21.0.1"]
+    INTERNAL_IPS = ["172.22.0.1"]
     MIDDLEWARE += [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]
