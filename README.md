@@ -61,6 +61,7 @@ For details, please refer to each README.
 
 - [SAPPORO-web - README](https://github.com/suecharo/SAPPORO/blob/master/SAPPORO-web/README.md)
 - [SAPPORO-service - README](https://github.com/suecharo/SAPPORO/blob/master/SAPPORO-service/README.md)
+- [SAPPORO-fileserver - README](https://github.com/suecharo/SAPPORO/blob/master/SAPPORO-fileserver/README.md)
 
 ## License
 
