@@ -1,17 +1,15 @@
-FROM python:alpine
+FROM python:slim
 
 WORKDIR /opt/SAPPORO-service
 
-RUN apk --update add --no-cache \
-    gcc \
+RUN apt update && \
+    apt install -y \
+    build-essential \
+    iproute2 \
     jq \
-    libc-dev \
-    libc6-compat \
-    libltdl \
-    libxml2-dev \
-    libxslt-dev \
-    linux-headers \
-    pcre-dev
+    procps && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /tmp
 

@@ -25,4 +25,4 @@ services:
       - ENABLE_TOKEN_AUTH=False
     ports:
       - 1122:80
-    command: ["sh", "/opt/SAPPORO-service/entry_point.sh"]
+    command: ["/bin/bash", "/opt/SAPPORO-service/entry_point.sh"]
