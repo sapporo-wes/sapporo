@@ -9,6 +9,10 @@ SAPPORO-web/config/uwsgi.sock
 SAPPORO-web/log/
 SAPPORO-web/SAPPORO-web/static/
 
+SAPPORO-fileserver/data/
+
+!.gitkeep
+
 __pycache__/
 *.py[cod]
 *$py.class

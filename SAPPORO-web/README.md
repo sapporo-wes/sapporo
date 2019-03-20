@@ -186,7 +186,7 @@ The Test is done using pytest and coverage.
 ```shell
 $ cd test
 $ docker-compose -f docker-compose.dev.yml up -d --build
-$ docker-compose -f docker-compose.dev.yml exec app sh /opt/SAPPORO-web/test/run_test.sh
+$ docker-compose -f docker-compose.dev.yml exec app /bin/bash /opt/SAPPORO-web/test/run_test.sh
 ```
 
 The result is output to `./test/coverage_html`.
@@ -198,7 +198,7 @@ You can develop using Django's lcoal server. As a result, code changes are refle
 ```shell
 $ cd test
 $ docker-compose -f docker-compose.dev.yml up -d --build
-$ docker-compose -f docker-compose.dev.yml exec app sh /opt/SAPPORO-web/test/migrate.sh
-$ docker-compose -f docker-compose.dev.yml exec app sh /opt/SAPPORO-web/SAPPORO-web/manage.py createsuperuser
-$ docker-compose -f docker-compose.dev.yml exec app sh /opt/SAPPORO-web/test/run_server.sh
+$ docker-compose -f docker-compose.dev.yml exec app /bin/bash /opt/SAPPORO-web/test/migrate.sh
+$ docker-compose -f docker-compose.dev.yml exec app python3 /opt/SAPPORO-web/SAPPORO-web/manage.py createsuperuser
+$ docker-compose -f docker-compose.dev.yml exec app /bin/bash /opt/SAPPORO-web/test/run_server.sh
 ```

@@ -114,7 +114,7 @@ def prepare_run_dir(uuid, run_order):
 
 
 def fork_run(uuid):
-    cmd = "sh {} {}".format(RUN_EXECUTION_SCRIPT_PATH, uuid)
+    cmd = "/bin/bash {} {}".format(RUN_EXECUTION_SCRIPT_PATH, uuid)
     l_cmd = shlex.split(cmd)
     proc = Popen(l_cmd)
     run_dir = RUN_BASE_DIR.joinpath(uuid[:2]).joinpath(uuid)

@@ -19,7 +19,7 @@ services:
       - POSTGRES_PASSWORD=sapporo-web-passwd
       - POSTGRES_DB=sapporo-web
       - POSTGRES_PORT=5432
-    command: ["sh", "/opt/SAPPORO-web/entry_point.sh"]
+    command: ["/bin/bash", "/opt/SAPPORO-web/entry_point.sh"]
   web:
     image: nginx:stable-alpine
     container_name: sapporo-web-web

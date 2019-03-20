@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 coverage run /opt/SAPPORO-web/SAPPORO-web/manage.py test app
 coverage report
 coverage html

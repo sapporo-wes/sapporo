@@ -1,6 +1,6 @@
 workflow_engines:
   - engine_name: cwltool
-    engine_version: 1.0.20181201184214
+    engine_version: 1.0.20190228155703
     workflow_types:
       - language_type: CWL
         language_version: v1.0

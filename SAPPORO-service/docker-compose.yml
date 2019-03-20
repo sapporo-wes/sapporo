@@ -16,7 +16,7 @@ services:
       - LOG_LEVEL=INFO # DEBUG or INFO
       - ENABLE_GET_RUNS=False
       - ENABLE_TOKEN_AUTH=False
-    command: ["sh", "/opt/SAPPORO-service/entry_point.sh"]
+    command: ["/bin/bash", "/opt/SAPPORO-service/entry_point.sh"]
   web:
     image: nginx:stable-alpine
     container_name: sapporo-service-web
