@@ -1,14 +1,18 @@
 # SAPPORO
 
-SAPPORO is a job execution system for always reproducing Batch Job.
+SAPPORO is a workflow and individual task execution system. It is also useful for continuous testing of workflows.
 
 [Japanese document](https://hackmd.io/s/Syq0q0o8N)
 
 ![SAPPORO - Home](https://i.imgur.com/ebHAY8o.jpg)
 
-## What does this mean always reproducing Batch Job
+## What does "individual task execution system" mean?
 
-Batch computing is to run serial processing (called workflow, pipeline, etc.) on one or more computers without human operation. Batch computing is used in the following various areas.
+[Batch Computing - Wikipedia](https://en.wikipedia.org/wiki/Batch_processing)
+
+> the scripted running of one or more programs, as directed by Job Control Language, with no human interaction other than, 
+
+Batch computing is used in the following various areas.
 
 - Machine learning
 - Genome analysis
@@ -20,6 +24,8 @@ These batch jobs can be ensured portability and reproducibility by using contain
 
 ![SAPPORO - Batch Job](https://i.imgur.com/4UJ799a.png)
 
+## What does "useful for continuous testing of workflows" mean?
+
 However, even if these technologies are used, since processing is executed on a physical computer, various practical problems occur.
 
 - Server is shut down
@@ -27,31 +33,27 @@ However, even if these technologies are used, since processing is executed on a 
 - CPU resources, memory, storage, etc. are occupied by other processes
 - Hosted container image is modified
 
-In order to deal with these problems, in SAPPORO, the concept of CI/CD is introduced to management of batch jobs. In other words, SAPPORO is intended to test wheter "batch jobs are always executable" and "output by batch job is always reproduced". SAPPORO aims to always reproduce batch jobs by introducing these concepts into the system.
+In order to deal with these problems, in SAPPORO, the concept of CI/CD is introduced for the management of batch jobs. In other words, SAPPORO is intended to test if "the batch jobs are executing correctly" and "is the output of the batch job always the same (reproducible)".
 
-## Feature
+## Features
 
-Features of SAPPORO are as follows.
-
-- Verification of reproducibility of workflow
+- Verification of the reproducibility of a workflow
 - Collect and manage batch job results
 - Support for various workflow execution engines and workflow description languages
 - Cooperation with various job schedulers
-- Deployment to various envirounments(on-premise, cloud, cluster. etc.)
-- Easy deployment and management
+- Deployment to various envirounments (on-premise, cloud, cluster. etc.)
+- docker-compose for simple deployment and management
 
 ## System Architecture
 
-SAPPORO divides into SAPPORO-web and SAPPORO-service.
+SAPPORO has two components: SAPPORO-web and SAPPORO-service.
 
 - SAPPORO-web
-  - Managing user informations and batch jobs
+  - User and batch job management interface
   - Web Server
-  - Providing web frontend
 - SAPPORO-service
-  - Executing batch job
-  - API Server
-  - Providing REST API
+  - Batch job executor
+  - REST API Server
 
 ![SAPPORO - System Architecture](https://i.imgur.com/A4seI74.png)
 
