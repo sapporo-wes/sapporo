@@ -32,6 +32,6 @@ six==1.12.0
 typing-extensions==3.7.2
 urllib3==1.24.1
 uWSGI==2.0.18
-Werkzeug==0.14.1
+Werkzeug==0.15.0
 xmltodict==0.12.0
 yq==2.7.2

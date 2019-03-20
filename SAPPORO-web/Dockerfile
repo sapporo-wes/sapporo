@@ -19,3 +19,4 @@ COPY entry_point.sh /opt/SAPPORO-web
 ADD https://raw.githubusercontent.com/eficode/wait-for/master/wait-for /opt/SAPPORO-web
 
 CMD ["tail", "-f", "/dev/null"]
+
