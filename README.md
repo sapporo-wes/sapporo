@@ -67,4 +67,4 @@ For details, please refer to each README.
 
 ## License
 
-SAPPORO is released under the [MIT license](https://github.com/suecharo/SAPPORO/blob/master/LICENSE).
+SAPPORO is released under the [Apache 2.0 license](https://github.com/suecharo/SAPPORO/blob/master/LICENSE).
