@@ -18,6 +18,8 @@ services:
       - ./service-info.dev.yml:/opt/SAPPORO-service/config/service-info.yml
       - ./workflow-info.dev.yml:/opt/SAPPORO-service/config/workflow-info.yml
       - ../config/generate_token.py:/opt/SAPPORO-service/config/generate_token.py
+    networks:
+      - sapporo
     environment:
       - DEBUG=True # Flask debug mode
       - LOG_LEVEL=DEBUG # DEBUG or INFO
@@ -26,3 +28,8 @@ services:
     ports:
       - 1122:80
     command: ["/bin/bash", "/opt/SAPPORO-service/entry_point.sh"]
+
+networks:
+  sapporo:
+    external:
+      name: sapporo-network

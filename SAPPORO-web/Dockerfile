@@ -11,7 +11,7 @@ RUN apt update && \
 
 COPY requirements.txt /tmp
 
-RUN pip install -U pip && \
+RUN pip install -U pip wheel setuptools && \
     pip install -r /tmp/requirements.txt && \
     rm -rf /tmp/requirements.txt
 
