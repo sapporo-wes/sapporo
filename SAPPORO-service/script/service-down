@@ -5,7 +5,7 @@ CMDNAME=`basename $0`
 function usage () {
   cat << EOS
 Usage: $CMDNAME
-Script to down SAPPORO-web.
+Script to down SAPPORO-service.
 
 Option:
   -h, --help                  Print usage.
@@ -25,8 +25,8 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/../SAPPORO-web && pwd)/docker-compose.yml
+DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/.. && pwd)/docker-compose.yml
 
-echo "Start web-down..."
+echo "Start service-down..."
 docker-compose -f ${DOCKER_COMPOSE_CONFIG_FILE} down
-echo "Finish web-down..."
+echo "Finish service-down..."

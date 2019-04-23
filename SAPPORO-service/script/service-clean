@@ -25,15 +25,15 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/../SAPPORO-service && pwd)/docker-compose.yml
-RUN_DIR=$(cd $(dirname $0)/../SAPPORO-service/run)
-LOG_DIR=$(cd $(dirname $0)/../SAPPORO-service/log)
+SERVICE_ROOT=$(cd $(dirname $0)/.. && pwd)
+DOCKER_COMPOSE_CONFIG_FILE=${SERVICE_ROOT}/docker-compose.yml
 
 echo "Start service-clean..."
 docker network rm sapporo-network > /dev/null 2>&1
 docker network rm sapporo-service_default > /dev/null 2>&1
-rm -rf "${RUN_DIR}/*"
-rm -rf "${LOG_DIR}/*"
+rm -rf "${SERVICE_ROOT}/config/uwsgi.sock"
+rm -rf "${SERVICE_ROOT}/run/*"
+rm -rf "${SERVICE_ROOT}/log/*"
 cat << EOS > ${DOCKER_COMPOSE_CONFIG_FILE}
 version: "3"
 services:

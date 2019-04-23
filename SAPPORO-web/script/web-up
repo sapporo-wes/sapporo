@@ -113,7 +113,7 @@ if [ -z $ARG_LOG_DIR ]; then
 fi
 
 DOCKER_BIN_PATH=`which docker`
-DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/../SAPPORO-web && pwd)/docker-compose.yml
+DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/.. && pwd)/docker-compose.yml
 
 echo "Start web-up..."
 cat << EOS
