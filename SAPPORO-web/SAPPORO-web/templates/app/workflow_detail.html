@@ -12,7 +12,11 @@
   <div class="container">
     <div class="row" id="title">
       <div class="col-12">
-        <h1>{{ workflow.name }}</h1>
+        {% if workflow.deleted %}
+          <h1>{{ workflow.name }} (Deleted)</h1>
+        {% else %}
+          <h1>{{ workflow.name }}</h1>
+        {% endif %}
       </div>
     </div>
 
@@ -51,11 +55,13 @@
       </div>
     </div>
 
-    <div class="row justify-content-center" id="prepare-button">
-      <div class="col-6">
-        <a class="btn btn-outline-primary btn-block" href="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" role="button">Prepare Run</a>
+    {% if workflow.deleted is false %}
+      <div class="row justify-content-center" id="prepare-button">
+        <div class="col-6">
+          <a class="btn btn-outline-primary btn-block" href="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" role="button">Prepare Run</a>
+        </div>
       </div>
-    </div>
+    {% endif %}
 
     <div class="row justify-content-center" id="workflow-content">
       <div class="col-10">

@@ -20,7 +20,7 @@ from app.models import Run, Workflow
 class WorkflowListView(LoginRequiredMixin, View):
     def get(self, request):
         workflows = Workflow.objects.select_related(
-            "service", "workflow_type").all().order_by("-created_at")
+            "service", "workflow_type").filter(deleted=False).order_by("-updated_at")
         context = {
             "workflows": workflows,
         }
@@ -48,8 +48,10 @@ class WorkflowDetailView(LoginRequiredMixin, View):
 
 class WorkflowPrepareView(LoginRequiredMixin, View):
     def get(self, request, workflow_token):
-        workflow = Workflow.objects.filter(token=workflow_token).select_related(
+        workflow = Workflow.objects.filter(token=workflow_token, deleted=False).select_related(
             "service", "workflow_type").first()
+        if workflow is None:
+            raise Http404
         excutable_engines = workflow.find_excutable_engines()
         input_params = parse_cwl_input_params(workflow.content)
         workflow_prepare_form = WorkflowPrepareForm(
