@@ -14,7 +14,7 @@ function run_wf() {
 function run_cwltool() {
   echo "RUNNING" > ${status_file}
   workflow_location=$(cat ${run_order_file} | yq -r '.workflow_location')
-  cwltool --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${status_file}
+  cwltool --enable-dev --custom-net=host --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${status_file}
   echo "COMPLETE" > ${status_file}
 }
 
