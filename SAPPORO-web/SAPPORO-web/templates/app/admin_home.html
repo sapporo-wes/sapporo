@@ -24,6 +24,10 @@
               <td><a href="{% url 'app:admin_service' %}">Managing services</a></td>
               <td>Add and delete services</td>
             </tr>
+            <tr>
+              <td><a href="{{ request.scheme }}://{{ request.META.HTTP_HOST }}/django-admin/auth/user/">Managing users</a></td>
+              <td>Manage user informations</td>
+            </tr>
           </tbody>
         </table>
       </div>
