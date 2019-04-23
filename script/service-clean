@@ -1,3 +1,40 @@
+#!/bin/bash
+cd `dirname $0`
+CMDNAME=`basename $0`
+
+function usage () {
+  cat << EOS
+Usage: $CMDNAME
+Script to clean SAPPORO-service.
+
+Option:
+  -h, --help                  Print usage.
+EOS
+}
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    "-h" | "--help" )
+      usage
+      exit 1
+      ;;
+    * )
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/../SAPPORO-service && pwd)/docker-compose.yml
+RUN_DIR=$(cd $(dirname $0)/../SAPPORO-service/run)
+LOG_DIR=$(cd $(dirname $0)/../SAPPORO-service/log)
+
+echo "Start service-clean..."
+docker network rm sapporo-network > /dev/null 2>&1
+docker network rm sapporo-service_default > /dev/null 2>&1
+rm -rf "${RUN_DIR}/*"
+rm -rf "${LOG_DIR}/*"
+cat << EOS > ${DOCKER_COMPOSE_CONFIG_FILE}
 version: "3"
 services:
   app:
@@ -38,3 +75,6 @@ networks:
   sapporo:
     external:
       name: sapporo-network
+EOS
+
+echo "Finish service-down..."

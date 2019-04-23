@@ -1,0 +1,32 @@
+#!/bin/bash
+cd `dirname $0`
+CMDNAME=`basename $0`
+
+function usage () {
+  cat << EOS
+Usage: $CMDNAME
+Script to down SAPPORO-web.
+
+Option:
+  -h, --help                  Print usage.
+EOS
+}
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    "-h" | "--help" )
+      usage
+      exit 1
+      ;;
+    * )
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/../SAPPORO-web && pwd)/docker-compose.yml
+
+echo "Start web-down..."
+docker-compose -f ${DOCKER_COMPOSE_CONFIG_FILE} down
+echo "Finish web-down..."

@@ -1,3 +1,40 @@
+#!/bin/bash
+cd `dirname $0`
+CMDNAME=`basename $0`
+
+function usage () {
+  cat << EOS
+Usage: $CMDNAME
+Script to clean SAPPORO-web.
+
+Option:
+  -h, --help                  Print usage.
+EOS
+}
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    "-h" | "--help" )
+      usage
+      exit 1
+      ;;
+    * )
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/../SAPPORO-web && pwd)/docker-compose.yml
+WEB_ROOT=$(cd $(dirname $0)/../SAPPORO-web)
+
+echo "Start web-clean..."
+docker network rm sapporo-network > /dev/null 2>&1
+docker network rm sapporo-web_default > /dev/null 2>&1
+docker volume rm sapporo-web_postgres-data > /dev/null 2>&1
+rm -rf "${WEB_ROOT}/log/*"
+rm -rf "${WEB_ROOT}/SAPPORO-web/app/migrations"
+cat << EOS > ${DOCKER_COMPOSE_CONFIG_FILE}
 version: "3"
 services:
   app:
@@ -58,3 +95,6 @@ networks:
   sapporo:
     external:
       name: sapporo-network
+EOS
+
+echo "Finish web-down..."

@@ -1,0 +1,175 @@
+#!/bin/bash
+cd `dirname $0`
+CMDNAME=`basename $0`
+
+function usage () {
+  cat << EOS
+Usage: $CMDNAME [Option]...
+Script to up SAPPORO-service.
+
+Option:
+  -h, --help                  Print usage.
+  -l, --log-level INFO|DEBUG  Set log level. (default INFO)
+  -p, --port PORT             Set the host TCP/IP port. (default 1122)
+  --enable-get-runs           Enable get runs. (default FALSE)
+  --enable-token-auth         Enable token auth. (default FALSE)
+  --log-dir ABS_PATH          Set log dir. (default SAPPORO-service/log)
+  --run-dir ABS_PATH          Set run dir. (default SAPPORO-service/run)
+EOS
+}
+
+FLG_GET_RUNS=False
+FLG_TOKEN_AUTH=False
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    "-h" | "--help" )
+      usage
+      exit 1
+      ;;
+    "-l" | "--log-level" )
+      if [ -z $2 ] || [ ${2::1} = "-" ]; then
+        usage
+        exit 1
+      fi
+      ARG_LOG_LEVEL=$2
+      if [ "$ARG_LOG_LEVEL" = "INFO" ] || [ $ARG_LOG_LEVEL = "DEBUG" ]; then
+        :
+      else
+        usage
+        exit 1
+      fi
+      shift 2
+      ;;
+    "-p" | "--port" )
+      if [ -z $2 ] || [ ${2::1} = "-" ]; then
+        usage
+        exit 1
+      fi
+      ARG_PORT=$2
+      expr $ARG_PORT + 1 > /dev/null 2>&1
+      if [ $? -ge 2 ]; then
+        usage
+        exit 1
+      fi
+      if [ $ARG_PORT -lt 1 ]; then
+        usage
+        exit 1
+      fi
+      shift 2
+      ;;
+    "--enable-get-runs" )
+      FLG_GET_RUNS=True
+      shift 1
+      ;;
+    "--enable-token-auth" )
+      FLG_TOKEN_AUTH=True
+      shift 1
+      ;;
+    "--log-dir" )
+      if [ -z $2 ] || [ ${2::1} = "-" ]; then
+        usage
+        exit 1
+      fi
+      ARG_LOG_DIR=$2
+      if [ "${ARG_LOG_DIR::1}" != "/" ]; then
+        usage
+        exit 1
+      fi
+      shift 2
+      ;;
+    "--run-dir" )
+      if [ -z $2 ] || [ ${2::1} = "-" ]; then
+        usage
+        exit 1
+      fi
+      ARG_RUN_DIR=$2
+      if [ "${ARG_RUN_DIR::1}" != "/" ]; then
+        usage
+        exit 1
+      fi
+      shift 2
+      ;;
+    * )
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z $ARG_LOG_LEVEL ]; then
+  ARG_LOG_LEVEL="INFO"
+fi
+if [ -z $ARG_PORT ]; then
+  ARG_PORT=1122
+fi
+if [ -z $ARG_RUN_DIR ]; then
+  ARG_RUN_DIR="./run"
+fi
+if [ -z $ARG_LOG_DIR ]; then
+  ARG_LOG_DIR="./log"
+fi
+
+DOCKER_BIN_PATH=`which docker`
+DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/../SAPPORO-service && pwd)/docker-compose.yml
+
+echo "Start service-up..."
+cat << EOS
+DOCKER_BIN: ${DOCKER_BIN_PATH}
+ARG_LOG_LEVEL: ${ARG_LOG_LEVEL}
+ARG_PORT: ${ARG_PORT}
+ARG_RUN_DIR: ${ARG_RUN_DIR}
+ARG_LOG_DIR: ${ARG_LOG_DIR}
+FLG_GET_RUNS: ${FLG_GET_RUNS}
+FLG_TOKEN_AUTH: ${FLG_TOKEN_AUTH}
+EOS
+
+if [ ! $(docker network ls | awk '{print $2}' | grep '^sapporo-network$' | wc -l) -eq 1 ]; then
+  docker network create sapporo-network
+fi
+
+cat << EOS > ${DOCKER_COMPOSE_CONFIG_FILE}
+version: "3"
+services:
+  app:
+    image: suecharo/sapporo-service:v0.3.4
+    container_name: sapporo-service-app
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_BIN_PATH}:/usr/bin/docker
+      - /tmp:/tmp
+      - ./SAPPORO-service:/opt/SAPPORO-service/SAPPORO-service
+      - ./config:/opt/SAPPORO-service/config
+      - ${ARG_LOG_DIR}:/opt/SAPPORO-service/log
+      - ${ARG_RUN_DIR}:/opt/SAPPORO-service/run
+    networks:
+      - sapporo
+    environment:
+      - LOG_LEVEL=${ARG_LOG_LEVEL} # DEBUG or INFO
+      - ENABLE_GET_RUNS=${FLG_GET_RUNS}
+      - ENABLE_TOKEN_AUTH=${FLG_TOKEN_AUTH}
+    command: ["/bin/bash", "/opt/SAPPORO-service/entry_point.sh"]
+  web:
+    image: nginx:stable-alpine
+    container_name: sapporo-service-web
+    depends_on:
+      - app
+    restart: always
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./config:/opt/SAPPORO-service/config
+      - ${ARG_LOG_DIR}:/opt/SAPPORO-service/log
+    networks:
+      - sapporo
+    ports:
+      - ${ARG_PORT}:80
+
+networks:
+  sapporo:
+    external:
+      name: sapporo-network
+EOS
+
+docker-compose -f ${DOCKER_COMPOSE_CONFIG_FILE} up -d
+echo "Finish service-up..."

@@ -1,0 +1,196 @@
+#!/bin/bash
+cd `dirname $0`
+CMDNAME=`basename $0`
+
+function usage () {
+  cat << EOS
+Usage: $CMDNAME [Option]...
+Script to up SAPPORO-web.
+
+Option:
+  -h, --help                  Print usage.
+  -l, --log-level INFO|DEBUG  Set log level. (default INFO)
+  -p, --port PORT             Set the host TCP/IP port. (default 1121)
+  -t, --timezone TIMEZONE     Set the timezone. (default Asia/Tokyo)
+  --log-dir ABS_PATH          Set log dir. (default SAPPORO-web/log)
+  --user-signup TRUE|FALSE    Enable user signup. (default True)
+EOS
+}
+
+FLG_USER_SIGNUP=True
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    "-h" | "--help" )
+      usage
+      exit 1
+      ;;
+    "-l" | "--log-level" )
+      if [ -z $2 ] || [ ${2::1} = "-" ]; then
+        usage
+        exit 1
+      fi
+      ARG_LOG_LEVEL=$2
+      if [ "$ARG_LOG_LEVEL" = "INFO" ] || [ $ARG_LOG_LEVEL = "DEBUG" ]; then
+        :
+      else
+        usage
+        exit 1
+      fi
+      shift 2
+      ;;
+    "-p" | "--port" )
+      if [ -z $2 ] || [ ${2::1} = "-" ]; then
+        usage
+        exit 1
+      fi
+      ARG_PORT=$2
+      expr $ARG_PORT + 1 > /dev/null 2>&1
+      if [ $? -ge 2 ]; then
+        usage
+        exit 1
+      fi
+      if [ $ARG_PORT -lt 1 ]; then
+        usage
+        exit 1
+      fi
+      shift 2
+      ;;
+    "-t" | "--timezone" )
+      if [ -z $2 ] || [ ${2::1} = "-" ]; then
+        usage
+        exit 1
+      fi
+      ARG_TIMEZONE=$2
+      shift 2
+      ;;
+    "--log-dir" )
+      if [ -z $2 ] || [ ${2::1} = "-" ]; then
+        usage
+        exit 1
+      fi
+      ARG_LOG_DIR=$2
+      if [ "${ARG_LOG_DIR::1}" != "/" ]; then
+        usage
+        exit 1
+      fi
+      shift 2
+      ;;
+    "--user-signup" )
+      if [ -z $2 ] || [ ${2::1} = "-" ]; then
+        usage
+        exit 1
+      fi
+      ARG_USER_SIGNUP=$2
+      if [ "$ARG_USER_SIGNUP" = "TRUE" ]; then
+        FLG_USER_SIGNUP=True
+      elif [ $ARG_USER_SIGNUP = "FALSE" ]; then
+        FLG_USER_SIGNUP=False
+      else
+        usage
+        exit 1
+      fi
+      shift 2
+      ;;
+    * )
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z $ARG_LOG_LEVEL ]; then
+  ARG_LOG_LEVEL="INFO"
+fi
+if [ -z $ARG_PORT ]; then
+  ARG_PORT=1121
+fi
+if [ -z $ARG_TIMEZONE ]; then
+  ARG_TIMEZONE="Asia/Tokyo"
+fi
+if [ -z $ARG_LOG_DIR ]; then
+  ARG_LOG_DIR="./log"
+fi
+
+DOCKER_BIN_PATH=`which docker`
+DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/../SAPPORO-web && pwd)/docker-compose.yml
+
+echo "Start web-up..."
+cat << EOS
+DOCKER_BIN: ${DOCKER_BIN_PATH}
+ARG_LOG_LEVEL: ${ARG_LOG_LEVEL}
+ARG_PORT: ${ARG_PORT}
+ARG_TIMEZONE: ${ARG_TIMEZONE}
+ARG_LOG_DIR: ${ARG_LOG_DIR}
+FLG_USER_SIGNUP: ${FLG_USER_SIGNUP}
+EOS
+
+if [ ! $(docker network ls | awk '{print $2}' | grep '^sapporo-network$' | wc -l) -eq 1 ]; then
+  docker network create sapporo-network
+fi
+
+cat << EOS > ${DOCKER_COMPOSE_CONFIG_FILE}
+version: "3"
+services:
+  app:
+    image: suecharo/sapporo-web:v0.3.4
+    container_name: sapporo-web-app
+    depends_on:
+      - database
+    restart: always
+    volumes:
+      - ./SAPPORO-web:/opt/SAPPORO-web/SAPPORO-web
+      - ./config:/opt/SAPPORO-web/config
+      - ${ARG_LOG_DIR}:/opt/SAPPORO-web/log
+    networks:
+      - sapporo
+    environment:
+      - LOG_LEVEL=${ARG_LOG_LEVEL} # DEBUG or INFO
+      - LANGUAGE_CODE=en
+      - TIME_ZONE=${ARG_TIMEZONE}
+      - ENABLE_USER_SIGNUP=${FLG_USER_SIGNUP}
+      - POSTGRES_USER=sapporo-web-user
+      - POSTGRES_PASSWORD=sapporo-web-passwd
+      - POSTGRES_DB=sapporo-web
+      - POSTGRES_PORT=5432
+    command: ["/bin/bash", "/opt/SAPPORO-web/entry_point.sh"]
+  web:
+    image: nginx:stable-alpine
+    container_name: sapporo-web-web
+    depends_on:
+      - app
+    restart: always
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./config:/opt/SAPPORO-web/config
+      - ${ARG_LOG_DIR}:/opt/SAPPORO-web/log
+      - ./SAPPORO-web/static:/opt/SAPPORO-web/SAPPORO-web/static
+    networks:
+      - sapporo
+    ports:
+      - ${ARG_PORT}:80
+  database:
+    image: postgres:alpine
+    container_name: sapporo-web-database
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - sapporo
+    environment:
+      - POSTGRES_USER=sapporo-web-user
+      - POSTGRES_PASSWORD=sapporo-web-passwd
+      - POSTGRES_DB=sapporo-web
+      - POSTGRES_PORT=5432
+
+volumes:
+  postgres-data:
+
+networks:
+  sapporo:
+    external:
+      name: sapporo-network
+EOS
+
+docker-compose -f ${DOCKER_COMPOSE_CONFIG_FILE} up -d
+echo "Finish web-up..."
