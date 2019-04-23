@@ -193,4 +193,11 @@ networks:
 EOS
 
 docker-compose -f ${DOCKER_COMPOSE_CONFIG_FILE} up -d
+
+while [ ! -e $(cd $(dirname $0)/.. && pwd)/config/uwsgi.sock ]; do
+  sleep 1s
+  echo "Starting uWSGI process..."
+done
+
+echo "Access http://0.0.0.0:${ARG_PORT}/ in your browser"
 echo "Finish web-up..."

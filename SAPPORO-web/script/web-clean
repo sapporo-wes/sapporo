@@ -26,6 +26,7 @@ while [ $# -gt 0 ]; do
 done
 
 WEB_ROOT=$(cd $(dirname $0)/.. && pwd)
+
 DOCKER_COMPOSE_CONFIG_FILE="${WEB_ROOT}/docker-compose.yml"
 
 echo "Start web-clean..."
@@ -33,8 +34,9 @@ docker network rm sapporo-network > /dev/null 2>&1
 docker network rm sapporo-web_default > /dev/null 2>&1
 docker volume rm sapporo-web_postgres-data > /dev/null 2>&1
 rm -rf "${WEB_ROOT}/config/uwsgi.sock"
-rm -rf "${WEB_ROOT}/log/*"
+rm -rf ${WEB_ROOT}/log/*
 rm -rf "${WEB_ROOT}/SAPPORO-web/app/migrations"
+rm -rf "${WEB_ROOT}/SAPPORO-web/config/local_settings.py"
 rm -rf "${WEB_ROOT}/SAPPORO-web/static"
 cat << EOS > ${DOCKER_COMPOSE_CONFIG_FILE}
 version: "3"
@@ -99,4 +101,4 @@ networks:
       name: sapporo-network
 EOS
 
-echo "Finish web-down..."
+echo "Finish web-clean..."

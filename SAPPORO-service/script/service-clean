@@ -31,9 +31,11 @@ DOCKER_COMPOSE_CONFIG_FILE=${SERVICE_ROOT}/docker-compose.yml
 echo "Start service-clean..."
 docker network rm sapporo-network > /dev/null 2>&1
 docker network rm sapporo-service_default > /dev/null 2>&1
+rm -rf "${SERVICE_ROOT}/config/token_list.txt"
 rm -rf "${SERVICE_ROOT}/config/uwsgi.sock"
-rm -rf "${SERVICE_ROOT}/run/*"
-rm -rf "${SERVICE_ROOT}/log/*"
+rm -rf ${SERVICE_ROOT}/log/*
+rm -rf ${SERVICE_ROOT}/run/*
+rm -rf "${SERVICE_ROOT}/SAPPORO-service/app/local_config.py"
 cat << EOS > ${DOCKER_COMPOSE_CONFIG_FILE}
 version: "3"
 services:
@@ -77,4 +79,4 @@ networks:
       name: sapporo-network
 EOS
 
-echo "Finish service-down..."
+echo "Finish service-clean..."
