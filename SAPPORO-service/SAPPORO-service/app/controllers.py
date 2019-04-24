@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, abort, jsonify, request
 
 from .config import ENABLE_GET_RUNS, d_config
 from .lib.runs import (cancel_run, execute, get_run_info, get_run_status_list,
@@ -31,15 +31,17 @@ def get_workflows_list():
     return response
 
 
-if ENABLE_GET_RUNS:
-    # curl -X GET localhost:8002/runs
-    @bp_app.route("/runs", methods=["GET"])
-    @token_auth
-    def get_runs():
+# curl -X GET localhost:8002/runs
+@bp_app.route("/runs", methods=["GET"])
+@token_auth
+def get_runs():
+    if ENABLE_GET_RUNS:
         data = get_run_status_list()
         response = jsonify(data)
         response.status_code = 200
         return response
+    else:
+        abort(403, "Forbidden")
 
 
 # python3 ./tests/post_runs_mock/post_runs_mock_trim.py

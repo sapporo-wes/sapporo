@@ -8,7 +8,7 @@ SAPPORO is a workflow and individual task execution system. It is also useful fo
 
 ## What does "individual task execution system" mean?
 
-[Batch Computing - Wikipedia](https://en.wikipedia.org/wiki/Batch_processing)
+[Wikipedia - Batch Computing](https://en.wikipedia.org/wiki/Batch_processing)
 
 > the scripted running of one or more programs, as directed by Job Control Language, with no human interaction other than, 
 
@@ -28,10 +28,10 @@ These batch jobs can be ensured portability and reproducibility by using contain
 
 However, even if these technologies are used, since processing is executed on a physical computer, various practical problems occur.
 
-- Server is shut down
-- Network is shut down
+- The server is shut down
+- The network is shut down
 - CPU resources, memory, storage, etc. are occupied by other processes
-- Hosted container image is modified
+- A hosted container image is modified
 
 In order to deal with these problems, in SAPPORO, the concept of CI/CD is introduced for the management of batch jobs. In other words, SAPPORO is intended to test if "the batch jobs are executing correctly" and "is the output of the batch job always the same (reproducible)".
 
@@ -41,7 +41,7 @@ In order to deal with these problems, in SAPPORO, the concept of CI/CD is introd
 - Collect and manage batch job results
 - Support for various workflow execution engines and workflow description languages
 - Cooperation with various job schedulers
-- Deployment to various envirounments (on-premise, cloud, cluster. etc.)
+- Deployment to various environments (on-premise, cloud, cluster. etc.)
 - docker-compose for simple deployment and management
 
 ## System Architecture

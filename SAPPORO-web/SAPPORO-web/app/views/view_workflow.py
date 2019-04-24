@@ -20,7 +20,7 @@ from app.models import Run, Workflow
 class WorkflowListView(LoginRequiredMixin, View):
     def get(self, request):
         workflows = Workflow.objects.select_related(
-            "service", "workflow_type").all().order_by("-created_at")
+            "service", "workflow_type").filter(deleted=False).order_by("-updated_at")
         context = {
             "workflows": workflows,
         }
@@ -48,8 +48,10 @@ class WorkflowDetailView(LoginRequiredMixin, View):
 
 class WorkflowPrepareView(LoginRequiredMixin, View):
     def get(self, request, workflow_token):
-        workflow = Workflow.objects.filter(token=workflow_token).select_related(
+        workflow = Workflow.objects.filter(token=workflow_token, deleted=False).select_related(
             "service", "workflow_type").first()
+        if workflow is None:
+            raise Http404
         excutable_engines = workflow.find_excutable_engines()
         input_params = parse_cwl_input_params(workflow.content)
         workflow_prepare_form = WorkflowPrepareForm(
@@ -70,7 +72,7 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
                 workflow_engine = [engine for engine in excutable_engines if engine.token ==
                                    workflow_prepare_form.cleaned_data["execution_engine"]][0]
                 run = self.post_run(
-                    request.user, workflow, workflow_engine, workflow_prepare_form.cleaned_data)
+                    request.user, workflow, workflow_engine, workflow_prepare_form.cleaned_data, input_params)
                 return HttpResponseRedirect(reverse_lazy("app:run_detail", kwargs={"run_id": run.run_id}))
             workflow_parameters_upload_form = WorkflowParametersUploadForm()
         elif request.POST.get("workflow_parameters_upload_form"):
@@ -81,8 +83,7 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
             if workflow_parameters_upload_form.is_valid():
                 workflow_parameters = workflow_parameters_upload_form.cleaned_data["workflow_parameters"].file.read(
                 ).decode("utf-8")
-                d_workflow_parameters = yaml.load(
-                    workflow_parameters)  # TODO fix yaml and json
+                d_workflow_parameters = self.load_upload_parameter_file(workflow_parameters)
                 for key, value in d_workflow_parameters.items():
                     workflow_prepare_form.fields[key].initial = value
         else:
@@ -101,12 +102,8 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
 
         return render(request, "app/workflow_prepare.html", context)
 
-    def post_run(self, user, workflow, workflow_engine, form_inputs):
-        workflow_parameters = copy(form_inputs)
-        del workflow_parameters["execution_engine"]
-        del workflow_parameters["run_name"]
-        workflow_parameters = yaml.dump(
-            workflow_parameters, default_flow_style=False)
+    def post_run(self, user, workflow, workflow_engine, form_inputs, input_params):
+        workflow_parameters = self.generate_wokrflow_parameters_yaml(form_inputs, input_params)
         data = {
             "workflow_name": workflow.name,
             "execution_engine_name": workflow_engine.name,
@@ -139,3 +136,28 @@ class WorkflowPrepareView(LoginRequiredMixin, View):
         )
 
         return run
+
+    def generate_wokrflow_parameters_yaml(self, form_inputs, input_params):
+        workflow_parameters = dict()
+        for input_param in input_params:
+            if input_param["type"] in ["File", "Directory"]:
+                workflow_parameters[input_param["label"]] = dict()
+                workflow_parameters[input_param["label"]]["class"] = input_param["type"]
+                workflow_parameters[input_param["label"]]["path"] = form_inputs[input_param["label"]]
+            else:
+                workflow_parameters[input_param["label"]] = form_inputs[input_param["label"]]
+        workflow_parameters = yaml.dump(
+            workflow_parameters, default_flow_style=False)
+
+        return workflow_parameters
+
+    def load_upload_parameter_file(self, workflow_parameters):
+        d_workflow_parameters = dict()
+        d_load_parameters = yaml.load(workflow_parameters)
+        for key, value in d_load_parameters.items():
+            if isinstance(value, dict):
+                d_workflow_parameters[key] = value["path"]
+            else:
+                d_workflow_parameters[key] = value
+        
+        return d_workflow_parameters

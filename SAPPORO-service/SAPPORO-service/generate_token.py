@@ -2,7 +2,7 @@
 import secrets
 from pathlib import Path
 
-TOKEN_FILE = Path(__file__).absolute().parent.joinpath("token_list.txt")
+TOKEN_FILE = Path(__file__).absolute().parent.parent.joinpath("config").joinpath("token_list.txt")
 l_token = []
 
 if TOKEN_FILE.exists() is True:

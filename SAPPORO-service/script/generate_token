@@ -1,0 +1,30 @@
+#!/bin/bash
+cd `dirname $0`
+CMDNAME=`basename $0`
+
+function usage () {
+  cat << EOS
+Usage: $CMDNAME
+Script to generate token for token auth.
+
+Option:
+  -h, --help                  Print usage.
+EOS
+}
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    "-h" | "--help" )
+      usage
+      exit 1
+      ;;
+    * )
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+DOCKER_COMPOSE_CONFIG_FILE=$(cd $(dirname $0)/.. && pwd)/docker-compose.yml
+
+docker-compose -f ${DOCKER_COMPOSE_CONFIG_FILE} exec app python3 /opt/SAPPORO-service/SAPPORO-service/generate_token.py

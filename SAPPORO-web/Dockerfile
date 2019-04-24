@@ -11,7 +11,7 @@ RUN apt update && \
 
 COPY requirements.txt /tmp
 
-RUN pip install -U pip && \
+RUN pip install -U pip wheel setuptools && \
     pip install -r /tmp/requirements.txt && \
     rm -rf /tmp/requirements.txt
 
@@ -19,4 +19,3 @@ COPY entry_point.sh /opt/SAPPORO-web
 ADD https://raw.githubusercontent.com/eficode/wait-for/master/wait-for /opt/SAPPORO-web
 
 CMD ["tail", "-f", "/dev/null"]
-

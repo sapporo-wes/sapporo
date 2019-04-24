@@ -4,5 +4,7 @@ workflow_engines:
     workflow_types:
       - language_type: CWL
         language_version: v1.0
+      - language_type: CWL
+        language_version: v1.1-draft
 auth_instructions_url: https://dummy_auth_instructions_url/
 contact_info_url: https://dummy_contact_info_url/

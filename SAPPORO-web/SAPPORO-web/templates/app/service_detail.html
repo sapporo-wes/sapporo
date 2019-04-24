@@ -12,7 +12,11 @@
   <div class="container">
     <div class="row" id="title">
       <div class="col-12">
-        <h1>{{ service.name }}</h1>
+        {% if service.deleted %}
+          <h1>{{ service.name }} (Deleted)</h1>
+        {% else %}
+          <h1>{{ service.name }}</h1>
+        {% endif %}
       </div>
     </div>
 

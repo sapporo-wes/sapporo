@@ -1,6 +1,6 @@
 # SAPPORO-fileserver
 
-SAPPORO-service is file storage for managing data. We are using [Minio](https://www.minio.io), which is a simple S3 compatible object storage.
+SAPPORO-fileserver is divided into file storage for input and file storage for output. File storage for input uses nginx. The file storage for output uses [Minio](https://www.minio.io) which is a simple S3 compatible object storage.
 
 [Japanese Document](https://hackmd.io/s/rJHpJwkdE)
 
@@ -21,7 +21,43 @@ environment:
 $ docker-compose up -d
 ```
 
-In browser, go to `localhost: 1123`.
+## Usage of File Storage for Input
+
+First, examine the path of dir in `docker-compose.yml` and edit `nginx.conf`.
+
+```shell
+$ pwd
+/home/ubuntu/SAPPORO/SAPPORO-fileserver
+$ vim nginx.conf
+
+    server {
+        listen 80;
+        listen [::]:80;
+        server_name localhost;
+        root /home/ubuntu/SAPPORO/SAPPORO-fileserver/data;    # HERE
+        location / {
+            autoindex on;
+        }
+
+$ docker-compose restart input
+```
+
+In your browser, access to `localhost:1124`.
+
+You can get the file URL, after change `localhost:1124` to `sapporo-fileserver-input`.
+
+```
+http://localhost:1124/input/small.ERR034597_1.fq
+
+# ->
+
+http://sapporo-fileserver-input/input/small.ERR034597_1.fq
+```
+
+## Usage of File Storage for Output
+
+
+In browser, access to `localhost:1123`.
 
 ![Mineo Login](https://i.imgur.com/m1ghCUn.png)
 
@@ -36,34 +72,23 @@ Create a bucket. You can do this from the browser or from CLI.
 The following is an example of using CLI.
 
 ```shell
-$ docker-compose exec app mc config host add sapporo http://0.0.0.0:1123 access_key secret_access_key
+$ docker-compose exec app mc config host add sapporo http://0.0.0.0:80 access_key secret_access_key
 $ docker-compose exec app mc mb sapporo/sapporo
 ```
 
 This will create a bucket called `sapporo`.
 
-## Usage
-
-First, check the IP of Docker Host of SAPPORO-service.
-
-```bash
-$ cd ../SAPPORO-service
-$ docker-compose exec app ip route
-default via 192.168.112.1 dev eth0    # THIS!!
-192.168.224.0/20 dev eth0 scope link  src 192.168.224.3
-```
-
 ---
 
 In Workflow Prepare, specify SAPPORO-fileserver instead of S3.
 
-![Test](https://i.imgur.com/zBbrkv0.png)
+![Test](https://i.imgur.com/y0Tv7JZ.png)
 
 ---
 
 The result is output as follows.
 
-![Output](https://i.imgur.com/Aay2M07.png)
+![Output](https://i.imgur.com/scZJbcm.png)
 
 The entity of output exists under `SAPPORO/SAPPORO-fileserver/data/sapporo`.
 
@@ -73,8 +98,5 @@ $ ls
 cwl_upload
 $ cd cwl_upload
 $ ls
-curl_fastq_stderr.log           fastqc_trimed_fastq_stdout.log  fastq.trimed.fq         upload_url.txt
-fastqc_fastq_stderr.log         fastq_fastqc.html               s3_upload_stderr.log
-fastqc_fastq_stdout.log         fastq.fq                        trimmomatic_stderr.log
-fastqc_trimed_fastq_stderr.log  fastq.trimed_fastqc.html        trimmomatic_stdout.log
+small.ERR034597_1_fastqc.html  small.ERR034597_1.trimmed_fastqc.html  small.ERR034597_1.trimmed.fq
 ```

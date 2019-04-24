@@ -7,7 +7,7 @@ from app.models.model_service import CommonInfo, Service, WorkflowType
 
 class Workflow(CommonInfo):
     service = models.ForeignKey(Service, verbose_name=_(
-        "Service"), on_delete=models.SET_NULL, related_name="workflows", null=True, blank=True)
+        "Service"), on_delete=models.CASCADE, related_name="workflows")
     name = models.CharField(_("Workflow name"), max_length=256)
     version = models.CharField(_("Workflow version"), max_length=256)
     workflow_type = models.ForeignKey(WorkflowType, verbose_name=_(

@@ -9,8 +9,8 @@ from app.models import Service
 
 class ServiceListView(LoginRequiredMixin, View):
     def get(self, request):
-        services = Service.objects.prefetch_related(
-            "workflow_engines", "workflows").all().order_by("-created_at")
+        services = Service.objects.filter(deleted=False).order_by("-updated_at").prefetch_related(
+            "workflow_engines", "workflows")
         context = {
             "services": services,
         }

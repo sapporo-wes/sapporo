@@ -41,12 +41,25 @@ Python libraries being used are described in [requirements.txt](https://github.c
 
 ## Easy Deployment
 
-Using docker-compose.
+Use a script that wraps docker-compose.
 
 ```shell
 $ git clone https://github.com/suecharo/SAPPORO.git
-$ cd SAPPORO/SAPPORO-service
-$ docker-compose up -d
+$ cd SAPPORO/SAPPORO-service/script
+$ ./service-up --help
+Usage: service-up [Option]...
+Script to up SAPPORO-service.
+
+Option:
+  -h, --help                  Print usage.
+  -l, --log-level INFO|DEBUG  Set log level. (default INFO)
+  -p, --port PORT             Set the host TCP/IP port. (default 1122)
+  --enable-get-runs           Enable get runs. (default FALSE)
+  --enable-token-auth         Enable token auth. (default FALSE)
+  --log-dir ABS_PATH          Set log dir. (default SAPPORO-service/log)
+  --run-dir ABS_PATH          Set run dir. (default SAPPORO-service/run)
+
+$ ./service-up
 $ curl -X GET localhost:1122/service-info
 {
   "auth_instructions_url": "https://dummy_auth_instructions_url/",
@@ -69,29 +82,11 @@ $ curl -X GET localhost:1122/service-info
 }
 ```
 
-### macOS
-
-Need to edit `./docker-compose.yml`.
-
-```shell
---- docker-compose.yml  2019-03-05 22:51:04.612902487 +0900
-+++ docker-compose.mac.yml  2019-03-05 23:16:30.253558038 +0900
-@@ -9,7 +9,7 @@
-     restart: always
-     volumes:
-       - /var/run/docker.sock:/var/run/docker.sock
--      - /usr/bin/docker:/usr/bin/docker
-+      - /usr/local/bin/docker:/usr/bin/docker
-       - /tmp:/tmp
-       - ./SAPPORO-service:/opt/SAPPORO-service/SAPPORO-service
-       - ./config:/opt/SAPPORO-service/config
-```
-
 ## Usage
 
 ### REST API Definition
 
-It is described in Swagger format in `./api-definition/SAPPORO-service-api-definition.yml`. Please confirm by the following method.
+It is described in the Swagger format in `./api-definition/SAPPORO-service-api-definition.yml`. Please confirm by the following method.
 
 - [SAPPORO - Swagger UI](https://suecharo.github.io/SAPPORO/SAPPORO-service/api-definition/swagger-ui)
 - [Swagger Editor](https://editor.swagger.io)
@@ -133,9 +128,9 @@ You can add workflows by editing `./config/workflow-info.yml`
 ```shell
 workflows:
   - workflow_name: trimming_and_qc
-    workflow_version: 0c33f861553629b1e6fb4161686ab47670c9ed97
-    workflow_location: https://raw.githubusercontent.com/suecharo/SAPPORO/master/SAPPORO-service/test/test_workflow/trimming_and_qc.cwl
-    workflow_parameters_template_location: https://raw.githubusercontent.com/suecharo/SAPPORO/master/SAPPORO-service/test/test_workflow/trimming_and_qc_run_template.yml
+    workflow_version: 561154b0dfcb359740f1e031d3d13d7225aa1262
+    workflow_location: https://raw.githubusercontent.com/suecharo/SAPPORO_test_workflow/master/workflow/trimming-and-qc/trimming-and-qc-upload/trimming-and-qc-upload.cwl
+    workflow_parameters_template_location: https://raw.githubusercontent.com/suecharo/SAPPORO_test_workflow/master/workflow/trimming-and-qc/trimming-and-qc-upload/trimming-and-qc-upload.yml
     language_type: CWL
     language_version: v1.0
 ```
@@ -152,17 +147,20 @@ The explanation of each item is as follows.
     - Describe the location of the workflow file
 - workflow_parameters_template_location
     - Describe the location of the workflow execution parameters template file
-- language\_[type|version]
-    - Specify language\_[type|version] described in `service-info.yml`
+- language_[type|version]
+    - Specify language_[type|version] described in `service-info.yml`
 
 ---
 
-There are input/output parameters restrictions for executable workflows. Please check `./test/test_workflow` as an example.
+Executable workflows have input/output parameter restrictions. Please check [GitHub - SAPPORO_test_workflow](https://github.com/suecharo/SAPPORO_test_workflow) as an example.
 
-- If the local file is not mounted on the Docker container, you can't specify the local file path as the input parameter.
-     - In the example, the input data is specified as a URL.
-- Output data needs to be uploaded to the local file server or object storage.
-     - Write the URL as one line in `upload_url.txt` in the execution directory.
+- Input data and workflow files must be hosted on the web
+    - If you want to use local files, you need to prepare a file server
+    - [SAPPORO-fileserver - README](https://github.com/suecharo/SAPPORO/blob/master/SAPPORO-fileserver/README.md)
+- Output data needs to be uploaded to file server or object storage
+  - Write one line in `upload_url.txt` in the execution directory
+  - The following are available as local object storage
+  - [SAPPORO-fileserver - README](https://github.com/suecharo/SAPPORO/blob/master/SAPPORO-fileserver/README.md)
 
 ### Manage Workflow Execution Engine, Job Scheduler
 
@@ -184,7 +182,7 @@ function run_wf() {
 function run_cwltool() {
   echo "RUNNING" > ${status_file}
   workflow_location=$(cat ${run_order_file} | yq -r '.workflow_location')
-  cwltool --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${status_file}
+  cwltool --enable-dev --custom-net=host --outdir ${output_dir} ${workflow_location} ${workflow_parameters_file} 1> ${stdout_file} 2> ${stderr_file} || echo "EXECUTOR_ERROR" > ${status_file}
   echo "COMPLETE" > ${status_file}
 }
 ```
@@ -201,12 +199,7 @@ Flask <-> uwsgi <-(uWSGI protocol)-> Nginx <-(HTTP)-> Docker <-> User
 
 ---
 
-As an initial setting, Nginx provides `localhost:1122` as a REST API endpoint. If you want to change the port, change the following part of `./docker-compose.yml`.
-
-```yaml
-ports:
-  - 1122:80 # HERE
-```
+As an initial setting, Nginx provides `localhost:1122` as a REST API endpoint. If you want to change the port, start SAPPORO-service like `./service-up --port ${PORT_NUM}`.
 
 ---
 
@@ -223,30 +216,11 @@ flask.log  nginx-access.log  nginx-error.log  nginx.pid  uwsgi.log  uwsgi.pid
 
 ---
 
-Logs are normally outputed to `./log`. If you want to change the output location, edit `./docker-compose.yml`.
-
-```shell
---- docker-compose.yml  2019-03-05 22:51:04.612902487 +0900
-+++ docker-compose.log.yml  2019-03-05 23:38:03.502634330 +0900
-@@ -13,7 +13,7 @@
-       - /tmp:/tmp
-       - ./SAPPORO-service:/opt/SAPPORO-service/SAPPORO-service
-       - ./config:/opt/SAPPORO-service/config
--      - ./log:/opt/SAPPORO-service/log
-+      - /var/log/SAPPORO-service:/opt/SAPPORO-service/log
-       - ./run:/opt/SAPPORO-service/run
-     environment:
-       - LOG_LEVEL=INFO # DEBUG or INFO
-```
+Logs are normally outputted to `./log`. If you want to change the output location, start SAPPORO-service like `./service-up --log-dir $ {LOG_DIR}`.
 
 ---
 
-To change the log level, edit `./docker-compose.yml`. When set as `LOG_LEVEL=DEBUG`, traceback of Python is displayed in `./log/flask.log`.
-
-```shell
-    environment:
-      - LOG_LEVEL=INFO # DEBUG or INFO
-```
+To change the log level, start SAPPORO-service like `./service-up --log-level DEBUG`. When set as `DEBUG`, traceback of Python is displayed in `./log/flask.log`.
 
 ---
 
@@ -254,12 +228,7 @@ If you want log rotation of `./log/flask.log`, edit `./SAPPORO-service/app/loggi
 
 ### Token authentication
 
-SAPPORO-service can uses simple token authentication. Please edit `./docker-compose.yml`.
-
-```shell
-    environment:
-      - ENABLE_TOKEN_AUTH=True # True or False
-```
+SAPPORO-service can use simple token authentication. Start SAPPORO-service like `./service-up --enable-token-auth`.
 
 ```shell
 $ curl -X GET localhost:1122/service-info
@@ -269,12 +238,12 @@ $ curl -X GET localhost:1122/service-info
 }
 ```
 
-Issuing a token is done as follows.
+To issue a token, using `./generate_token`.
 
 ```shell
-$ docker-compose exec app python3 /opt/SAPPORO-service/config/generate_token.py
+$ ./generate_token
 Your Token is: Yv8hl40BoP1ogtp42SHq0cZTGzSyY3o4TV6EMloMzI0
-$ docker-compose exec app python3 /opt/SAPPORO-service/config/generate_token.py
+$ ./generate_token
 Your Token is: _pKRgNkEkPLqFBMpJSChVlvC2lmRHWlhW2UiuBWY760
 ```
 
@@ -317,11 +286,15 @@ When using token authentication, it is necessary to encrypt the header, so pleas
 
 ### GET /runs
 
-Using `GET /runs`, can check all batch jobs in SAPPORO-service. However, when using SAPPORO-service by an unspecified number of users, problems arises (e.g. canceling other user's batch jobs). Please edit `./docker-compose.yml` to change the setting.
+Using `GET /runs`, can check all batch jobs in SAPPORO-service. However, when using SAPPORO-service by an unspecified number of users, problems arises (e.g. cancelling other user's batch jobs). The default setting is disabled, so if you want to change this, start SAPPORO-service like `./service-up --enable-get-runs`.
+
+## Stop and Uninstall
 
 ```shell
-    environment:
-      - ENABLE_GET_RUNS=False # True or False
+# Stop
+$ ./service-down
+# Uninstall
+$ ./service-clean
 ```
 
 ## Testing environment

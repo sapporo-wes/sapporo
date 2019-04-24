@@ -41,21 +41,32 @@ Python libraries being used are described in [requirements.txt](https://github.c
 
 ## Easy Deployment
 
-Using docker-compose.
+Use a script that wraps docker-compose.
 
 ```shell
 $ git clone https://github.com/suecharo/SAPPORO.git
-$ cd SAPPORO/SAPPORO-web
-$ docker-compose up -d
-```
+$ cd SAPPORO/SAPPORO-web/script
+$ ./web-up --help
+Usage: web-up [Option]...
+Script to up SAPPORO-web.
 
-Access `localhost:1121/` using the browser.
+Option:
+  -h, --help                  Print usage.
+  -l, --log-level INFO|DEBUG  Set log level. (default INFO)
+  -p, --port PORT             Set the host TCP/IP port. (default 1121)
+  -t, --timezone TIMEZONE     Set the timezone. (default Asia/Tokyo)
+  --log-dir ABS_PATH          Set log dir. (default SAPPORO-web/log)
+  --user-signup TRUE|FALSE    Enable user signup. (default True)
+
+$ ./web-up
+# Access `localhost:1121/` using the browser.
+```
 
 ![SAPPORO - Home](https://i.imgur.com/ebHAY8o.jpg)
 
 ## Usage
 
-### Managing User
+### Manage User
 
 There are two types of user: the general user and the administrator user. The difference is whether it can access the administration page.
 
@@ -64,25 +75,20 @@ There are two types of user: the general user and the administrator user. The di
 The administrator user creates it as follows.
 
 ```shell
-$ docker-compose exec app python3 /opt/SAPPORO-web/SAPPORO-web/manage.py createsuperuser
+$ ./create_super_user
 ```
 
 ---
 
-The general users creates using Sign Up.
+The general users create using Sign Up.
 
 ![SAPPORO - Signup](https://i.imgur.com/fsAoJc9.jpg)
 
-If you want to disable Sign Up, edit `./docker-compose.yml`.
-
-```shell
-    environment:
-      - ENABLE_USER_SIGNUP=True  # True or False
-```
+If you want to disable Sign Up, start SAPPORO-web like `./web-up --user-signup FALSE`.
 
 ---
 
-User management uses Django Native. Please access to `localhost:1121/django-admin` as an administrator user.
+To manage users, after logging in as an admin user, select [Admin] - [Managing users] in the header.
 
 ### Add SAPPORO-service
 
@@ -94,15 +100,9 @@ You can add SAPPORO-service by entering service information in the form.
 
 ---
 
-For your information, if you use the same docker host between SAPPORO-web and SAPPORO-service, you can check the IP adress of docker host by the following way.
+If you are using SAPPORO-service on the same machine, `Service Server Host` is `sapporo-service-web`.
 
-```shell
-$ docker-compose exec app ip route
-default via 192.168.224.1 dev eth0    # THIS!!
-192.168.224.0/20 dev eth0 scope link  src 192.168.224.3
-```
-
-## Running Workflow
+## Run Workflow
 
 Select [Workflow] - [Workflow Name to be executed] in the header.
 
@@ -126,12 +126,7 @@ Django <-> uwsgi <-(uWSGI protocol)-> Nginx <-(HTTP)-> Docker <-> User
 
 ---
 
-As an initial setting, Nginx provides `localhost:1121` as a Web endpoint. If you want to change the port, change the following part of `./docker-compose.yml`.
-
-```yaml
-ports:
-  - 1121:80 # HERE
-```
+As an initial setting, Nginx provides `localhost:1121` as a Web endpoint. If you want to change the port, start SAPPORO-web like `./web-up --port ${PORT_NUM}`.
 
 ---
 
@@ -148,34 +143,24 @@ django.log  nginx-access.log  nginx-error.log  nginx.pid  uwsgi.log  uwsgi.pid
 
 ---
 
-Logs are normally outputed to `./log`. If you want to change the output location, edit `./docker-compose.yml`.
-
-```shell
---- docker-compose.yml	2019-03-06 10:37:53.403787949 +0900
-+++ docker-compose.log.yml	2019-03-06 10:38:35.055851639 +0900
-@@ -12,7 +12,7 @@
-     volumes:
-       - ./SAPPORO-web:/opt/SAPPORO-web/SAPPORO-web
-       - ./config:/opt/SAPPORO-web/config
--      - ./log:/opt/SAPPORO-web/log
-+      - /var/log/SAPPORO-web:/opt/SAPPORO-web/log
-     environment:
-       - LOG_LEVEL=INFO # DEBUG or INFO
-       - LANGUAGE_CODE=en
-```
+Logs are normally outputted to `./log`. If you want to change the output location, start SAPPORO-web like `./web-up --log-dir $ {LOG_DIR}`.
 
 ---
 
-To change the log level, edit `./docker-compose.yml`. When set as `LOG_LEVEL=DEBUG`, detailed logs and traceback of Python are displayed in `./log/flask.log`.
-
-```shell
-    environment:
-      - LOG_LEVEL=INFO # DEBUG or INFO
-```
+To change the log level, start SAPPORO-web like `./web-up --log-level DEBUG`. When set as `DEBUG`, detailed logs and traceback of Python are displayed in `./log/flask.log`.
 
 ---
 
 If you want log rotation of `./log/django.log`, edit `./SAPPORO-web/config/logging_config.py`.
+
+## Stop and Uninstall
+
+```shell
+# Stop
+$ ./web-down
+# Uninstall
+$ ./web-clean
+```
 
 ## Testing environment
 
@@ -193,7 +178,7 @@ The result is output to `./test/coverage_html`.
 
 ### Development environment
 
-You can develop using Django's lcoal server. As a result, code changes are reflected immediately on the server. Files containing dev as the name in `./test` are used as the configuration files.
+You can develop using Django's local server. As a result, code changes are reflected immediately on the server. Files containing dev as the name in `./test` are used as the configuration files.
 
 ```shell
 $ cd test

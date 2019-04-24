@@ -18,6 +18,7 @@ class CommonInfo(models.Model):
     updated_at = models.DateTimeField(_("Updated date"), auto_now=True)
     token = models.CharField(_("Token"), max_length=256,
                              unique=True, default=_get_token, primary_key=True)
+    deleted = models.BooleanField(_("Flag_deleted"), default=False)
 
     class Meta:
         abstract = True
@@ -181,7 +182,8 @@ class Service(CommonInfo):
                     ins_workflow.parameters_template = res_workflow["workflow_parameters_template"]
                     ins_workflow.save()
             else:
-                ins_workflow.delete()
+                ins_workflow.deleted = True
+                ins_workflow.save()
         for res_workflow in d_response["workflows"]:
             ins_workflow_type, _ = WorkflowType.objects.get_or_create(
                 type=res_workflow["language_type"],
@@ -201,6 +203,21 @@ class Service(CommonInfo):
 
         return True
 
+    def delete_by_flag(self):
+        self.deleted = True
+        self.save()
+        for workflow_engine in self.workflow_engines.all():
+            workflow_engine.deleted = True
+            workflow_engine.save()
+        for supported_wes_version in self.supported_wes_versions.all():
+            supported_wes_version.deleted = True
+            supported_wes_version.save()
+        for workflow in self.workflows.all():
+            workflow.deleted = True
+            workflow.save()
+
+        return True
+
 
 class WorkflowType(CommonInfo):
     type = models.CharField(_("Workflow type"), max_length=64)
@@ -217,7 +234,7 @@ class WorkflowType(CommonInfo):
 
 class WorkflowEngine(CommonInfo):
     service = models.ForeignKey(Service, verbose_name=_(
-        "Belong service"), on_delete=models.SET_NULL, related_name="workflow_engines", null=True, blank=True)
+        "Belong service"), on_delete=models.CASCADE, related_name="workflow_engines")
     name = models.CharField(_("Workflow engine name"), max_length=64)
     version = models.CharField(_("Workflow engine version"), max_length=64)
     workflow_types = models.ManyToManyField(
