@@ -132,7 +132,7 @@ cat << EOS > ${DOCKER_COMPOSE_CONFIG_FILE}
 version: "3"
 services:
   app:
-    image: suecharo/sapporo-service:v0.3.4
+    image: suecharo/sapporo-service:v0.3.5
     container_name: sapporo-service-app
     restart: always
     volumes:

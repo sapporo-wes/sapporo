@@ -1,7 +1,7 @@
 version: "3"
 services:
   app:
-    image: suecharo/sapporo-web:v0.3.4
+    image: suecharo/sapporo-web:v0.3.5
     container_name: sapporo-web-app
     depends_on:
       - database
