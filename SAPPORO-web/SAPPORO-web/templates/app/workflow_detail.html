@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    {% if workflow.deleted is false %}
+    {% if workflow.deleted is False %}
       <div class="row justify-content-center" id="prepare-button">
         <div class="col-6">
           <a class="btn btn-outline-primary btn-block" href="{% url 'app:workflow_prepare' workflow_token=workflow.token %}" role="button">Prepare Run</a>
