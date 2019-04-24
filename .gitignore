@@ -11,6 +11,7 @@ SAPPORO-web/SAPPORO-web/config/local_settings.py
 SAPPORO-web/SAPPORO-web/static/
 
 SAPPORO-fileserver/data/
+SAPPORO-fileserver/log/
 
 !.gitkeep
 

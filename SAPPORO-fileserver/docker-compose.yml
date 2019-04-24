@@ -1,14 +1,33 @@
 version: "3"
 services:
-  app:
-    image: suecharo/sapporo-fileserver:v0.3.4
-    container_name: sapporo-fileserver-app
+  input:
+    image: nginx:stable-alpine
+    container_name: sapporo-fileserver-input
     restart: always
     volumes:
-      - ./data:/data
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./log:/var/log/nginx
+      - ${PWD}/data:${PWD}/data
+    ports:
+      - 1124:80
+    networks:
+      - sapporo
+  output:
+    image: suecharo/sapporo-fileserver:v0.3.4
+    container_name: sapporo-fileserver-output
+    restart: always
+    volumes:
+      - ${PWD}/data:${PWD}/data
     environment:
       MINIO_ACCESS_KEY: access_key
       MINIO_SECRET_KEY: secret_access_key
-    command: ["server", "--address", "0.0.0.0:1123", "/data"]
+    command: ["server", "--address", "0.0.0.0:80", "${PWD}/data"]
     ports:
-      - 1123:1123
+      - 1123:80
+    networks:
+      - sapporo
+
+networks:
+  sapporo:
+    external:
+      name: sapporo-network
