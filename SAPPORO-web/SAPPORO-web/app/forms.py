@@ -80,11 +80,11 @@ class WorkflowPrepareForm(forms.Form):
         for input_param in input_params:
             if input_param["type"] == "boolean":
                 self.fields[input_param["label"]] = forms.BooleanField()
-            elif input_param["type"] == "int":
+            elif input_param["type"] in ["int", "long", "double"]:
                 self.fields[input_param["label"]] = forms.IntegerField()
             elif input_param["type"] == "float":
                 self.fields[input_param["label"]] = forms.FloatField()
-            elif input_param["type"] == "string":
+            elif input_param["type"] in ["string", "File", "Directory"]:
                 self.fields[input_param["label"]] = forms.CharField()
             self.fields[input_param["label"]].required = True
             if input_param["default"] is not None:

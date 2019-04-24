@@ -36,7 +36,7 @@ class AdminServiceView(LoginRequiredMixin, View):
         elif request.POST.get("button_delete_service"):
             for service_name in request.POST.getlist("delete_check"):
                 service = Service.objects.get(name=service_name)
-                service.delete()
+                service.delete_by_flag()
             service_addition_form = ServiceAdditionForm()
         elif request.POST.get("button_update_service"):
             for service_name in request.POST.getlist("update_check"):
@@ -50,8 +50,8 @@ class AdminServiceView(LoginRequiredMixin, View):
         return self.general_render(request, service_addition_form)
 
     def general_render(self, request, service_addition_form):
-        services = Service.objects.all().prefetch_related(
-            "workflow_engines").prefetch_related("workflows")
+        services = Service.objects.filter(deleted=False).order_by("-updated_at").prefetch_related(
+            "workflow_engines", "workflows")
         context = {
             "services": services,
             "service_addition_form": service_addition_form,

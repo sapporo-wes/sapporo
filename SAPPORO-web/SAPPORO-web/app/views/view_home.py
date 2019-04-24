@@ -25,8 +25,8 @@ class HomeView(View):
             logger.debug(request.META["REMOTE_ADDR"])
 
         if request.user.is_authenticated:
-            services = Service.objects.all()
-            workflows = Workflow.objects.all()
+            services = Service.objects.filter(deleted=False).order_by("-updated_at")
+            workflows = Workflow.objects.filter(deleted=False).order_by("-updated_at")
             runs = Run.get_user_recent_runs(request.user.pk)
             for run in runs:
                 run.update_from_service()

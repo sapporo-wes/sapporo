@@ -1,3 +1,42 @@
+#!/bin/bash
+cd `dirname $0`
+CMDNAME=`basename $0`
+
+function usage () {
+  cat << EOS
+Usage: $CMDNAME
+Script to clean SAPPORO-service.
+
+Option:
+  -h, --help                  Print usage.
+EOS
+}
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    "-h" | "--help" )
+      usage
+      exit 1
+      ;;
+    * )
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+SERVICE_ROOT=$(cd $(dirname $0)/.. && pwd)
+DOCKER_COMPOSE_CONFIG_FILE=${SERVICE_ROOT}/docker-compose.yml
+
+echo "Start service-clean..."
+docker network rm sapporo-network > /dev/null 2>&1
+docker network rm sapporo-service_default > /dev/null 2>&1
+rm -rf "${SERVICE_ROOT}/config/token_list.txt"
+rm -rf "${SERVICE_ROOT}/config/uwsgi.sock"
+rm -rf ${SERVICE_ROOT}/log/*
+rm -rf ${SERVICE_ROOT}/run/*
+rm -rf "${SERVICE_ROOT}/SAPPORO-service/app/local_config.py"
+cat << EOS > ${DOCKER_COMPOSE_CONFIG_FILE}
 version: "3"
 services:
   app:
@@ -38,3 +77,6 @@ networks:
   sapporo:
     external:
       name: sapporo-network
+EOS
+
+echo "Finish service-clean..."

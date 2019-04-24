@@ -11,6 +11,8 @@ services:
       - ../SAPPORO-web:/opt/SAPPORO-web/SAPPORO-web
       - ../test:/opt/SAPPORO-web/test
       - ../log:/opt/SAPPORO-web/log
+    networks:
+      - sapporo
     environment:
       - DEBUG=True # Django debug mode and Use SQLite
       - LOG_LEVEL=DEBUG # DEBUG or INFO
@@ -20,3 +22,8 @@ services:
     ports:
       - 1121:8000
     command: ["sh", "/opt/SAPPORO-web/entry_point.sh"]
+
+networks:
+  sapporo:
+    external:
+      name: sapporo-network
