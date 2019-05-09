@@ -23,7 +23,7 @@ services:
       - POSTGRES_PORT=5432
     command: ["/bin/bash", "/opt/SAPPORO-web/entry_point.sh"]
   web:
-    image: nginx:stable-alpine
+    image: nginx:1.16.0-alpine
     container_name: sapporo-web-web
     depends_on:
       - app
@@ -38,7 +38,7 @@ services:
     ports:
       - 1121:80
   database:
-    image: postgres:alpine
+    image: postgres:11.2-alpine
     container_name: sapporo-web-database
     restart: always
     volumes:
