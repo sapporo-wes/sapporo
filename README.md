@@ -10,14 +10,16 @@ Sapporo has two components: **Sapporo-Service** is an API server which actually 
 
 **_GitHub Repository for each component_**
 
-- [GitHub - ddbj/Sapporo-Service](https://github.com/ddbj/SAPPORO-service)
-- [GitHub - ddbj/SSapporo-Web](https://github.com/ddbj/SAPPORO-web)
+- [GitHub - ddbj/SAPPORO-service](https://github.com/ddbj/SAPPORO-service)
+- [GitHub - ddbj/SAPPORO-web](https://github.com/ddbj/SAPPORO-web)
+
+**[Sapporo - Getting Stated](https://github.com/ddbj/SAPPORO/blob/master/docs/GettingStarted.md)**
 
 ## Sapporo needs your help!
 
 The [DDBJ](https://ddbj.nig.ac.jp) has maintained a shared computing cluster for over 10 years. The demand that we often asked by the users is to share the tools and the workflows among the other users with ease.
 
-A year ago we made the first release of Sapporo. We have been dogfooding to investigate if the application suits our purpose. Now we published the major update, including the new features for both Sapporo-service and Sapporo-web. Sapporo-service is now a full implementation of the GA4GH WES standard, and ready for production deployment. Please try deploying Sapporo on your computer and run your workflows, and let us know what you think. Of course we welcome your pull request to [github/ddbj/Sapporo-service](https://github.com/ddbj/SAPPORO-service) or [github/ddbj/Sapporo-web](https://github/ddbj/Sapporo-web) !
+A year ago we made the first release of Sapporo. We have been dogfooding to investigate if the application suits our purpose. Now we published the major update, including the new features for both Sapporo-service and Sapporo-Web. Sapporo-service is now a full implementation of the GA4GH WES standard, and ready for production deployment. Sapporo-Web is yet under the development and may have bugs (we found some while creating this tutorial document, oo!). Please try deploying Sapporo on your computer and run your workflows, and let us know what you think. Of course we welcome your pull request to [GitHub - ddbj/SAPPORO-service](https://github.com/ddbj/SAPPORO-service) or [GitHub - ddbj/SAPPORO-web](https://github/ddbj/SAPPORO-web) !
 
 ## Acknowledgement
 
