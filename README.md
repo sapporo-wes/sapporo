@@ -1,74 +1,28 @@
 # SAPPORO
 
-Sapporo is a workflow execution system (WES) that provides the [GA4GH WES Standard](https://github.com/ga4gh/workflow-execution-service-schemas) compatible API server and the Web GUI.
+[![Apache License](https://img.shields.io/badge/license-Apache%202.0-orange.svg?style=flat&color=important)](http://www.apache.org/licenses/LICENSE-2.0)
 
-![SAPPORO - Home](https://i.imgur.com/ebHAY8o.jpg)
+<img src="https://raw.githubusercontent.com/ddbj/SAPPORO/master/logo/SAPPORO-WES.svg" width="400" style="display: block; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 30px;" alt="SAPPORO-WES logo">
 
-[Documentation in Japanese](https://hackmd.io/s/Syq0q0o8N)
+Sapporo is a standard implementation conforming to the Global Alliance for Genomics and Health (GA4GH) Workflow Execution Service (WES) API specification and a web application for managing and executing those WES services.
 
-## Features
+Sapporo has two components: **Sapporo-Service** is an API server which actually runs workflows via workflow runners, and **Sapporo-Web** is a browser-based GUI to manage the workflow execution running on WES servers.
 
-- Easy to deploy with `docker-compose`
-  - Suitable for on-premise, local cluster, cloud
-- Workflow language and runner flexibility
-  - A wrapper [`run.sh`](https://github.com/ddbj/SAPPORO-service/blob/master/sapporo/run.sh) encapsulates the differences in languages/runners/job schedulers
+**_GitHub Repository for each component_**
 
-### Features work in progress
+- [GitHub - ddbj/Sapporo-Service](https://github.com/ddbj/SAPPORO-service)
+- [GitHub - ddbj/SSapporo-Web](https://github.com/ddbj/SAPPORO-web)
 
-- Compatibility with object storage servers
-- Collect and manage batch job results
-- Verification of the reproducibility of a workflow
+## Sapporo needs your help!
 
-## Architecture
+The [DDBJ](https://ddbj.nig.ac.jp) has maintained a shared computing cluster for over 10 years. The demand that we often asked by the users is to share the tools and the workflows among the other users with ease.
 
-Sapporo has two components, Web and Service, which enable the cloud-friendly deployment. Sapporo-fileserver is also available for I/O testing.
+A year ago we made the first release of Sapporo. We have been dogfooding to investigate if the application suits our purpose. Now we published the major update, including the new features for both Sapporo-service and Sapporo-web. Sapporo-service is now a full implementation of the GA4GH WES standard, and ready for production deployment. Please try deploying Sapporo on your computer and run your workflows, and let us know what you think. Of course we welcome your pull request to [github/ddbj/Sapporo-service](https://github.com/ddbj/SAPPORO-service) or [github/ddbj/Sapporo-web](https://github/ddbj/Sapporo-web) !
 
-- [SAPPORO-web](https://github.com/ddbj/SAPPORO-web)
-  - Simple web application to providev graphical interface to manage users, jobs, and servers
-- [SAPPORO-service](https://github.com/ddbj/SAPPORO-service)
-  - An REST API implementation of [GA4GH WES](https://github.com/ga4gh/workflow-execution-service-schemas)
-- [SAPPORO-fileserver](https://github.com/ddbj/SAPPORO-fileserver)
-  - A tiny wrapper for [minio](https://minio.io) server for testing workflow input/output
+## Acknowledgement
 
-![SAPPORO - System Architecture](https://i.imgur.com/A4seI74.png)
-
-Users need to register Sapporo-service or other WES implementations to Sapporo-web to submit and manage workflows. Details of the components are in the documentation of each repository:
-
-- [SAPPORO-web - README](https://github.com/ddbj/SAPPORO-web/blob/master/README.md)
-- [SAPPORO-service - README](https://github.com/ddbj/SAPPORO-service/blob/master/README.md)
-- [SAPPORO-fileserver - README](https://github.com/ddbj/SAPPORO-fileserver/blob/master/README.md)
-
-## Aims and expectations
-
-### Individual task execution system
-
-From [Wikipedia - Batch Computing](https://en.wikipedia.org/wiki/Batch_processing):
-
-> the scripted running of one or more programs, as directed by Job Control Language, with no human interaction other than,
-
-Batch computing is a common technique used in the various fields of data engineering and science:
-
-- Animation rendering
-- Software testing
-- Machine learning
-- Genomic data analysis
-- Simulations
-
-Batch jobs usually have problems on portability and reproducibility, because many are implemented for a specific computing environment such as local computing clusters. Sapporo aims to support technologies such as container virtualization (e.g. Docker, Singularity, etc.), or workflow runners (e.g. Airflow, Luigi, etc.), and workflow languages ([Common Workflow Language](https://www.commonwl.org/), [Workflow Description Language](https://github.com/openwdl/wdl), [Nextflow](https://www.nextflow.io/), [Snakemake](https://snakemake.github.io/), etc.).
-
-![SAPPORO - Batch Job](https://i.imgur.com/4UJ799a.png)
-
-## Continuous testing of workflows
-
-Packaging software in containers and describing processes in workflow languages are powerful methods to improve portability. However, there are still problems to prevent workflow execution like:
-
-- Server down
-- Network down
-- Other processes occupies resources such as CPU, memory, or storage
-- Unexpected modification of container images
-
-Sapporo aims to introduce the continuous integration (CI) / continous deployment (CD) concept to the management of batch job execution. Testing batch job with WES can make sure that the registered batch job is running correctly, or failed at some point.
+The development of Sapporo is supported by [DDBJ](https://ddbj.nig.ac.jp). We thank the members of the two user groups, the [pitagora network](https://pitagora-network.org/) and the [workflow meetup Japan](https://workflow-meetup-jp.github.io/). This work is partially supported by the CREST program of the Japan Science and Technology Agency (grant No. JPMJCR1501).
 
 ## License
 
-SAPPORO is released under the [Apache 2.0 license](https://github.com/ddbj/SAPPORO/blob/master/LICENSE).
+[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). See the [LICENSE](https://github.com/ddbj/SAPPORO-web/blob/master/LICENSE).
