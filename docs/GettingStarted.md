@@ -1,10 +1,10 @@
-# Sapporo: Getting Started
+# sapporo: Getting Started
 
 Authors: [Tazro Ohta](https://github.com/inutano), [Hirotaka Suetake](https://github.com/suecharo)
 
-Here we introduce how to deploy Sapporo, an implementation of GA4GH workflow execution service (WES).
+Here we introduce how to deploy sapporo, an implementation of GA4GH workflow execution service (WES).
 
-Sapporo has two components: **Sapporo-Service** is an API server which actually runs workflows via workflow runners, and **Sapporo-Web** is a browser-based GUI to manage the workflow execution running on WES servers.
+sapporo has two components: **sapporo-service** is an API server which actually runs workflows via workflow runners, and **sapporo-web** is a browser-based GUI to manage the workflow execution running on WES servers.
 
 ## Prerequisites
 
@@ -12,18 +12,18 @@ Sapporo has two components: **Sapporo-Service** is an API server which actually 
 - Docker
 - docker-compose
 
-## Sapporo-service: The API server
+## sapporo-service: The API server
 
 Let's launch the server and run a workflow. First, clone the github repository:
 
 ```shell=
-$ git clone https://github.com/ddbj/SAPPORO-service
+$ git clone https://github.com/ddbj/sapporo-service
 ```
 
 Then run `docker-compose up` to launch the server:
 
 ```shell=
-$ cd SAPPORO-service
+$ cd sapporo-service
 $ docker-compose up
 Creating network "sapporo-network" with the default driver
 Pulling app (ghcr.io/ddbj/sapporo-service:1.0.11)...
@@ -51,13 +51,13 @@ sapporo |  * Debug mode: off
 sapporo |  * Running on http://0.0.0.0:1122/ (Press CTRL+C to quit)
 ```
 
-That's it! Now Sapporo-service is running on your computer with the address `localhost:1122`. Let's access the endpoint `/service-info` to get the general information of the WES (using `jq` to prettify the output json).
+That's it! Now sapporo-service is running on your computer with the address `localhost:1122`. Let's access the endpoint `/service-info` to get the general information of the WES (using `jq` to prettify the output json).
 
 ```shell=
 $ curl -s localhost:1122/service-info | jq .
 {
-  "auth_instructions_url": "https://github.com/ddbj/SAPPORO-service",
-  "contact_info_url": "https://github.com/ddbj/SAPPORO-service",
+  "auth_instructions_url": "https://github.com/ddbj/sapporo-service",
+  "contact_info_url": "https://github.com/ddbj/sapporo-service",
   "default_workflow_engine_parameters": [],
   "executable_workflows": [...],
   "supported_filesystem_protocols": [
@@ -112,7 +112,7 @@ $ curl -s localhost:1122/service-info | jq .
 }
 ```
 
-The full documentation of the API endpoints are desribed in [Swagger UI - Sapporo-Service](https://suecharo.github.io/sapporo-swagger-ui/dist/).
+The full documentation of the API endpoints are described in [Swagger UI - sapporo-service](https://suecharo.github.io/sapporo-swagger-ui/dist/).
 
 ## Prepare to run a workflow
 
@@ -144,7 +144,7 @@ $ cat workflow_engine_parameters.json
 {}
 ```
 
-The last file called "tag file" is to specify the tags bound to this run, which passes the optional arguments to the WES server. Tags can control the behaviour of the WES which would be different depending on the implementation.
+The last file called "tag file" is to specify the tags bound to this run, which passes the optional arguments to the WES server. Tags can control the behavior of the WES which would be different depending on the implementation.
 
 ```shell=
 $ cat tags.json
@@ -189,7 +189,7 @@ $ curl -s localhost:1122/runs/98a99495-2a3a-40ce-b033-46ad01ab0044 | jq .
   },
   "run_id": "98a99495-2a3a-40ce-b033-46ad01ab0044",
   "run_log": {
-    "cmd": "docker run -i --rm -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp -v /home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044:/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044 -w=/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/exe commonworkflowlanguage/cwltool:1.0.20191225192155 --outdir /home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs https://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl /home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/exe/workflow_params.json 1>/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/stdout.log 2>/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/stderr.log",
+    "cmd": "docker run -i --rm -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp -v /home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044:/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044 -w=/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/exe commonworkflowlanguage/cwltool:1.0.20191225192155 --outdir /home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs https://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl /home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/exe/workflow_params.json 1>/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/stdout.log 2>/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/stderr.log",
     "end_time": null,
     "exit_code": null,
     "name": "download-fastq.cwl",
@@ -231,20 +231,20 @@ $ curl -s localhost:1122/runs/98a99495-2a3a-40ce-b033-46ad01ab0044 | jq .
   },
   "run_id": "98a99495-2a3a-40ce-b033-46ad01ab0044",
   "run_log": {
-    "cmd": "docker run -i --rm -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp -v /home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044:/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044 -w=/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/exe commonworkflowlanguage/cwltool:1.0.20191225192155 --outdir /home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs https://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl /home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/exe/workflow_params.json 1>/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/stdout.log 2>/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/stderr.log",
+    "cmd": "docker run -i --rm -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp -v /home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044:/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044 -w=/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/exe commonworkflowlanguage/cwltool:1.0.20191225192155 --outdir /home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs https://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl /home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/exe/workflow_params.json 1>/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/stdout.log 2>/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/stderr.log",
     "end_time": "2021-03-11T22:21:16",
     "exit_code": 0,
     "name": "download-fastq.cwl",
     "start_time": "2021-03-11T22:19:53",
     "stderr": "\u001b[1;30mINFO\u001b[0m /usr/local/bin/cwltool 1.0.20191225192155\nCould not load extension schema https://schema.org/docs/schema_org_rdfa.html: None:11:92: Repeat node-elements inside property elements: http://www.w3.org/1999/xhtmlmeta\n\u001b[1;30mWARNING\u001b[0m \u001b[33mWorkflow checker warning:\nhttps://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl:14:5: Source 'nthreads'\n                                                                                                                         of type [\"null\",\n                                                                                                                         \"int\"] may be\n                                                                                                                         incompatible\nhttps://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl:41:7:   with sink\n                                                                                                                           'nthreads' of type\n                                                                                                                           \"int\"\nhttps://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl:19:5: Source 'repo' of\n                                                                                                                         type [\"null\",\n                                                                                                                         \"string\"] may be\n                                                                                                                         incompatible\nhttps://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl:33:7:   with sink 'repo'\n                                                                                                                           of type \"string\"\u001b[0m\n\u001b[1;30mINFO\u001b[0m [workflow ] start\n\u001b[1;30mINFO\u001b[0m [workflow ] starting step download_sra\n\u001b[1;30mINFO\u001b[0m [step download_sra] start\n\u001b[1;30mINFO\u001b[0m ['docker', 'pull', 'quay.io/inutano/download-sra:0.2.1']\n0.2.1: Pulling from inutano/download-sra\n5d20c808ce19: Pulling fs layer\n26033daab2b1: Pulling fs layer\n6936ed840dfa: Pulling fs layer\n5d20c808ce19: Download complete\n5d20c808ce19: Pull complete\n6936ed840dfa: Verifying Checksum\n6936ed840dfa: Download complete\n26033daab2b1: Verifying Checksum\n26033daab2b1: Download complete\n26033daab2b1: Pull complete\n6936ed840dfa: Pull complete\nDigest: sha256:69f1ca73377435be390bffede86219f3a5c4aa63aeb7b8041089a77a22d75027\nStatus: Downloaded newer image for quay.io/inutano/download-sra:0.2.1\n\u001b[1;30mINFO\u001b[0m [job download_sra] /tmp/1k8ba4u6$ docker \\\n    run \\\n    -i \\\n    --volume=/tmp/1k8ba4u6:/ebxWvx:rw \\\n    --volume=/tmp/pmjhk0_d:/tmp:rw \\\n    --workdir=/ebxWvx \\\n    --read-only=true \\\n    --user=0:0 \\\n    --rm \\\n    --env=TMPDIR=/tmp \\\n    --env=HOME=/ebxWvx \\\n    --cidfile=/tmp/uupe_aud/20210311222022-280547.cid \\\n    quay.io/inutano/download-sra:0.2.1 \\\n    download-sra \\\n    -r \\\n    ebi \\\n    SRR1274307\n--2021-03-11 22:20:23--  ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR127/007/SRR1274307\n           => 'SRR1274307.sra'\nResolving ftp.sra.ebi.ac.uk... 193.62.197.74\nConnecting to ftp.sra.ebi.ac.uk|193.62.197.74|:21... connected.\nLogging in as anonymous ... Logged in!\n==> SYST ... done.    ==> PWD ... done.\n==> TYPE I ... done.  ==> CWD (1) /vol1/srr/SRR127/007 ... done.\n==> SIZE SRR1274307 ... 946479\n==> PASV ... done.    ==> RETR SRR1274307 ... done.\nLength: 946479 (924K) (unauthoritative)\n\n     0K .......... .......... .......... .......... ..........  5% 80.8K 11s\n    50K .......... .......... .......... .......... .......... 10%  213K 7s\n   100K .......... .......... .......... .......... .......... 16% 30.5M 4s\n   150K .......... .......... .......... .......... .......... 21% 9.68M 3s\n   200K .......... .......... .......... .......... .......... 27%  219K 3s\n   250K .......... .......... .......... .......... .......... 32% 16.3M 2s\n   300K .......... .......... .......... .......... .......... 37% 11.2M 2s\n   350K .......... .......... .......... .......... .......... 43% 8.14M 1s\n   400K .......... .......... .......... .......... .......... 48%  227K 1s\n   450K .......... .......... .......... .......... .......... 54% 34.5M 1s\n   500K .......... .......... .......... .......... .......... 59% 40.9M 1s\n   550K .......... .......... .......... .......... .......... 64% 49.6M 1s\n   600K .......... .......... .......... .......... .......... 70% 36.6M 1s\n   650K .......... .......... .......... .......... .......... 75% 20.0M 0s\n   700K .......... .......... .......... .......... .......... 81% 16.2M 0s\n   750K .......... .......... .......... .......... .......... 86% 17.4M 0s\n   800K .......... .......... .......... .......... .......... 91%  226K 0s\n   850K .......... .......... .......... .......... .......... 97% 32.9M 0s\n   900K .......... .......... ....                            100% 11.9M=1.6s\n\n2021-03-11 22:20:29 (592 KB/s) - 'SRR1274307.sra' saved [946479]\n\n\u001b[1;30mINFO\u001b[0m [job download_sra] Max memory used: 1MiB\n\u001b[1;30mINFO\u001b[0m [job download_sra] completed success\n\u001b[1;30mINFO\u001b[0m [step download_sra] completed success\n\u001b[1;30mINFO\u001b[0m [workflow ] starting step pfastq_dump\n\u001b[1;30mINFO\u001b[0m [step pfastq_dump] start\n\u001b[1;30mINFO\u001b[0m ['docker', 'pull', 'quay.io/inutano/sra-toolkit:v2.9.0']\nv2.9.0: Pulling from inutano/sra-toolkit\nd8d1b9d0fad7: Pulling fs layer\nff8923c0c81d: Pulling fs layer\na0e4bf411830: Pulling fs layer\nfe23b5934555: Pulling fs layer\n9cbeb98e2f73: Pulling fs layer\ne4d6e1f8f7b0: Pulling fs layer\n184ea3f39f9e: Pulling fs layer\n9333b8d7b119: Pulling fs layer\nde906d5248f0: Pulling fs layer\nfe23b5934555: Waiting\n9cbeb98e2f73: Waiting\ne4d6e1f8f7b0: Waiting\n184ea3f39f9e: Waiting\n9333b8d7b119: Waiting\nde906d5248f0: Waiting\na0e4bf411830: Verifying Checksum\na0e4bf411830: Download complete\nff8923c0c81d: Verifying Checksum\nff8923c0c81d: Download complete\nfe23b5934555: Verifying Checksum\nfe23b5934555: Download complete\n9cbeb98e2f73: Verifying Checksum\n9cbeb98e2f73: Download complete\nd8d1b9d0fad7: Download complete\n9333b8d7b119: Verifying Checksum\n9333b8d7b119: Download complete\ne4d6e1f8f7b0: Verifying Checksum\ne4d6e1f8f7b0: Download complete\nde906d5248f0: Verifying Checksum\nde906d5248f0: Download complete\nd8d1b9d0fad7: Pull complete\nff8923c0c81d: Pull complete\na0e4bf411830: Pull complete\nfe23b5934555: Pull complete\n9cbeb98e2f73: Pull complete\ne4d6e1f8f7b0: Pull complete\n184ea3f39f9e: Verifying Checksum\n184ea3f39f9e: Download complete\n184ea3f39f9e: Pull complete\n9333b8d7b119: Pull complete\nde906d5248f0: Pull complete\nDigest: sha256:6fd4a55d66354ec14c363888fdc44ebac4531a263b00f799c810064cd6a591f2\nStatus: Downloaded newer image for quay.io/inutano/sra-toolkit:v2.9.0\n\u001b[1;30mINFO\u001b[0m [job pfastq_dump] /tmp/mpgxwo91$ docker \\\n    run \\\n    -i \\\n    --volume=/tmp/mpgxwo91:/ebxWvx:rw \\\n    --volume=/tmp/v6h32xdi:/tmp:rw \\\n    --volume=/tmp/1k8ba4u6/SRR1274307.sra:/var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra:ro \\\n    --workdir=/ebxWvx \\\n    --read-only=true \\\n    --user=0:0 \\\n    --rm \\\n    --env=TMPDIR=/tmp \\\n    --env=HOME=/ebxWvx \\\n    --cidfile=/tmp/ykf3a62q/20210311222107-416357.cid \\\n    quay.io/inutano/sra-toolkit:v2.9.0 \\\n    pfastq-dump \\\n    --gzip \\\n    -t \\\n    4 \\\n    --readids \\\n    --skip-technical \\\n    --split-files \\\n    --split-spot \\\n    /var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra\nUsing sra-stat : 2.9.0\nUsing fastq-dump : 2.9.0\ntmpdir: /ebxWvx\noutdir: /ebxWvx\nblocks: 1,6846 6847,13692 13693,20538 20539,27386\nRead 6846 spots for /var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra\nWritten 6846 spots for /var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra\nRead 6846 spots for /var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra\nWritten 6846 spots for /var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra\nRead 6846 spots for /var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra\nWritten 6846 spots for /var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra\nRead 6848 spots for /var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra\nWritten 6848 spots for /var/lib/cwl/stgd9e1ef08-dfad-4dfb-aeaa-cbb2abf385c2/SRR1274307.sra\n\u001b[1;30mINFO\u001b[0m [job pfastq_dump] Max memory used: 0MiB\n\u001b[1;30mINFO\u001b[0m [job pfastq_dump] completed success\n\u001b[1;30mINFO\u001b[0m [step pfastq_dump] completed success\n\u001b[1;30mINFO\u001b[0m [workflow ] completed success\n\u001b[1;30mINFO\u001b[0m Final process status is success\n",
-    "stdout": "{\n    \"fastq_files\": [\n        {\n            \"location\": \"file:///home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs/SRR1274307_1.fastq.gz\",\n            \"basename\": \"SRR1274307_1.fastq.gz\",\n            \"class\": \"File\",\n            \"checksum\": \"sha1$22f01534b704d7024f36ce95cf975be80f4dda54\",\n            \"size\": 736698,\n            \"format\": \"http://edamontology.org/format_1930\",\n            \"path\": \"/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs/SRR1274307_1.fastq.gz\"\n        },\n        {\n            \"location\": \"file:///home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs/SRR1274307_2.fastq.gz\",\n            \"basename\": \"SRR1274307_2.fastq.gz\",\n            \"class\": \"File\",\n            \"checksum\": \"sha1$c381b2fc6c3783716c5c0fe645a4df27b0006251\",\n            \"size\": 761425,\n            \"format\": \"http://edamontology.org/format_1930\",\n            \"path\": \"/home/ubuntu/git/github.com/ddbj/SAPPORO-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs/SRR1274307_2.fastq.gz\"\n        }\n    ]\n}\n"
+    "stdout": "{\n    \"fastq_files\": [\n        {\n            \"location\": \"file:///home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs/SRR1274307_1.fastq.gz\",\n            \"basename\": \"SRR1274307_1.fastq.gz\",\n            \"class\": \"File\",\n            \"checksum\": \"sha1$22f01534b704d7024f36ce95cf975be80f4dda54\",\n            \"size\": 736698,\n            \"format\": \"http://edamontology.org/format_1930\",\n            \"path\": \"/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs/SRR1274307_1.fastq.gz\"\n        },\n        {\n            \"location\": \"file:///home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs/SRR1274307_2.fastq.gz\",\n            \"basename\": \"SRR1274307_2.fastq.gz\",\n            \"class\": \"File\",\n            \"checksum\": \"sha1$c381b2fc6c3783716c5c0fe645a4df27b0006251\",\n            \"size\": 761425,\n            \"format\": \"http://edamontology.org/format_1930\",\n            \"path\": \"/home/ubuntu/git/github.com/ddbj/sapporo-service/run/98/98a99495-2a3a-40ce-b033-46ad01ab0044/outputs/SRR1274307_2.fastq.gz\"\n        }\n    ]\n}\n"
   },
   "state": "COMPLETE",
   "task_logs": null
 }
 ```
 
-The `state` turned to `"COMPLETE"`, now it's done! Sapporo-Service is hosting output files. Let's see if the output can actually be downloaded.
+The `state` turned to `"COMPLETE"`, now it's done! sapporo-service is hosting output files. Let's see if the output can actually be downloaded.
 
 ```shell=
 $ curl -s localhost:1122/runs/98a99495-2a3a-40ce-b033-46ad01ab0044 | jq ".outputs"
@@ -267,9 +267,9 @@ $ ls ./SRR1274307_1.fastq.gz
 
 Woohoo! :tada: Now you successfully deployed your own CWL-as-a-Service!
 
-## Sapporo-Web: A GUI for WES endpoint
+## sapporo-web: A GUI for WES endpoint
 
-Next we try to use Sapporo-Web, a web-based GUI application that allows users to run and manage workflows on a WES server. Sapporo-Web is implemented as a javascript SPA and hosted on GitHub Pages. You can access https://ddbj.github.io/SAPPORO-web/ or you can deploy your own Sapporo-Web (Recommend to use the Google Chrome browser). See details at https://github.com/ddbj/SAPPORO-web .
+Next we try to use sapporo-web, a web-based GUI application that allows users to run and manage workflows on a WES server. sapporo-web is implemented as a javascript SPA and hosted on GitHub Pages. You can access https://ddbj.github.io/sapporo-web or you can deploy your own sapporo-web (Recommend to use the Google Chrome browser). See details at https://github.com/ddbj/sapporo-web .
 
 ![](https://i.imgur.com/poWyOeM.png)
 
@@ -312,6 +312,8 @@ It's done again! You can download the output files.
 ## Version history
 
 - 1st version
-  - https://github.com/ddbj/SAPPORO/blob/ca05ad2b9df62f9fb03f7444d90a86a8dfd16bce/docs/GettingStarted.md
+  - https://github.com/ddbj/sapporo/blob/ca05ad2b9df62f9fb03f7444d90a86a8dfd16bce/docs/GettingStarted.md
 - 2nd version
+  - https://github.com/ddbj/sapporo/blob/2260a8788a17cf93bd2187e5912c86bf21867486/docs/GettingStarted.md
+- 3rd version
   - This document
