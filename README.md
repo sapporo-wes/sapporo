@@ -1,25 +1,44 @@
-# sapporo
+# Sapporo: an implementation of GA4GH WES standard
 
 [![Apache License](https://img.shields.io/badge/license-Apache%202.0-orange.svg?style=flat&color=important)](http://www.apache.org/licenses/LICENSE-2.0)
 
 <img src="https://raw.githubusercontent.com/ddbj/sapporo/master/logo/sapporo-WES.svg" width="400" style="display: block; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 30px;" alt="sapporo-WES logo">
 
-sapporo is a standard implementation conforming to the Global Alliance for Genomics and Health (GA4GH) Workflow Execution Service (WES) API specification and a web application for managing and executing those WES services.
+Sapporo is an implementation of Workflow Execution Service (WES) or so-called Workflow-as-a-Service.
 
-sapporo has two components: **sapporo-service** is an API server which actually runs workflows via workflow runners, and **sapporo-web** is a browser-based GUI to manage the workflow execution running on WES servers.
+## Getting Started
 
-**_GitHub Repository for each component_**
+A hands-on introduction of Sapporo is available here: [Sapporo - Getting Started](https://github.com/ddbj/sapporo/blob/master/docs/GettingStarted.md)
 
-- [GitHub - ddbj/sapporo-service](https://github.com/ddbj/sapporo-service)
-- [GitHub - ddbj/sapporo-web](https://github.com/ddbj/sapporo-web)
+This guides you to:
 
-**[sapporo - Getting Stated](https://github.com/ddbj/sapporo/blob/master/docs/GettingStarted.md)**
+1. deploy the API server `sapporo-service` on your local computer
+1. use `curl` command to request a workflow run from CUI
+1. use the browser-based GUI `sapporo-web` to request a workflow run on your local `sapporo-service`
 
-## sapporo needs your help!
+## How it works
 
-The [DDBJ](https://ddbj.nig.ac.jp) has maintained a shared computing cluster for over 10 years. The demand that we often asked by the users is to share the tools and the workflows among the other users with ease.
+Sapporo has two independent components, `sapporo-service`, and `sapporo-web`.
 
-A year ago we made the first release of sapporo. We have been dogfooding to investigate if the application suits our purpose. Now we published the major update, including the new features for both sapporo-service and sapporo-web. sapporo-service is now a full implementation of the GA4GH WES standard, and ready for production deployment. sapporo-web is yet under the development and may have bugs (we found some while creating this tutorial document, oo!). Please try deploying sapporo on your computer and run your workflows, and let us know what you think. Of course we welcome your pull request to [GitHub - ddbj/sapporo-service](https://github.com/ddbj/sapporo-service) or [GitHub - ddbj/sapporo-web](https://github/ddbj/sapporo-web) !
+### sapporo-service
+
+[GitHub - ddbj/sapporo-service](https://github.com/ddbj/sapporo-service)
+
+Sapporo-service is an implementation of the Global Alliance for Genomics and Health (GA4GH) [Workflow Execution Service API specification](https://ga4gh.github.io/workflow-execution-service-schemas/docs/). Sapporo-service is a lightweight API server that receives a request from users and runs a workflow via the workflow runner selected by the user.
+
+### sapporo-web
+
+[GitHub - ddbj/sapporo-web](https://github.com/ddbj/sapporo-web)
+
+Sapporo-web is a browser-based GUI to manage workflows that run on a WES server. To run a workflow, users do the following three steps, (1) Register a WES server to run workflows, (2) Register a workflow definition file, (3) input parameters. Sapporo-web fetches workflow definition files from publicly available URLs.
+
+## Why do I need to use Sapporo?
+
+[DNA Data Bank of Japan (DDBJ)](https://ddbj.nig.ac.jp) has maintained a shared computing cluster for over 10 years. The demand that we often asked by the users is to share the tools and the workflows among the other users with ease. Every user has, however, different preferences for programming languages to implement their tool, or workflow platform and languages to bundle their analysis pipelines, which causes barriers for others to reuse.
+
+We design Sapporo as a top layer over the tools, the workflow languages, and the workflow runners to abstract the way to execute a workflow run. This allows users to reuse the resources without learning a new framework. One who usually writes [Common Workflow Language (CWL)](https://commonwl.org) does not need to learn [nextflow](https://nextflow.io) to run a workflow from the great public resource [nf-core](https://nf-co.re), or one who prefers [snakemake](https://snakemake.readthedocs.io/en/stable/index.html) does not need to learn how to run a CWL workflow to use a tool from [Common Workflow Library](https://github.com/common-workflow-library).
+
+Another benefit from deploying Sapporo is liberation from `ssh` to a server: it should sound fantastic especially for admins of shared computing infrastructure. Users will need to prepare the tools and compose their workflow, then throw them to the server to run. It enables an abstraction of computing resources that encourages the hybrid use of on-premise and cloud computing.
 
 ## Acknowledgement
 
