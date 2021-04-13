@@ -194,9 +194,20 @@ In this tutorial we don't use any tag.
 
 ## POST to run a workflow
 
+Check if your working directory has two configuration files for this run with `tree` command (If you are using Mac you can install `tree` with [homebrew](https://brew.sh/)):
+
+```
+$ tree
+.
+├── workflow_engine_parameters.json
+└── workflow_params.json
+
+0 directories, 2 files
+```
+
 Now you are ready to run a workflow!
 
-Lets' use `curl` command to post a workflow run request with the files we prepared. The server returns a JSON object which contains a `run_id`, an identifier for this workflow run.
+Lets' use `curl` command to post a workflow request with the files we prepared.
 
 In this command line, we specify the workflow definition file with the URL prepared above, workflow type as `CWL`, workflow type version (the version of the CWL spec) with `v1.0`, workflow engine with `cwltool`, workflow parameters with the file `workflow_params.json`, and the workflow engine parameters with `workflow_engine_parameters.json`.
 
