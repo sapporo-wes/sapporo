@@ -1,20 +1,28 @@
-# sapporo: Getting Started
+# Sapporo: Getting Started
 
 Authors: [Tazro Ohta](https://github.com/inutano), [Hirotaka Suetake](https://github.com/suecharo)
 
-Here we introduce how to deploy sapporo, an implementation of GA4GH workflow execution service (WES).
+Here we introduce how to deploy Sapporo, an implementation of [GA4GH workflow execution service (WES) standard](https://ga4gh.github.io/workflow-execution-service-schemas/docs/).
 
-sapporo has two components: **sapporo-service** is an API server which actually runs workflows via workflow runners, and **sapporo-web** is a browser-based GUI to manage the workflow execution running on WES servers.
+Sapporo has two independent components: **sapporo-service** is an API server which runs workflows via workflow runners, and **sapporo-web** is a browser-based GUI to manage the workflow execution running on WES servers.
+
+This documentation guides you to:
+
+1. deploy the API server `sapporo-service` on your local computer
+1. use `curl` command to request a workflow run from CUI
+1. use the browser-based GUI `sapporo-web` to request a workflow run on your local `sapporo-service`
 
 ## Prerequisites
 
 - Linux or Mac
-- Docker
-- docker-compose
+- [Docker](https://docs.docker.com/get-docker/)
+- [docker-compose](https://docs.docker.com/compose/install/)
+- [jq](https://stedolan.github.io/jq/download/)
+  - a command line utility to prettify the JSON output
 
-## sapporo-service: The API server
+## Deploy Sapporo-service: The API server
 
-Let's launch the server and run a workflow. First, clone the github repository:
+Clone the Github repository (wherever you like):
 
 ```shell=
 $ git clone https://github.com/ddbj/sapporo-service
@@ -51,7 +59,11 @@ sapporo |  * Debug mode: off
 sapporo |  * Running on http://0.0.0.0:1122/ (Press CTRL+C to quit)
 ```
 
-That's it! Now sapporo-service is running on your computer with the address `localhost:1122`. Let's access the endpoint `/service-info` to get the general information of the WES (using `jq` to prettify the output json).
+That's it! Now sapporo-service is running on your computer, and accessible at the address `localhost:1122`.
+
+We use `docker-compose up` without deamonize option `-d`, to see the log of the API server. If you want to run a server as a background process, use `docker-compose up -d`.
+
+Let's see if the server is running. Open a new terminal window or tab, and access endpoint `/service-info` to get the general information of the WES (using `jq` to prettify the output json).
 
 ```shell=
 $ curl -s localhost:1122/service-info | jq .
@@ -114,20 +126,34 @@ $ curl -s localhost:1122/service-info | jq .
 
 The full documentation of the API endpoints are described in [Swagger UI - sapporo-service](https://suecharo.github.io/sapporo-swagger-ui/dist/).
 
-## Prepare to run a workflow
+## Prepare a workflow run
 
-To run a workflow on a WES server, you need several configuration files shown below:
+To run a workflow on a WES server, you need configuration files shown below:
 
-- a CWL workflow definition file (string, remote URL)
-- a workflow parameter (file, json)
-- a workflow engine parameter (file, json)
-- a WES request tag file (file, json)
+- Workflow definition file (a URL string, required)
+- Workflow parameters (JSON file, required)
+- Workflow engine parameters (JSON file, required)
+- WES request tag file (JSON file, optional)
 
-For workflow file, here we use our [fastq download workflow](https://github.com/pitagora-network/pitagora-cwl/tree/master/workflows/download-fastq). We will pass the remote URL of this workflow file hosted on github, but make sure to use the "raw" file URL, `https://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl`.
+### Workflow definition file
 
-This workflow requires three inputs: A list of Sequence Read Archive Run ID, the source repository, and the number of threads. Here we describe these input parameters as follows in a json file named `workflow_params.json`.
+In this tutorial, we use our [fastq download workflow](https://github.com/pitagora-network/pitagora-cwl/tree/master/workflows/download-fastq). This workflow has two steps; downloading `.sra` file from the repository, and decompress the file to `.fastq` file.
 
-```workflow_params.json=
+For workflow definition, you don't need to have it as file. Sapporo will fetch the file and dependencies from remote URL. So use this URL as string:
+
+```
+https://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl
+```
+
+Please make sure to use the "raw" file URL of GitHub.
+
+### Workflow parameters
+
+The workflow requires three inputs: A list of [Sequence Read Archive](https://www.ddbj.nig.ac.jp/dra/index-e.html) Run ID, the source repository, and the number of threads. Here we create a file `workflow_params.json` describing these input parameters as follows.
+
+```shell=
+$ echo '{"run_ids":["SRR1274307"],"repo": "ebi","nthreads": 4}' > workflow_params.json
+$ cat workflow_params.json | jq
 {
   "run_ids": [
     "SRR1274307"
@@ -137,40 +163,69 @@ This workflow requires three inputs: A list of Sequence Read Archive Run ID, the
 }
 ```
 
-Next, we can specify the workflow engine parameters, but we remain it empty. We can put an empty JSON object to the file named `workflow_engine_parameters.json`.
+### Workflow engine parameters
+
+Sometimes you may want to specify options for workflow runner, for example `--debug` option for `cwltool`, or `-with-docker` for `nextflow`.
+
+Here we create a file `workflow_engine_parameters.json` specifying `--debug` and `--timestamps` for `cwltool`. The configuration file will be as follows since the options must be described as key-value pairs.
 
 ```shell=
-$ cat workflow_engine_parameters.json
+$ echo '{"--debug":"","--timestamps":""}' > workflow_engine_parameters.json
+$ cat workflow_engine_parameters.json | jq
+{
+  "--debug": "",
+  "--timestamps": ""
+}
+```
+
+If you don't need to specify any options for workflow engine, you can just remain the file with an empty object `{}`.
+
+```shell=
+$ echo '{}' > workflow_engine_parameters.json
+$ cat workflow_engine_parameters.json | jq
 {}
 ```
 
+### WES request tag file
+
 The last file called "tag file" is to specify the tags bound to this run, which passes the optional arguments to the WES server. Tags can control the behavior of the WES which would be different depending on the implementation.
 
-```shell=
-$ cat tags.json
-{}
+In this tutorial we don't use any tag.
+
+## POST to run a workflow
+
+Check if your working directory has two configuration files for this run with `tree` command (If you are using Mac you can install `tree` with [homebrew](https://brew.sh/)):
+
+```
+$ tree
+.
+├── workflow_engine_parameters.json
+└── workflow_params.json
+
+0 directories, 2 files
 ```
 
 Now you are ready to run a workflow!
 
-## POST to run a workflow
+Lets' use `curl` command to post a workflow request with the files we prepared.
 
-Using curl to post a request to run a workflow with the files we prepared. The server returns a json object which contains a `run_id`, an identifier for this workflow run.
+In this command line, we specify the workflow definition file with the URL prepared above, workflow type as `CWL`, workflow type version (the version of the CWL spec) with `v1.0`, workflow engine with `cwltool`, workflow parameters with the file `workflow_params.json`, and the workflow engine parameters with `workflow_engine_parameters.json`.
 
 ```curl=
 $ curl -s -X POST \
     -F "workflow_url=https://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl" \
     -F "workflow_type=CWL" \
     -F "workflow_type_version=v1.0" \
-    -F "workflow_params=<workflow_params.json" \
     -F "workflow_engine_name=cwltool" \
+    -F "workflow_params=<workflow_params.json" \
     -F "workflow_engine_parameters=<workflow_engine_parameters.json" \
-    -F "tags=<tags.json" \
     http://localhost:1122/runs
 {"run_id":"98a99495-2a3a-40ce-b033-46ad01ab0044"}
 ```
 
-Next we ask the status of the run by using the `run_id`.
+If your request is successfully received, the server will return the JSON object which contains `run_id`. This is an identifier for the run you just called, so you can control the run by requesting to the server with this ID.
+
+Let's ask the status of the run by using the `run_id` (Replace the uuid part of the command line below with the ID shown on your terminal).
 
 ```curl=
 $ curl -s localhost:1122/runs/98a99495-2a3a-40ce-b033-46ad01ab0044 | jq .
@@ -244,7 +299,7 @@ $ curl -s localhost:1122/runs/98a99495-2a3a-40ce-b033-46ad01ab0044 | jq .
 }
 ```
 
-The `state` turned to `"COMPLETE"`, now it's done! sapporo-service is hosting output files. Let's see if the output can actually be downloaded.
+Now it's done! The `state` turned to `"COMPLETE"`. The output files are in the Sapporo-server. Let's see if you can download the output.
 
 ```shell=
 $ curl -s localhost:1122/runs/98a99495-2a3a-40ce-b033-46ad01ab0044 | jq ".outputs"
@@ -258,22 +313,49 @@ $ curl -s localhost:1122/runs/98a99495-2a3a-40ce-b033-46ad01ab0044 | jq ".output
     "file_url": "http://localhost:1122/runs/98a99495-2a3a-40ce-b033-46ad01ab0044/data/outputs/SRR1274307_2.fastq.gz"
   }
 ]
-
 $ curl -s localhost:1122/runs/98a99495-2a3a-40ce-b033-46ad01ab0044 | jq -r ".outputs[0].file_url" | xargs -I{} curl -s -O {}
-
 $ ls ./SRR1274307_1.fastq.gz
 ./SRR1274307_1.fastq.gz
 ```
 
-Woohoo! :tada: Now you successfully deployed your own CWL-as-a-Service!
+Woohoo! :tada: Now you successfully deployed your own Workflow-as-a-Service!
 
-## sapporo-web: A GUI for WES endpoint
+## Sapporo-web: A GUI for WES endpoint
 
-Next we try to use sapporo-web, a web-based GUI application that allows users to run and manage workflows on a WES server. sapporo-web is implemented as a javascript SPA and hosted on GitHub Pages. You can access https://ddbj.github.io/sapporo-web or you can deploy your own sapporo-web (Recommend to use the Google Chrome browser). See details at https://github.com/ddbj/sapporo-web .
+Next we try to use Sapporo-web, a web-based GUI application that allows users to run and manage workflows on a WES server.
+
+We implemented Sapporo-web as a javascript single page application (SPA) that can be hosted on GitHub pages, which means you don't need to install or deploy your own GUI appliance. The GUI application uses your browser's local storage to store the information of the connections to the WES servers, registered workflows, or your past workflow runs.
+
+You can deploy your own Sapporo-web application as well. See details [here](https://github.com/ddbj/sapporo-web).
+
+In this tutorial, we will use the public instance available at https://ddbj.github.io/sapporo-web .
 
 ![](https://i.imgur.com/poWyOeM.png)
 
-Here we use the one on GitHub pages. First, we need to register a WES endpoint we are going to use. Click the register button and input the address and the name for this endpoint. This time we input the localhost address `http://localhost:1122`, but make sure to use https protocol to avoid mixed content error if you try with your own server.
+### Is it safe to use the GUI app on GitHub? Where will my information be stored? Do I need to sign up?
+
+Yes, it is definitely safe to use the Sapporo-web. Your workflow logs will not be stored on GitHub but in your web browser. You don't need to sign up. You don't!
+
+Sapporo-web is designed as a generic interface for multiple WES servers.
+
+Imagine if you have multiple computing servers, your desktop computer, your shared computing cluster, and your private cloud environment. You could deploy Sapporo-service API servers on each computing environment, and you can connect to each of them via local network, VPN, or internet from a specific IP address. Then you can control all of them from one GUI, which is available on GitHub pages.
+
+Please note that, regardless anyone can access the app hosted on GitHub, nobody else but you can access to your workflow logs, because your information is stored on your browser's local storage.
+
+### Using Sapporo-web to run a workflow
+
+We will guide you to do the following steps:
+
+1. Register a WES server (which is running on your local computer)
+1. Register a workflow on the registered WES server
+1. Prepare a workflow run with input parameters
+1. Run!
+
+### Register a WES server
+
+First, you need to register a WES endpoint you are going to run a workflow. Click the register button and input the address and the endpoint name. To use the server running on your computer, input the address `http://localhost:1122`.
+
+If you want to register a API server running on your server, make sure to use frontend HTTP server in front so that you can access with https protocol. The GitHub pages uses https, so if your server only allows http, it will cause the mixed-content error.
 
 ![](https://i.imgur.com/2QVuiJf.png)
 
@@ -281,7 +363,13 @@ If the server is successfully registered, the `service-info` will be shown up.
 
 ![](https://i.imgur.com/bILCnoG.png)
 
-Next, we need to register a workflow to run on the server. Click register in the box of the workflow and input the URL we used above: `https://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl`.
+### Register a workflow on the registered WES server
+
+Next, you need to register a workflow to run on the server. Click register in the box of the workflow and input the URL we used above:
+
+```
+https://raw.githubusercontent.com/pitagora-network/pitagora-cwl/master/workflows/download-fastq/download-fastq.cwl
+```
 
 ![](https://i.imgur.com/PHg47AG.png)
 
@@ -291,7 +379,19 @@ If the workflow is successfully registered, the workflow details and the form to
 
 ![](https://i.imgur.com/otztTxo.jpg)
 
-Here we input the same parameters we used.
+### Prepare a workflow run with input parameters
+
+On the workflow page, you need to prepare the workflow parameters, workflow engine parameters, and the optional tags. You can use the same workflow inputs as follows, while remaining the rest empty objects `{}`.
+
+```
+{
+  "run_ids": [
+    "SRR1274307"
+  ],
+  "repo": "ebi",
+  "nthreads": 4
+}
+```
 
 ![](https://i.imgur.com/RfxEE2C.png)
 
@@ -305,15 +405,19 @@ After a while, click the reload button next to the status badge.
 
 ![](https://i.imgur.com/RhFCeV0.png)
 
-It's done again! You can download the output files.
+It's done again! You can download the output files from the `output` tab.
 
 ![](https://i.imgur.com/qdX2sxv.png)
 
+That's all! Now you can deploy your WES server, use the GUI, and run a workflow. Please feel free to give us your feedback. If you encountered any problem, or got any question, use [GitHub issues (WES)](https://github.com/ddbj/sapporo-service/issues) or [GitHub issues (GUI)](https://github.com/ddbj/sapporo-web/issues) to find out a solution.
+
 ## Version history
 
-- 1st version
-  - https://github.com/ddbj/sapporo/blob/ca05ad2b9df62f9fb03f7444d90a86a8dfd16bce/docs/GettingStarted.md
-- 2nd version
+- Apr 13, 2021
+  - This one
+- Mar 24, 2021
+  - https://github.com/ddbj/sapporo/blob/4e679836a34b54c836440be8e10f24d0f561fe50/docs/GettingStarted.md
+- Mar 12, 2021
   - https://github.com/ddbj/sapporo/blob/2260a8788a17cf93bd2187e5912c86bf21867486/docs/GettingStarted.md
-- 3rd version
-  - This document
+- Feb 9, 2021
+  - https://github.com/ddbj/sapporo/blob/ca05ad2b9df62f9fb03f7444d90a86a8dfd16bce/docs/GettingStarted.md
