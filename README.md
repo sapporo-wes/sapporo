@@ -2,13 +2,13 @@
 
 [![Apache License](https://img.shields.io/badge/license-Apache%202.0-orange.svg?style=flat&color=important)](http://www.apache.org/licenses/LICENSE-2.0)
 
-<img src="https://raw.githubusercontent.com/ddbj/sapporo/master/logo/sapporo-WES.svg" width="400" style="display: block; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 30px;" alt="sapporo-WES logo">
+<img src="https://raw.githubusercontent.com/ddbj/sapporo/main/logo/sapporo-WES.svg" width="400" style="display: block; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 30px;" alt="sapporo-WES logo">
 
 Sapporo is an implementation of Workflow Execution Service (WES) or so-called Workflow-as-a-Service.
 
 ## Getting Started
 
-A hands-on introduction of Sapporo is available here: [Sapporo - Getting Started](https://github.com/ddbj/sapporo/blob/master/docs/GettingStarted.md)
+A hands-on introduction of Sapporo is available here: [Sapporo - Getting Started](https://github.com/ddbj/sapporo/blob/main/docs/GettingStarted.md)
 
 This guides you to:
 
@@ -46,16 +46,16 @@ The development of sapporo is supported by [DDBJ](https://ddbj.nig.ac.jp). We th
 
 ## License
 
-[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). See the [LICENSE](https://github.com/ddbj/sapporo-web/blob/master/LICENSE).
+[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). See the [LICENSE](https://github.com/ddbj/sapporo-web/blob/main/LICENSE).
 
 ## Notice
 
 Please note that this repository is participating in a study into sustainability
- of open source projects. Data will be gathered about this repository for
- approximately the next 12 months, starting from 2021-06-16.
+of open source projects. Data will be gathered about this repository for
+approximately the next 12 months, starting from 2021-06-16.
 
 Data collected will include number of contributors, number of PRs, time taken to
- close/merge these PRs, and issues closed.
+close/merge these PRs, and issues closed.
 
 For more information, please visit
 [our informational page](https://sustainable-open-science-and-software.github.io/) or download our [participant information sheet](https://sustainable-open-science-and-software.github.io/assets/PIS_sustainable_software.pdf).
