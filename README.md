@@ -2,13 +2,13 @@
 
 [![Apache License](https://img.shields.io/badge/license-Apache%202.0-orange.svg?style=flat&color=important)](http://www.apache.org/licenses/LICENSE-2.0)
 
-<img src="https://raw.githubusercontent.com/ddbj/sapporo/main/logo/sapporo-WES.svg" width="400" style="display: block; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 30px;" alt="sapporo-WES logo">
+<img src="https://raw.githubusercontent.com/sapporo-wes/sapporo/main/logo/sapporo-WES.svg" width="400" style="display: block; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 30px;" alt="sapporo-WES logo">
 
 Sapporo is an implementation of Workflow Execution Service (WES) or so-called Workflow-as-a-Service.
 
 ## Getting Started
 
-A hands-on introduction of Sapporo is available here: [Sapporo - Getting Started](https://github.com/ddbj/sapporo/blob/main/docs/GettingStarted.md)
+A hands-on introduction of Sapporo is available here: [Sapporo - Getting Started](https://github.com/sapporo-wes/sapporo/blob/main/docs/GettingStarted.md)
 
 This guides you to:
 
@@ -22,13 +22,13 @@ Sapporo has two independent components, `sapporo-service`, and `sapporo-web`.
 
 ### sapporo-service
 
-[GitHub - ddbj/sapporo-service](https://github.com/ddbj/sapporo-service)
+[GitHub - ddbj/sapporo-service](https://github.com/sapporo-wes/sapporo-service)
 
 Sapporo-service is an implementation of the Global Alliance for Genomics and Health (GA4GH) [Workflow Execution Service API specification](https://ga4gh.github.io/workflow-execution-service-schemas/docs/). Sapporo-service is a lightweight API server that receives a request from users and runs a workflow via the workflow runner selected by the user.
 
 ### sapporo-web
 
-[GitHub - ddbj/sapporo-web](https://github.com/ddbj/sapporo-web)
+[GitHub - ddbj/sapporo-web](https://github.com/sapporo-wes/sapporo-web)
 
 Sapporo-web is a browser-based GUI to manage workflows that run on a WES server. To run a workflow, users do the following three steps, (1) Register a WES server to run workflows, (2) Register a workflow definition file, (3) input parameters. Sapporo-web fetches workflow definition files from publicly available URLs.
 
@@ -46,7 +46,7 @@ The development of sapporo is supported by [DDBJ](https://ddbj.nig.ac.jp). We th
 
 ## License
 
-[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). See the [LICENSE](https://github.com/ddbj/sapporo-web/blob/main/LICENSE).
+[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). See the [LICENSE](https://github.com/sapporo-wes/sapporo-web/blob/main/LICENSE).
 
 ## Notice
 
