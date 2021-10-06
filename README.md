@@ -22,13 +22,13 @@ Sapporo has two independent components, `sapporo-service`, and `sapporo-web`.
 
 ### sapporo-service
 
-[GitHub - ddbj/sapporo-service](https://github.com/sapporo-wes/sapporo-service)
+[GitHub - sapporo-wes/sapporo-service](https://github.com/sapporo-wes/sapporo-service)
 
 Sapporo-service is an implementation of the Global Alliance for Genomics and Health (GA4GH) [Workflow Execution Service API specification](https://ga4gh.github.io/workflow-execution-service-schemas/docs/). Sapporo-service is a lightweight API server that receives a request from users and runs a workflow via the workflow runner selected by the user.
 
 ### sapporo-web
 
-[GitHub - ddbj/sapporo-web](https://github.com/sapporo-wes/sapporo-web)
+[GitHub - sapporo-wes/sapporo-web](https://github.com/sapporo-wes/sapporo-web)
 
 Sapporo-web is a browser-based GUI to manage workflows that run on a WES server. To run a workflow, users do the following three steps, (1) Register a WES server to run workflows, (2) Register a workflow definition file, (3) input parameters. Sapporo-web fetches workflow definition files from publicly available URLs.
 

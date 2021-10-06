@@ -34,8 +34,8 @@ Then run `docker-compose up` to launch the server:
 $ cd sapporo-service
 $ docker-compose up
 Creating network "sapporo-network" with the default driver
-Pulling app (ghcr.io/ddbj/sapporo-service:1.0.11)...
-1.0.11: Pulling from ddbj/sapporo-service
+Pulling app (ghcr.io/sapporo-wes/sapporo-service:1.0.11)...
+1.0.11: Pulling from sapporo-wes/sapporo-service
 45b42c59be33: Already exists
 f875e16ab19c: Already exists
 cbef73715c9a: Already exists
@@ -328,7 +328,7 @@ We implemented Sapporo-web as a javascript single page application (SPA) that ca
 
 You can deploy your own Sapporo-web application as well. See details [here](https://github.com/sapporo-wes/sapporo-web).
 
-In this tutorial, we will use the public instance available at https://ddbj.github.io/sapporo-web .
+In this tutorial, we will use the public instance available at https://sapporo-wes.github.io/sapporo-web .
 
 ![](https://i.imgur.com/poWyOeM.png)
 
