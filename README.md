@@ -1,5 +1,6 @@
 # Sapporo: an implementation of GA4GH WES standard
 
+[![DOI](https://zenodo.org/badge/161498025.svg)](https://zenodo.org/badge/latestdoi/161498025)
 [![Apache License](https://img.shields.io/badge/license-Apache%202.0-orange.svg?style=flat&color=important)](http://www.apache.org/licenses/LICENSE-2.0)
 
 <img src="https://raw.githubusercontent.com/sapporo-wes/sapporo/main/logo/sapporo-WES.svg" width="400" style="display: block; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 30px;" alt="sapporo-WES logo">
