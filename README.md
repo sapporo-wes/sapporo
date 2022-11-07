@@ -7,6 +7,8 @@
 
 Sapporo is an implementation of Workflow Execution Service (WES) or so-called Workflow-as-a-Service.
 
+**[Paper Link](https://f1000research.com/articles/11-889)**
+
 ## Getting Started
 
 A hands-on introduction of Sapporo is available here: [Sapporo - Getting Started](https://github.com/sapporo-wes/sapporo/blob/main/docs/GettingStarted.md)
